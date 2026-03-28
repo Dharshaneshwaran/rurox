@@ -1,20 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { JetBrains_Mono, Manrope, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const displayFont = Space_Grotesk({
+  variable: "--font-display",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const bodyFont = Manrope({
+  variable: "--font-body",
+  subsets: ["latin"],
+});
+
+const monoFont = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Smart Teacher Assignment System",
-  description: "Manage teacher timetables, substitutions, and special classes.",
+  title: {
+    default: "Smart Teacher Assignment System",
+    template: "%s | Smart Teacher Assignment System",
+  },
+  description:
+    "Manage teacher timetables, substitutions, approvals, and special classes in a polished scheduling workspace.",
 };
 
 export default function RootLayout({
@@ -25,9 +34,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-zinc-50 text-zinc-900">
+      <body className="min-h-full bg-background font-body text-foreground">
         <div className="flex min-h-full flex-col">{children}</div>
       </body>
     </html>

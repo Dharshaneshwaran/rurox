@@ -1,4 +1,6 @@
 import type { Substitution } from "@/lib/types";
+import { cn } from "@/lib/cn";
+import { badgeClasses } from "@/components/ui/Badge";
 
 type SubstitutionListProps = {
   substitutions: Substitution[];
@@ -10,57 +12,73 @@ export default function SubstitutionList({
   variant = "light",
 }: SubstitutionListProps) {
   if (!substitutions.length) {
-    return (
-      <p className={`text-sm ${variant === "dark" ? "text-zinc-500" : "text-zinc-500"}`}>
-        No substitutions yet.
-      </p>
-    );
+    return <p className="text-sm text-muted-foreground">No substitutions scheduled.</p>;
   }
 
-  const isDark = variant === "dark";
+  const dark = variant === "dark";
 
   return (
     <div className="space-y-3">
       {substitutions.map((item) => (
-        <div
+        <article
           key={item.id}
-          className={`rounded-2xl border px-4 py-3 ${
-            isDark
-              ? "border-zinc-700/50 bg-zinc-800/50"
-              : "border-zinc-200 bg-white"
-          }`}
+          className={cn(
+            "border px-4 py-4",
+            dark
+              ? "border-white/15 bg-white/5"
+              : "border-border bg-white"
+          )}
         >
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <p
+                  className={cn(
+                    "font-medium",
+                    dark ? "text-white" : "text-foreground"
+                  )}
+                >
+                  {item.day} / Period {item.period}
+                </p>
+                <span
+                  className={cn(
+                    "text-xs uppercase tracking-[0.2em]",
+                    dark ? "text-white/55" : "text-muted-foreground"
+                  )}
+                >
+                  {new Date(item.date).toLocaleDateString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </span>
+              </div>
               <p
-                className={`text-sm font-semibold ${
-                  isDark ? "text-white" : "text-zinc-900"
-                }`}
+                className={cn(
+                  "mt-3 text-sm",
+                  dark ? "text-white/75" : "text-muted-foreground"
+                )}
               >
-                {item.day} • Period {item.period}
+                Absent: {item.absentTeacher?.name ?? "Unknown"}
               </p>
               <p
-                className={`text-xs ${isDark ? "text-zinc-400" : "text-zinc-600"}`}
+                className={cn(
+                  "mt-1 text-sm",
+                  dark ? "text-white/75" : "text-muted-foreground"
+                )}
               >
-                Absent: {item.absentTeacher?.name ?? "Unknown"} · Replacement:{" "}
-                {item.replacementTeacher?.name ?? "Pending"}
+                Cover: {item.replacementTeacher?.name ?? "Pending"}
               </p>
             </div>
             <span
-              className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                item.autoAssigned
-                  ? isDark
-                    ? "bg-emerald-400/15 text-emerald-400"
-                    : "bg-emerald-100 text-emerald-700"
-                  : isDark
-                    ? "bg-amber-400/15 text-amber-400"
-                    : "bg-amber-100 text-amber-700"
-              }`}
+              className={badgeClasses({
+                variant: item.autoAssigned ? "success" : "warning",
+              })}
             >
               {item.autoAssigned ? "Auto" : "Manual"}
             </span>
           </div>
-        </div>
+        </article>
       ))}
     </div>
   );

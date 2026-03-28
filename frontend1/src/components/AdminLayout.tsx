@@ -1,91 +1,229 @@
 "use client";
 
-import { ReactNode } from "react";
+import { useState } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import AppMark from "@/components/ui/AppMark";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import Panel from "@/components/ui/Panel";
+import {
+  DashboardIcon,
+  LogOutIcon,
+  MenuIcon,
+  SwapIcon,
+  UsersIcon,
+  XIcon,
+} from "@/components/ui/Icons";
 import { useAuth } from "@/hooks/useAuth";
+import { cn } from "@/lib/cn";
+
+const navItems = [
+  {
+    label: "Dashboard",
+    href: "/admin/dashboard",
+    description: "Teachers and schedules",
+    icon: DashboardIcon,
+  },
+  {
+    label: "Substitutions",
+    href: "/admin/substitutions",
+    description: "Coverage and absences",
+    icon: SwapIcon,
+  },
+  {
+    label: "Users",
+    href: "/admin/users",
+    description: "Approvals and access",
+    icon: UsersIcon,
+  },
+];
+
+function NavItems({
+  pathname,
+  onNavigate,
+}: {
+  pathname: string;
+  onNavigate?: () => void;
+}) {
+  return (
+    <nav className="flex flex-col gap-2">
+      {navItems.map((item) => {
+        const isActive = pathname.startsWith(item.href);
+        const Icon = item.icon;
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={onNavigate}
+            className={cn(
+              "group flex items-center gap-4 rounded-[24px] border px-4 py-3.5 transition",
+              isActive
+                ? "border-[color:color-mix(in_oklab,var(--color-brand)_18%,white)] bg-[var(--color-brand-soft)] text-[var(--color-brand)]"
+                : "border-transparent bg-transparent text-[var(--color-text-muted)] hover:border-[var(--color-stroke)] hover:bg-white hover:text-[var(--color-text)]"
+            )}
+          >
+            <div
+              className={cn(
+                "flex h-11 w-11 items-center justify-center rounded-2xl transition",
+                isActive
+                  ? "bg-white text-[var(--color-brand)]"
+                  : "bg-[var(--color-panel-muted)] text-[var(--color-text-soft)] group-hover:bg-[var(--color-brand-soft)] group-hover:text-[var(--color-brand)]"
+              )}
+            >
+              <Icon className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold">{item.label}</p>
+              <p
+                className={cn(
+                  "truncate text-xs",
+                  isActive ? "text-[var(--color-brand)]/80" : "text-[var(--color-text-soft)]"
+                )}
+              >
+                {item.description}
+              </p>
+            </div>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  const { user, clear } = useAuth({
+  const { user, clear, loading } = useAuth({
     role: "ADMIN",
     redirectTo: "/admin/login",
   });
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const navItems = [
-    { label: "Dashboard", href: "/admin/dashboard", icon: "📊" },
-    { label: "Substitutions", href: "/admin/substitutions", icon: "🔁" },
-    { label: "Users", href: "/admin/users", icon: "👥" },
-  ];
-
-  if (!user) {
-    return null; // Let the hook redirect
+  if (loading || !user) {
+    return (
+      <div className="page-shell min-h-screen">
+        <div className="mx-auto flex min-h-screen w-full max-w-[1600px] items-center justify-center px-6 py-12 text-sm text-[var(--color-text-muted)]">
+          Loading workspace...
+        </div>
+      </div>
+    );
   }
 
+  const initials =
+    user.name
+      ?.split(" ")
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "AD";
+
+  const handleSignOut = () => {
+    clear();
+    window.location.href = "/";
+  };
+
   return (
-    <div className="flex min-h-screen bg-[radial-gradient(circle_at_top,_#f8f5f1_0%,_#f0efe8_45%,_#e8e3d8_100%)]">
-      {/* Sidebar */}
-      <aside className="sticky top-0 h-screen w-64 flex-shrink-0 border-r border-zinc-200 bg-white/80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] backdrop-blur-md">
-        <div className="flex h-full flex-col px-6 py-8">
-          <div className="mb-10">
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-amber-700">
-              Admin Portal
-            </p>
-            <h2 className="mt-2 text-xl font-bold text-zinc-900 leading-tight">
-              Smart Teacher<br />System
-            </h2>
-          </div>
-
-          <nav className="flex flex-col gap-2 flex-grow">
-            {navItems.map((item) => {
-              const isActive = pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all ${
-                    isActive
-                      ? "bg-amber-100/50 text-amber-900 shadow-sm"
-                      : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-                  }`}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className="mt-auto border-t border-zinc-200 pt-6">
-            <div className="mb-4 flex items-center gap-3 px-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-900 font-bold text-white">
-                {user.name?.charAt(0) || "A"}
-              </div>
-              <div className="overflow-hidden">
-                <p className="truncate text-sm font-bold text-zinc-900">
-                  {user.name}
-                </p>
-                <p className="truncate text-xs text-zinc-500">{user.email}</p>
-              </div>
+    <div className="page-shell min-h-screen lg:grid lg:grid-cols-[296px_minmax(0,1fr)]">
+      <aside className="hidden border-r border-[var(--color-stroke)] bg-[rgba(255,255,255,0.62)] px-5 py-5 backdrop-blur-xl lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-6">
+        <Panel tone="highlight" className="px-5 py-5">
+          <div className="space-y-4">
+            <AppMark />
+            <div className="space-y-2">
+              <Badge tone="brand">Admin portal</Badge>
+              <p className="text-sm leading-6 text-[var(--color-text-muted)]">
+                Manage staff records, substitution coverage, and pending approvals
+                from a single command surface.
+              </p>
             </div>
-            <button
-              onClick={() => {
-                clear();
-                window.location.href = "/";
-              }}
-              className="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-zinc-600 transition hover:bg-red-50 hover:text-red-700"
-            >
-              <span className="text-lg transition-transform group-hover:-translate-x-1">🚪</span>
-              Sign out
-            </button>
           </div>
-        </div>
+        </Panel>
+
+        <Panel tone="muted" className="flex-1 px-4 py-4">
+          <div className="space-y-3">
+            <p className="px-2 text-xs font-semibold uppercase tracking-[0.28em] text-[var(--color-text-soft)]">
+              Navigation
+            </p>
+            <NavItems pathname={pathname} />
+          </div>
+        </Panel>
+
+        <Panel className="px-4 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-brand)] text-sm font-bold text-white">
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-[var(--color-text)]">
+                {user.name || "Administrator"}
+              </p>
+              <p className="truncate text-xs text-[var(--color-text-soft)]">
+                {user.email}
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            className="mt-4 w-full justify-start"
+            icon={<LogOutIcon className="h-4 w-4" />}
+            onClick={handleSignOut}
+          >
+            Sign out
+          </Button>
+        </Panel>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-x-hidden">
-        {children}
-      </main>
+      <div className="flex min-h-screen flex-col">
+        <header className="sticky top-0 z-30 border-b border-[var(--color-stroke)] bg-[rgba(247,249,252,0.84)] px-4 py-3 backdrop-blur-xl lg:hidden">
+          <div className="flex items-center justify-between gap-3">
+            <AppMark className="min-w-0" />
+            <button
+              type="button"
+              onClick={() => setMobileOpen((current) => !current)}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--color-stroke)] bg-white text-[var(--color-text)]"
+              aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
+            >
+              {mobileOpen ? (
+                <XIcon className="h-5 w-5" />
+              ) : (
+                <MenuIcon className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+          {mobileOpen ? (
+            <div className="pt-4">
+              <Panel tone="muted" className="space-y-4 px-4 py-4">
+                <div className="flex items-center gap-3 rounded-[24px] border border-[var(--color-stroke)] bg-white px-4 py-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-brand)] text-sm font-bold text-white">
+                    {initials}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-[var(--color-text)]">
+                      {user.name || "Administrator"}
+                    </p>
+                    <p className="truncate text-xs text-[var(--color-text-soft)]">
+                      {user.email}
+                    </p>
+                  </div>
+                </div>
+                <NavItems pathname={pathname} onNavigate={() => setMobileOpen(false)} />
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  icon={<LogOutIcon className="h-4 w-4" />}
+                  onClick={handleSignOut}
+                >
+                  Sign out
+                </Button>
+              </Panel>
+            </div>
+          ) : null}
+        </header>
+
+        <main className="flex-1">{children}</main>
+      </div>
     </div>
   );
 }

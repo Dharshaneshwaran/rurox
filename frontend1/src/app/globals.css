@@ -1,19 +1,172 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f3ee;
-  --foreground: #1b1b1f;
+  --color-page: #f7f4ee;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f1ece4;
+  --color-surface-strong: #e4ddd2;
+  --color-panel: rgba(255, 253, 250, 0.9);
+  --color-panel-strong: #fffdfa;
+  --color-panel-muted: #f4eee7;
+  --color-text: #14181c;
+  --color-text-soft: #4e5968;
+  --color-text-muted: #7e8a97;
+  --color-border: #d9d4ca;
+  --color-stroke: #d9d4ca;
+  --color-stroke-strong: #c6beb0;
+  --color-primary: #1e6d76;
+  --color-primary-strong: #164f56;
+  --color-primary-soft: #dff1f3;
+  --color-accent: #c18425;
+  --color-accent-strong: #9e6512;
+  --color-accent-soft: #f8ecd7;
+  --color-success: #2d7b66;
+  --color-success-soft: #ddf1ea;
+  --color-warning: #b86e1a;
+  --color-warning-soft: #fce8cc;
+  --color-danger: #c15555;
+  --color-danger-soft: #f9e3e3;
+  --shadow-soft: 0 28px 72px -38px rgba(15, 23, 42, 0.26);
+  --shadow-card: 0 18px 40px -28px rgba(15, 23, 42, 0.22);
+  --shadow-panel: 0 28px 72px -38px rgba(15, 23, 42, 0.26);
+  --radius-panel: 32px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+  --color-brand: var(--color-primary);
+  --color-brand-strong: var(--color-primary-strong);
+  --color-brand-soft: var(--color-primary-soft);
+  --color-panel-solid: var(--color-panel-strong);
+  --font-heading: var(--font-display);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--color-page);
+  --color-foreground: var(--color-text);
+  --color-surface: var(--color-surface);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-surface-strong: var(--color-surface-strong);
+  --color-panel: var(--color-panel);
+  --color-panel-strong: var(--color-panel-strong);
+  --color-panel-muted: var(--color-panel-muted);
+  --color-border: var(--color-border);
+  --color-muted: var(--color-text-soft);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-primary: var(--color-primary);
+  --color-primary-strong: var(--color-primary-strong);
+  --color-primary-soft: var(--color-primary-soft);
+  --color-accent: var(--color-accent);
+  --color-accent-strong: var(--color-accent-strong);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-success: var(--color-success);
+  --color-success-soft: var(--color-success-soft);
+  --color-warning: var(--color-warning);
+  --color-warning-soft: var(--color-warning-soft);
+  --color-danger: var(--color-danger);
+  --color-danger-soft: var(--color-danger-soft);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+html {
+  background: var(--color-page);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-color: var(--color-border);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), "Segoe UI", sans-serif;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(30, 109, 118, 0.14), transparent 28%),
+    radial-gradient(circle at top right, rgba(193, 132, 37, 0.12), transparent 20%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)),
+    var(--color-page);
+  color: var(--color-text);
+  font-family: var(--font-body), "Segoe UI", sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  border-radius: 0;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+::selection {
+  background: rgba(30, 109, 118, 0.18);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.6;
+}
+
+.scroll-area {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(20, 24, 28, 0.22) transparent;
+}
+
+.scroll-area::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+  background: rgba(20, 24, 28, 0.2);
+}
+
+.scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display), "Segoe UI", sans-serif;
+  }
+
+  .font-display {
+    font-family: var(--font-display), "Segoe UI", sans-serif;
+  }
+
+  .font-body {
+    font-family: var(--font-body), "Segoe UI", sans-serif;
+  }
+
+  .font-mono-display {
+    font-family: var(--font-mono), "Consolas", monospace;
+  }
 }

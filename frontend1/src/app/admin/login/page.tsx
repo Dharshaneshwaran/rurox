@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { apiFetch } from "@/lib/api";
+import AuthShell from "@/components/AuthShell";
+import Button from "@/components/ui/Button";
+import Field, { inputClassName } from "@/components/ui/Field";
 import { setStoredAuth } from "@/hooks/useAuth";
+import { apiFetch } from "@/lib/api";
 import type { User } from "@/lib/types";
 
 export default function AdminLoginPage() {
@@ -28,7 +32,7 @@ export default function AdminLoginPage() {
       );
 
       if (data.user.role !== "ADMIN") {
-        setError("This account is not an admin.");
+        setError("This account does not have admin access.");
         setLoading(false);
         return;
       }
@@ -43,54 +47,71 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#f8f5f1_0%,_#f0efe8_45%,_#e8e3d8_100%)]">
-      <main className="mx-auto flex w-full max-w-lg flex-col gap-8 px-6 py-16">
-        <header>
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-700">
-            Admin Access
-          </p>
-          <h1 className="mt-4 text-3xl font-semibold text-zinc-900">
-            Sign in to manage schedules
-          </h1>
-        </header>
+    <AuthShell
+      eyebrow="Admin access"
+      title="Sign in to manage staffing"
+      description="Use your admin account to review teachers, resolve absences, and keep the schedule coordinated."
+      panelTitle="Operations"
+      panelDescription="Run the staffing desk with a cleaner command surface."
+      highlights={[
+        {
+          label: "Teacher visibility",
+          value: "Directory",
+          description: "See staffing coverage, workload, and weekly structure from one dashboard.",
+        },
+        {
+          label: "Absence flow",
+          value: "3-step review",
+          description: "Select an absent teacher, review suggestions, and confirm coverage without guesswork.",
+        },
+        {
+          label: "Approvals",
+          value: "Pending queue",
+          description: "Approve new teacher accounts and keep access decisions inside the same workspace.",
+        },
+      ]}
+      footer={
+        <>
+          <span>Need teacher access instead?</span>
+          <Link href="/teacher/login" className="font-medium text-accent">
+            Teacher sign in
+          </Link>
+        </>
+      }
+    >
+      <form onSubmit={onSubmit} className="space-y-5">
+        <Field label="Email" htmlFor="email">
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            className={inputClassName}
+            required
+          />
+        </Field>
 
-        <form
-          onSubmit={onSubmit}
-          className="rounded-3xl border border-zinc-200 bg-white/90 p-8 shadow-[0_24px_60px_-40px_rgba(24,24,27,0.6)]"
-        >
-          <label className="block text-sm font-semibold text-zinc-700">
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-              required
-            />
-          </label>
+        <Field label="Password" htmlFor="password">
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            className={inputClassName}
+            required
+          />
+        </Field>
 
-          <label className="mt-5 block text-sm font-semibold text-zinc-700">
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-              required
-            />
-          </label>
+        {error ? (
+          <div className="border border-danger bg-danger-soft px-4 py-3 text-sm text-danger">
+            {error}
+          </div>
+        ) : null}
 
-          {error ? <p className="mt-4 text-sm text-red-600">{error}</p> : null}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-8 w-full rounded-full bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:opacity-60"
-          >
-            {loading ? "Signing in..." : "Sign in"}
-          </button>
-        </form>
-      </main>
-    </div>
+        <Button type="submit" variant="accent" className="w-full" disabled={loading}>
+          {loading ? "Signing in..." : "Open admin workspace"}
+        </Button>
+      </form>
+    </AuthShell>
   );
 }

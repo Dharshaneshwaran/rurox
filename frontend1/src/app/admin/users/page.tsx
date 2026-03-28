@@ -1,12 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
-import { apiFetch } from "@/lib/api";
-import { useAuth } from "@/hooks/useAuth";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import AdminLayout from "@/components/AdminLayout";
 import SectionCard from "@/components/SectionCard";
+import { ShieldIcon, UsersIcon } from "@/components/icons";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import EmptyState from "@/components/ui/EmptyState";
+import PageHeader from "@/components/ui/PageHeader";
+import StatCard from "@/components/ui/StatCard";
+import { useAuth } from "@/hooks/useAuth";
+import { apiFetch } from "@/lib/api";
 
-interface User {
+interface UserRecord {
   id: string;
   name: string | null;
   email: string;
@@ -15,89 +21,88 @@ interface User {
   createdAt: string;
 }
 
-import AdminLayout from "@/components/AdminLayout";
-
 export default function AdminUsersPage() {
-  const { token, user, loading, clear } = useAuth({
+  const { token, loading } = useAuth({
     role: "ADMIN",
     redirectTo: "/admin/login",
   });
-  const [pendingUsers, setPendingUsers] = useState<User[]>([]);
-  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [pendingUsers, setPendingUsers] = useState<UserRecord[]>([]);
+  const [allUsers, setAllUsers] = useState<UserRecord[]>([]);
   const [activeTab, setActiveTab] = useState<"pending" | "all">("pending");
-  const [loadingState, setLoading] = useState(false);
+  const [loadingState, setLoadingState] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const loadUsers = useCallback(async () => {
     if (!token) return;
-    setLoading(true);
+    setLoadingState(true);
     setError(null);
 
     try {
       const [pending, all] = await Promise.all([
-        apiFetch<{ users: User[] }>("/api/admin/users/pending", {}, token),
-        apiFetch<{ users: User[] }>("/api/admin/users", {}, token),
+        apiFetch<{ users: UserRecord[] }>("/api/admin/users/pending", {}, token),
+        apiFetch<{ users: UserRecord[] }>("/api/admin/users", {}, token),
       ]);
       setPendingUsers(pending.users);
       setAllUsers(all.users);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load users");
     } finally {
-      setLoading(false);
+      setLoadingState(false);
     }
   }, [token]);
 
   useEffect(() => {
-    loadUsers();
+    void loadUsers();
   }, [loadUsers]);
 
   const handleApprove = async (userId: string) => {
     if (!token) return;
-    setLoading(true);
+    setLoadingState(true);
     setError(null);
     setSuccess(null);
 
     try {
-      await apiFetch(
-        `/api/admin/users/${userId}/approve`,
-        { method: "POST" },
-        token
-      );
-      setSuccess("User approved successfully!");
-      loadUsers();
+      await apiFetch(`/api/admin/users/${userId}/approve`, { method: "POST" }, token);
+      setSuccess("User approved successfully.");
+      await loadUsers();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to approve user");
     } finally {
-      setLoading(false);
+      setLoadingState(false);
     }
   };
 
   const handleDelete = async (userId: string) => {
     if (!token) return;
-    if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+    if (!confirm("Delete this user permanently?")) {
       return;
     }
 
-    setLoading(true);
+    setLoadingState(true);
     setError(null);
     setSuccess(null);
 
     try {
       await apiFetch(`/api/admin/users/${userId}`, { method: "DELETE" }, token);
-      setSuccess("User deleted successfully!");
-      loadUsers();
+      setSuccess("User deleted successfully.");
+      await loadUsers();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete user");
     } finally {
-      setLoading(false);
+      setLoadingState(false);
     }
   };
 
-  if (loading && pendingUsers.length === 0) {
+  const approvedCount = useMemo(
+    () => allUsers.filter((user) => user.approved).length,
+    [allUsers]
+  );
+
+  if (loading) {
     return (
       <AdminLayout>
-        <div className="flex h-full items-center justify-center p-8 text-sm text-zinc-500">
+        <div className="px-4 py-10 text-sm text-muted-foreground sm:px-8 lg:px-10">
           Loading users...
         </div>
       </AdminLayout>
@@ -106,129 +111,191 @@ export default function AdminUsersPage() {
 
   return (
     <AdminLayout>
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-8 py-12">
-        <header className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-              Admin Control
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold text-zinc-900">
-              User Management
-            </h1>
+      <div className="px-4 py-6 sm:px-8 lg:px-10 xl:px-12">
+        <PageHeader
+          eyebrow="User approvals"
+          title="Access control"
+          description="Approve pending teacher accounts, monitor overall access, and remove accounts that should no longer be in the system."
+          meta={
+            <>
+              <Badge variant="accent">{pendingUsers.length} pending approvals</Badge>
+              <Badge variant="neutral">{allUsers.length} total users</Badge>
+            </>
+          }
+        />
+
+        {error ? (
+          <div className="mt-6 border border-danger bg-danger-soft px-4 py-3 text-sm text-danger">
+            {error}
           </div>
-        </header>
+        ) : null}
+        {success ? (
+          <div className="mt-6 border border-success bg-success-soft px-4 py-3 text-sm text-success">
+            {success}
+          </div>
+        ) : null}
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        {success && <p className="text-sm text-green-600">{success}</p>}
-
-        <div className="flex gap-4 border-b border-zinc-200">
-          <button
-            onClick={() => setActiveTab("pending")}
-            className={`px-4 py-3 text-sm font-semibold transition ${
-              activeTab === "pending"
-                ? "border-b-2 border-amber-700 text-zinc-900"
-                : "text-zinc-600 hover:text-zinc-900"
-            }`}
-          >
-            Pending Approvals ({pendingUsers.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("all")}
-            className={`px-4 py-3 text-sm font-semibold transition ${
-              activeTab === "all"
-                ? "border-b-2 border-amber-700 text-zinc-900"
-                : "text-zinc-600 hover:text-zinc-900"
-            }`}
-          >
-            All Users ({allUsers.length})
-          </button>
+        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            label="Pending"
+            value={String(pendingUsers.length)}
+            detail="Teachers waiting for an admin decision."
+            tone={pendingUsers.length ? "accent" : "default"}
+            icon={<ShieldIcon className="h-5 w-5" />}
+          />
+          <StatCard
+            label="Approved"
+            value={String(approvedCount)}
+            detail="Accounts that can sign into the platform today."
+            tone={approvedCount ? "success" : "default"}
+            icon={<UsersIcon className="h-5 w-5" />}
+          />
+          <StatCard
+            label="All users"
+            value={String(allUsers.length)}
+            detail="Every account currently stored in the system."
+            icon={<UsersIcon className="h-5 w-5" />}
+          />
+          <StatCard
+            label="Active view"
+            value={activeTab === "pending" ? "Pending" : "All users"}
+            detail="Switch between the approval queue and the full user list."
+            tone="accent"
+            icon={<ShieldIcon className="h-5 w-5" />}
+          />
         </div>
 
-        {activeTab === "pending" && (
-          <SectionCard title="Pending Teacher Approvals">
-            {pendingUsers.length === 0 ? (
-              <p className="text-sm text-zinc-500">No pending approvals</p>
-            ) : (
-              <div className="space-y-4">
-                {pendingUsers.map((user) => (
-                  <div
-                    key={user.id}
-                    className="flex items-center justify-between rounded-2xl bg-white p-6"
-                  >
-                    <div className="flex-1">
-                      <p className="font-semibold text-zinc-900">{user.name || user.email}</p>
-                      <p className="text-sm text-zinc-600">{user.email}</p>
-                      <p className="mt-1 text-xs text-zinc-500">
-                        Requested: {new Date(user.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="flex gap-3">
-                      <button
-                        onClick={() => handleApprove(user.id)}
-                        disabled={loadingState}
-                        className="rounded-full bg-green-50 px-6 py-2 text-sm font-semibold text-green-700 hover:bg-green-100 disabled:opacity-60"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => handleDelete(user.id)}
-                        disabled={loadingState}
-                        className="rounded-full bg-red-50 px-6 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </SectionCard>
-        )}
+        <div className="mt-8 border border-border bg-white p-2">
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setActiveTab("pending")}
+              className={`px-4 py-3 text-sm font-medium transition ${
+                activeTab === "pending"
+                  ? "bg-accent text-white"
+                  : "text-muted-foreground hover:bg-background hover:text-foreground"
+              }`}
+            >
+              Pending approvals ({pendingUsers.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("all")}
+              className={`px-4 py-3 text-sm font-medium transition ${
+                activeTab === "all"
+                  ? "bg-accent text-white"
+                  : "text-muted-foreground hover:bg-background hover:text-foreground"
+              }`}
+            >
+              All users ({allUsers.length})
+            </button>
+          </div>
+        </div>
 
-        {activeTab === "all" && (
-          <SectionCard title="All System Users">
-            {allUsers.length === 0 ? (
-              <p className="text-sm text-zinc-500">No users found</p>
-            ) : (
-              <div className="space-y-4">
-                {allUsers.map((user) => (
-                  <div
-                    key={user.id}
-                    className="flex items-center justify-between rounded-2xl bg-white p-6"
-                  >
-                    <div className="flex-1">
-                      <p className="font-semibold text-zinc-900">{user.name || user.email}</p>
-                      <p className="text-sm text-zinc-600">{user.email}</p>
-                      <div className="mt-1 flex gap-2">
-                        <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-700">
-                          {user.role}
-                        </span>
-                        {!user.approved && (
-                          <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
-                            Pending Approval
-                          </span>
-                        )}
-                        {user.approved && (
-                          <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                            Approved
-                          </span>
-                        )}
+        <div className="mt-6">
+          {activeTab === "pending" ? (
+            <SectionCard
+              title="Pending teacher approvals"
+              subtitle="Review new teacher requests and decide which accounts should enter the system."
+            >
+              {pendingUsers.length ? (
+                <div className="space-y-4">
+                  {pendingUsers.map((user) => (
+                    <div
+                      key={user.id}
+                      className="border border-border bg-background/45 p-5"
+                    >
+                      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="font-display text-2xl tracking-[-0.04em] text-foreground">
+                              {user.name || user.email}
+                            </p>
+                            <Badge variant="warning">Pending</Badge>
+                          </div>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            {user.email}
+                          </p>
+                          <p className="mt-3 text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                            Requested {new Date(user.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-wrap gap-3">
+                          <Button
+                            onClick={() => handleApprove(user.id)}
+                            variant="accent"
+                            disabled={loadingState}
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            onClick={() => handleDelete(user.id)}
+                            variant="danger"
+                            disabled={loadingState}
+                          >
+                            Reject
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleDelete(user.id)}
-                      disabled={loadingState || user.role === "ADMIN"}
-                      className="rounded-full bg-red-50 px-6 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"
+                  ))}
+                </div>
+              ) : (
+                <EmptyState
+                  title="No approvals waiting"
+                  description="All current teacher requests have already been reviewed."
+                />
+              )}
+            </SectionCard>
+          ) : (
+            <SectionCard
+              title="All system users"
+              subtitle="Track approved and pending accounts across the platform."
+            >
+              {allUsers.length ? (
+                <div className="space-y-4">
+                  {allUsers.map((user) => (
+                    <div
+                      key={user.id}
+                      className="border border-border bg-background/45 p-5"
                     >
-                      Delete
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </SectionCard>
-        )}
+                      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="font-display text-2xl tracking-[-0.04em] text-foreground">
+                              {user.name || user.email}
+                            </p>
+                            <Badge variant="neutral">{user.role}</Badge>
+                            <Badge variant={user.approved ? "success" : "warning"}>
+                              {user.approved ? "Approved" : "Pending"}
+                            </Badge>
+                          </div>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            {user.email}
+                          </p>
+                        </div>
 
+                        <Button
+                          onClick={() => handleDelete(user.id)}
+                          variant="danger"
+                          disabled={loadingState || user.role === "ADMIN"}
+                        >
+                          Delete user
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <EmptyState
+                  title="No users found"
+                  description="There are no user accounts in the system yet."
+                />
+              )}
+            </SectionCard>
+          )}
+        </div>
       </div>
     </AdminLayout>
   );

@@ -1,9 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AuthShell from "@/components/ui/AuthShell";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import { FieldNote, TextField } from "@/components/ui/Field";
 import { apiFetch } from "@/lib/api";
-import Link from "next/link";
 
 export default function TeacherSignupPage() {
   const router = useRouter();
@@ -34,20 +38,17 @@ export default function TeacherSignupPage() {
     }
 
     try {
-      await apiFetch(
-        "/api/auth/signup",
-        {
-          method: "POST",
-          body: JSON.stringify({ name, email, password }),
-        }
-      );
+      await apiFetch("/api/auth/signup", {
+        method: "POST",
+        body: JSON.stringify({ name, email, password }),
+      });
 
       setSuccess(true);
       setName("");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
-      
+
       setTimeout(() => {
         router.push("/teacher/login");
       }, 2000);
@@ -59,100 +60,106 @@ export default function TeacherSignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#f8f5f1_0%,_#f0efe8_45%,_#e8e3d8_100%)]">
-      <main className="mx-auto flex w-full max-w-lg flex-col gap-8 px-6 py-16">
-        <header>
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-700">
-            Teacher Access
-          </p>
-          <h1 className="mt-4 text-3xl font-semibold text-zinc-900">
-            Create your account
-          </h1>
-          <p className="mt-2 text-sm text-zinc-600">
-            Sign up to request access. An admin will approve your account before you can log in.
-          </p>
-        </header>
-
-        {success ? (
-          <div className="rounded-3xl border border-green-200 bg-green-50/90 p-8 shadow-[0_24px_60px_-40px_rgba(24,24,27,0.6)]">
-            <p className="text-sm font-semibold text-green-800">
-              ✓ Signup successful!
-            </p>
-            <p className="mt-3 text-sm text-green-700">
-              Your account has been created. An administrator will review and approve your request. You'll be able to log in once approved.
-            </p>
-            <p className="mt-4 text-xs text-green-600">
-              Redirecting to login page...
-            </p>
-          </div>
-        ) : (
-          <form
-            onSubmit={onSubmit}
-            className="rounded-3xl border border-zinc-200 bg-white/90 p-8 shadow-[0_24px_60px_-40px_rgba(24,24,27,0.6)]"
+    <AuthShell
+      eyebrow="Teacher access"
+      title="Request access to the teacher workspace."
+      description="Create your account once. An administrator reviews and activates teacher access before sign-in is enabled."
+      panelLabel="Teacher onboarding"
+      panelTitle="A cleaner signup flow for teachers joining the schedule."
+      panelDescription="Submit a straightforward request, let admin approval handle access control, and return to a workspace that matches the rest of the product."
+      highlights={[
+        "Teacher requests enter a dedicated admin approval queue immediately after submission.",
+        "Form spacing, validation, and messaging stay consistent with the login experience.",
+        "The layout stays readable on mobile, tablet, and desktop without collapsing the hierarchy.",
+        "Approved teachers move straight into the same timetable and substitution system used every day.",
+      ]}
+      footer={
+        <FieldNote>
+          Already have an account?{" "}
+          <Link
+            href="/teacher/login"
+            className="font-semibold text-[var(--color-primary)] transition hover:text-[var(--color-primary-strong)]"
           >
-            <label className="block text-sm font-semibold text-zinc-700">
-              Full Name
-              <input
-                type="text"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                className="mt-2 w-full rounded-2xl border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-                required
-              />
-            </label>
+            Sign in here.
+          </Link>
+        </FieldNote>
+      }
+    >
+      {success ? (
+        <div className="rounded-[28px] border border-success/15 bg-success-soft px-6 py-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge tone="success">Request sent</Badge>
+            <Badge tone="default">Pending approval</Badge>
+          </div>
+          <p className="mt-4 text-base font-semibold text-success">
+            Signup successful
+          </p>
+          <p className="mt-3 text-sm leading-6 text-foreground/85">
+            Your account has been created and is waiting for administrator
+            approval. You will be redirected to login shortly.
+          </p>
+          <p className="mt-4 text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
+            Redirecting to login page...
+          </p>
+        </div>
+      ) : (
+        <form onSubmit={onSubmit} className="space-y-5">
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge tone="brand">Approval workflow</Badge>
+            <Badge tone="default">Responsive form</Badge>
+          </div>
 
-            <label className="mt-5 block text-sm font-semibold text-zinc-700">
-              Email
-              <input
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                className="mt-2 w-full rounded-2xl border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-                required
-              />
-            </label>
+          <div className="grid gap-4">
+            <TextField
+              label="Full name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              autoComplete="name"
+              required
+            />
+            <TextField
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              autoComplete="email"
+              required
+            />
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoComplete="new-password"
+              required
+            />
+            <TextField
+              label="Confirm password"
+              type="password"
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              autoComplete="new-password"
+              required
+            />
+          </div>
 
-            <label className="mt-5 block text-sm font-semibold text-zinc-700">
-              Password
-              <input
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                className="mt-2 w-full rounded-2xl border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-                required
-              />
-            </label>
+          {error ? (
+            <div className="rounded-[22px] border border-danger/15 bg-danger-soft px-4 py-3 text-sm text-danger">
+              {error}
+            </div>
+          ) : null}
 
-            <label className="mt-5 block text-sm font-semibold text-zinc-700">
-              Confirm Password
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.target.value)}
-                className="mt-2 w-full rounded-2xl border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-                required
-              />
-            </label>
-
-            {error ? <p className="mt-4 text-sm text-red-600">{error}</p> : null}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="mt-8 w-full rounded-full bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:opacity-60"
-            >
-              {loading ? "Creating account..." : "Create account"}
-            </button>
-
-            <p className="mt-6 text-center text-sm text-zinc-600">
-              Already have an account?{" "}
-              <Link href="/teacher/login" className="font-semibold text-amber-700 hover:text-amber-800">
-                Sign in
-              </Link>
-            </p>
-          </form>
-        )}
-      </main>
-    </div>
+          <div className="space-y-3 pt-2">
+            <Button type="submit" size="lg" fullWidth disabled={loading}>
+              {loading ? "Creating account..." : "Create teacher account"}
+            </Button>
+            <FieldNote>
+              Admin approval is required before the teacher dashboard can be
+              accessed.
+            </FieldNote>
+          </div>
+        </form>
+      )}
+    </AuthShell>
   );
 }

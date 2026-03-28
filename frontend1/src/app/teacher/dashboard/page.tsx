@@ -1,18 +1,22 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { apiFetch } from "@/lib/api";
-import { useAuth } from "@/hooks/useAuth";
-import type { TimetableEntry, Substitution, SpecialClass } from "@/lib/types";
-import TimetableGrid from "@/components/TimetableGrid";
 import AddSubjectModal from "@/components/AddSubjectModal";
 import SectionCard from "@/components/SectionCard";
-import SubstitutionList from "@/components/SubstitutionList";
 import SpecialClassesList from "@/components/SpecialClassesList";
+import SubstitutionList from "@/components/SubstitutionList";
+import TeacherLayout from "@/components/TeacherLayout";
+import TimetableGrid from "@/components/TimetableGrid";
+import { BookIcon, CalendarIcon, ClockIcon, SwapIcon } from "@/components/icons";
+import Badge from "@/components/ui/Badge";
+import PageHeader from "@/components/ui/PageHeader";
+import StatCard from "@/components/ui/StatCard";
+import { useAuth } from "@/hooks/useAuth";
+import { apiFetch } from "@/lib/api";
+import type { SpecialClass, Substitution, TimetableEntry } from "@/lib/types";
 
 export default function TeacherDashboardPage() {
-  const { token, user, loading, clear } = useAuth({
+  const { token, user, loading } = useAuth({
     role: "TEACHER",
     redirectTo: "/teacher/login",
   });
@@ -64,7 +68,11 @@ export default function TeacherDashboardPage() {
     setModalOpen(true);
   };
 
-  const handleConfirmAddSubject = async (subject: string, className: string, room: string) => {
+  const handleConfirmAddSubject = async (
+    subject: string,
+    className: string,
+    room: string
+  ) => {
     if (!token || !user?.teacherId) return;
     setAddingSubject(true);
     try {
@@ -100,54 +108,91 @@ export default function TeacherDashboardPage() {
           day: sub.day,
           period: sub.period,
           subject: "Substitution",
-          className: "Assigned",
+          className: "Assigned cover",
           room: null,
           isSubstitution: true,
         });
       }
     });
     return marked;
-  }, [timetables, substitutions, user?.teacherId]);
+  }, [substitutions, timetables, user?.teacherId]);
 
-  if (loading) {
-    return <div className="p-8 text-sm text-zinc-500">Loading...</div>;
-  }
+  const openSlots = Math.max(40 - timetables.length, 0);
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#f8f5f1_0%,_#f0efe8_45%,_#e8e3d8_100%)]">
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-12">
-        <header className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-              Teacher Dashboard
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold text-zinc-900">
-              Hello{user?.name ? `, ${user.name}` : ""}
-            </h1>
+    <TeacherLayout>
+      <div className="px-4 py-6 sm:px-8 lg:px-10 xl:px-12">
+        <PageHeader
+          eyebrow="Teacher dashboard"
+          title={`Hello${user?.name ? `, ${user.name}` : ""}`}
+          description="Review your week, monitor special sessions, and keep open timetable slots filled without losing sight of assigned cover work."
+          meta={
+            <>
+              <Badge variant="accent">Live timetable</Badge>
+              <Badge variant="neutral">{openSlots} open slots this week</Badge>
+            </>
+          }
+        />
+
+        {error ? (
+          <div className="mt-6 border border-danger bg-danger-soft px-4 py-3 text-sm text-danger">
+            {error}
           </div>
-          <button
-            onClick={() => {
-              clear();
-              window.location.href = "/";
-            }}
-            className="inline-flex h-11 items-center rounded-full bg-zinc-900 px-5 text-sm font-semibold text-white"
-          >
-            Sign out
-          </button>
-        </header>
+        ) : null}
 
-        {error ? <p className="text-sm text-red-600">{error}</p> : null}
-
-        <SectionCard
-          title="Weekly Timetable"
-          subtitle="Substitutions are highlighted"
-        >
-          <TimetableGrid 
-            entries={timetableWithSubs} 
-            onAddSubject={handleAddSubject}
-            isTeacher={true}
+        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            label="Scheduled classes"
+            value={String(timetables.length)}
+            detail="Core timetable entries assigned to your week."
+            icon={<CalendarIcon className="h-5 w-5" />}
           />
-        </SectionCard>
+          <StatCard
+            label="Open slots"
+            value={String(openSlots)}
+            detail="Free periods that can still be filled."
+            icon={<ClockIcon className="h-5 w-5" />}
+          />
+          <StatCard
+            label="Substitution alerts"
+            value={String(substitutions.length)}
+            detail="Cover assignments currently assigned to you."
+            tone={substitutions.length ? "accent" : "default"}
+            icon={<SwapIcon className="h-5 w-5" />}
+          />
+          <StatCard
+            label="Special classes"
+            value={String(specialClasses.length)}
+            detail="Additional sessions and extra events."
+            tone={specialClasses.length ? "success" : "default"}
+            icon={<BookIcon className="h-5 w-5" />}
+          />
+        </div>
+
+        <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_360px]">
+          <SectionCard
+            title="Weekly timetable"
+            subtitle="Review the full week and add classes directly into any open slot."
+          >
+            <TimetableGrid entries={timetableWithSubs} onAddSubject={handleAddSubject} />
+          </SectionCard>
+
+          <div className="space-y-6">
+            <SectionCard
+              title="Substitution alerts"
+              subtitle="Your assigned cover periods appear here as soon as they are confirmed."
+            >
+              <SubstitutionList substitutions={substitutions} />
+            </SectionCard>
+
+            <SectionCard
+              title="Special classes"
+              subtitle="Additional sessions, events, and timetable exceptions."
+            >
+              <SpecialClassesList items={specialClasses} />
+            </SectionCard>
+          </div>
+        </div>
 
         <AddSubjectModal
           isOpen={modalOpen}
@@ -157,16 +202,7 @@ export default function TeacherDashboardPage() {
           onAdd={handleConfirmAddSubject}
           loading={addingSubject}
         />
-
-        <div className="grid gap-6 md:grid-cols-2">
-          <SectionCard title="Special Classes" subtitle="Extra sessions and events">
-            <SpecialClassesList items={specialClasses} />
-          </SectionCard>
-          <SectionCard title="Substitution Alerts" subtitle="Your assigned covers">
-            <SubstitutionList substitutions={substitutions} />
-          </SectionCard>
-        </div>
-      </main>
-    </div>
+      </div>
+    </TeacherLayout>
   );
 }

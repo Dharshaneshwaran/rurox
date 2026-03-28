@@ -30,11 +30,25 @@ export const clearStoredAuth = () => {
 
 export const useAuth = (options?: { role?: Role; redirectTo?: string }) => {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(() => getStoredUser());
-  const [token, setToken] = useState<string | null>(() => getStoredToken());
-  const loading = false;
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setUser(getStoredUser());
+      setToken(getStoredToken());
+      setLoading(false);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+
     if (options?.role && user?.role !== options.role) {
       router.push(options.redirectTo ?? "/");
       return;
@@ -43,7 +57,7 @@ export const useAuth = (options?: { role?: Role; redirectTo?: string }) => {
     if (!user && options?.redirectTo) {
       router.push(options.redirectTo);
     }
-  }, [options?.role, options?.redirectTo, router, user]);
+  }, [loading, options?.role, options?.redirectTo, router, user]);
 
   const clear = () => {
     clearStoredAuth();
