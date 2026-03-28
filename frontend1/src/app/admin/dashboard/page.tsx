@@ -30,9 +30,11 @@ export default function AdminDashboardPage() {
   });
   const [error, setError] = useState<string | null>(null);
   const [creatingTeacher, setCreatingTeacher] = useState(false);
+  const [directoryLoading, setDirectoryLoading] = useState(true);
 
   const loadTeachers = useCallback(async () => {
     if (!token) return;
+    setDirectoryLoading(true);
     setError(null);
     try {
       const teacherData = await apiFetch<{ teachers: Teacher[] }>(
@@ -43,6 +45,8 @@ export default function AdminDashboardPage() {
       setTeachers(teacherData.teachers);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load teachers");
+    } finally {
+      setDirectoryLoading(false);
     }
   }, [token]);
 
@@ -174,7 +178,11 @@ export default function AdminDashboardPage() {
 
         <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_360px]">
           <SectionCard
-            title={`Teacher directory (${filteredTeachers.length})`}
+            title={
+              directoryLoading
+                ? "Teacher directory"
+                : `Teacher directory (${filteredTeachers.length})`
+            }
             subtitle="Search by teacher name or subject, then open the full profile to update timetable slots."
             actions={
               <div className="relative w-full sm:w-80">
@@ -184,12 +192,40 @@ export default function AdminDashboardPage() {
                   placeholder="Search teachers or subjects"
                   value={searchTerm}
                   onChange={(event) => setSearchTerm(event.target.value)}
+                  disabled={directoryLoading}
                   className="h-11 w-full border border-border bg-white pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
                 />
               </div>
             }
           >
-            {filteredTeachers.length ? (
+            {directoryLoading ? (
+              <div className="grid gap-4 lg:grid-cols-2">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="border border-border bg-background/45 p-5"
+                  >
+                    <div className="animate-pulse">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="h-12 w-12 border border-border bg-white/70" />
+                        <div className="h-7 w-24 rounded-full border border-border bg-white/70" />
+                      </div>
+
+                      <div className="mt-5 h-8 w-2/3 rounded bg-white/70" />
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <div className="h-7 w-20 rounded-full border border-border bg-white/70" />
+                        <div className="h-7 w-24 rounded-full border border-border bg-white/70" />
+                      </div>
+
+                      <div className="mt-6 border-t border-border pt-4">
+                        <div className="h-5 w-3/4 rounded bg-white/70" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredTeachers.length ? (
               <div className="grid gap-4 lg:grid-cols-2">
                 {filteredTeachers.map((teacher) => (
                   <Link

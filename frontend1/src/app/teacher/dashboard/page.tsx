@@ -15,6 +15,48 @@ import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/api";
 import type { SpecialClass, Substitution, TimetableEntry } from "@/lib/types";
 
+const SKELETON_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+function TimetableSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-[26px] border border-border/70 bg-surface">
+      <div className="grid grid-cols-[94px_repeat(5,minmax(0,1fr))] border-b border-border/70 bg-surface-subtle">
+        <div className="border-r border-border/70 px-4 py-4">
+          <div className="h-3 w-12 animate-pulse rounded-full bg-border/70" />
+        </div>
+        {SKELETON_DAYS.map((day) => (
+          <div key={day} className="border-r border-border/70 px-4 py-4 last:border-r-0">
+            <div className="h-3 w-16 animate-pulse rounded-full bg-border/70" />
+          </div>
+        ))}
+      </div>
+
+      {Array.from({ length: 4 }).map((_, rowIndex) => (
+        <div
+          key={rowIndex}
+          className="grid grid-cols-[94px_repeat(5,minmax(0,1fr))] border-b border-border/60 last:border-b-0"
+        >
+          <div className="border-r border-border/60 px-4 py-6">
+            <div className="mx-auto h-5 w-5 animate-pulse rounded-full bg-border/70" />
+          </div>
+          {SKELETON_DAYS.map((day) => (
+            <div
+              key={`${day}-${rowIndex}`}
+              className="border-r border-border/60 p-3 last:border-r-0"
+            >
+              <div className="h-[102px] animate-pulse rounded-[22px] border border-border/60 bg-surface-subtle/70 p-4">
+                <div className="h-5 w-20 rounded-full bg-border/70" />
+                <div className="mt-3 h-4 w-12 rounded-full bg-border/60" />
+                <div className="mt-5 h-3 w-24 rounded-full bg-border/60" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function TeacherDashboardPage() {
   const { token, user, loading } = useAuth({
     role: "TEACHER",
@@ -28,9 +70,11 @@ export default function TeacherDashboardPage() {
   const [selectedDay, setSelectedDay] = useState<string>("");
   const [selectedPeriod, setSelectedPeriod] = useState<number>(0);
   const [addingSubject, setAddingSubject] = useState(false);
+  const [dashboardLoading, setDashboardLoading] = useState(true);
 
   const loadData = useCallback(async () => {
     if (!token) return;
+    setDashboardLoading(true);
     try {
       const timetableData = await apiFetch<{ timetables: TimetableEntry[] }>(
         "/api/timetables/mine",
@@ -53,6 +97,8 @@ export default function TeacherDashboardPage() {
       setSpecialClasses(specialData.specialClasses);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load dashboard");
+    } finally {
+      setDashboardLoading(false);
     }
   }, [token]);
 
@@ -174,7 +220,11 @@ export default function TeacherDashboardPage() {
             title="Weekly timetable"
             subtitle="Review the full week and add classes directly into any open slot."
           >
-            <TimetableGrid entries={timetableWithSubs} onAddSubject={handleAddSubject} />
+            {dashboardLoading ? (
+              <TimetableSkeleton />
+            ) : (
+              <TimetableGrid entries={timetableWithSubs} onAddSubject={handleAddSubject} />
+            )}
           </SectionCard>
 
           <div className="space-y-6">
