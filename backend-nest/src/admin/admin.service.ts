@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 const brevoApiKey = process.env.BREVO_API_KEY ?? '';
 const brevoSenderEmail = process.env.BREVO_SENDER_EMAIL ?? '';
 const brevoSenderName = process.env.BREVO_SENDER_NAME ?? 'Smart Teacher System';
+const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
 
 @Injectable()
 export class AdminService {
@@ -150,7 +151,7 @@ export class AdminService {
         htmlContent: `
           <p>Hello ${payload.name},</p>
           <p>Your account has been approved. You can now log in.</p>
-          <p>Login: http://localhost:3000/teacher/login</p>
+          <p>Login: <a href="${frontendUrl}/teacher/login">${frontendUrl}/teacher/login</a></p>
         `,
       }),
     });
