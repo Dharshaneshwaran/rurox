@@ -5,61 +5,39 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
-import type { Teacher, TimetableEntry } from "@/lib/types";
+import type { Teacher } from "@/lib/types";
 import SectionCard from "@/components/SectionCard";
+import AdminLayout from "@/components/AdminLayout";
 
 export default function AdminDashboardPage() {
-  const { token, user, loading, clear } = useAuth({
+  const { token, loading } = useAuth({
     role: "ADMIN",
     redirectTo: "/admin/login",
   });
-  const [timetables, setTimetables] = useState<TimetableEntry[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [filters, setFilters] = useState({ teacher: "", subject: "", class: "" });
+  const [searchTerm, setSearchTerm] = useState("");
   const [newTeacher, setNewTeacher] = useState({
     name: "",
     email: "",
     password: "",
     subjects: "",
   });
-  const [editTeacher, setEditTeacher] = useState({
-    id: "",
-    name: "",
-    subjects: "",
-  });
-  const [newEntry, setNewEntry] = useState({
-    teacherId: "",
-    day: "MON",
-    period: 1,
-    subject: "",
-    className: "",
-    room: "",
-  });
   const [error, setError] = useState<string | null>(null);
 
-  const loadTimetables = useCallback(async () => {
+  const loadTeachers = useCallback(async () => {
     if (!token) return;
     setError(null);
-    const params = new URLSearchParams();
-    if (filters.teacher) params.set("teacher", filters.teacher);
-    if (filters.subject) params.set("subject", filters.subject);
-    if (filters.class) params.set("class", filters.class);
-
     try {
-      const [data, teacherData] = await Promise.all([
-        apiFetch<{ timetables: TimetableEntry[] }>(
-        `/api/timetables?${params.toString()}`,
+      const teacherData = await apiFetch<{ teachers: Teacher[] }>(
+        "/api/teachers",
         {},
         token
-        ),
-        apiFetch<{ teachers: Teacher[] }>("/api/teachers", {}, token),
-      ]);
-      setTimetables(data.timetables);
+      );
       setTeachers(teacherData.teachers);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load timetables");
+      setError(err instanceof Error ? err.message : "Failed to load teachers");
     }
-  }, [filters, token]);
+  }, [token]);
 
   const handleCreateTeacher = async () => {
     if (!token) return;
@@ -83,383 +61,159 @@ export default function AdminDashboardPage() {
     );
 
     setNewTeacher({ name: "", email: "", password: "", subjects: "" });
-    loadTimetables();
-  };
-
-  const handleCreateEntry = async () => {
-    if (!token) return;
-
-    await apiFetch(
-      "/api/timetables",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          teacherId: newEntry.teacherId,
-          day: newEntry.day,
-          period: newEntry.period,
-          subject: newEntry.subject,
-          className: newEntry.className,
-          room: newEntry.room || undefined,
-        }),
-      },
-      token
-    );
-
-    setNewEntry({
-      teacherId: "",
-      day: "MON",
-      period: 1,
-      subject: "",
-      className: "",
-      room: "",
-    });
-    loadTimetables();
-  };
-
-  const handleUpdateTeacher = async () => {
-    if (!token || !editTeacher.id) return;
-    const subjects = editTeacher.subjects
-      .split(",")
-      .map((subject) => subject.trim())
-      .filter(Boolean);
-
-    await apiFetch(
-      `/api/teachers/${editTeacher.id}`,
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          name: editTeacher.name || undefined,
-          subjects: subjects.length ? subjects : undefined,
-        }),
-      },
-      token
-    );
-
-    setEditTeacher({ id: "", name: "", subjects: "" });
-    loadTimetables();
-  };
-
-  const handleDeleteTeacher = async () => {
-    if (!token || !editTeacher.id) return;
-
-    await apiFetch(
-      `/api/teachers/${editTeacher.id}`,
-      { method: "DELETE" },
-      token
-    );
-
-    setEditTeacher({ id: "", name: "", subjects: "" });
-    loadTimetables();
+    loadTeachers();
   };
 
   useEffect(() => {
     if (!loading) {
-      void loadTimetables();
+      void loadTeachers();
     }
-  }, [loading, loadTimetables]);
+  }, [loading, loadTeachers]);
+
+  const filteredTeachers = teachers.filter((t) =>
+    t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    t.subjects.some((s) => s.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   if (loading) {
-    return <div className="p-8 text-sm text-zinc-500">Loading...</div>;
+    return (
+      <AdminLayout>
+        <div className="flex h-full items-center justify-center p-8 text-sm text-zinc-500">
+          Loading dashboard...
+        </div>
+      </AdminLayout>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#f8f5f1_0%,_#f0efe8_45%,_#e8e3d8_100%)]">
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-12">
-        <header className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-              Admin Dashboard
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold text-zinc-900">
-              Welcome back{user?.name ? `, ${user.name}` : ""}
-            </h1>
-          </div>
-          <div className="flex gap-3">
-            <Link
-              href="/admin/users"
-              className="inline-flex h-11 items-center rounded-full border border-zinc-300 px-5 text-sm font-semibold text-zinc-800 transition hover:border-zinc-800"
-            >
-              User Management
-            </Link>
-            <Link
-              href="/admin/substitutions"
-              className="inline-flex h-11 items-center rounded-full border border-zinc-300 px-5 text-sm font-semibold text-zinc-800 transition hover:border-zinc-800"
-            >
-              Manage Substitutions
-            </Link>
-            <button
-              onClick={() => {
-                clear();
-                window.location.href = "/";
-              }}
-              className="inline-flex h-11 items-center rounded-full bg-zinc-900 px-5 text-sm font-semibold text-white"
-            >
-              Sign out
-            </button>
-          </div>
+    <AdminLayout>
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-8 py-12">
+        <header>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
+            Overview
+          </p>
+          <h1 className="mt-2 text-3xl font-semibold text-zinc-900">
+            Teachers Directory
+          </h1>
+          <p className="mt-2 text-zinc-600 max-w-2xl">
+            Select a teacher to view and edit their specific timetable, schedule special classes, or manage their workload.
+          </p>
         </header>
 
+        <section>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <h2 className="text-xl font-semibold text-zinc-900">
+              Staff List ({filteredTeachers.length})
+            </h2>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">🔍</span>
+              <input
+                type="text"
+                placeholder="Search teachers or subjects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full sm:w-80 rounded-full border border-zinc-200 bg-white py-2.5 pl-11 pr-4 text-sm font-medium text-zinc-900 shadow-sm transition placeholder:text-zinc-400 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400/50"
+              />
+            </div>
+          </div>
+
+          {error ? <p className="mb-6 text-sm text-red-600">{error}</p> : null}
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredTeachers.map((teacher) => (
+              <Link
+                href={`/admin/teachers/${teacher.id}`}
+                key={teacher.id}
+                className="group flex flex-col justify-between overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-amber-400 hover:shadow-xl hover:shadow-amber-900/5"
+              >
+                <div>
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-xl font-bold text-amber-700 transition group-hover:bg-amber-100 group-hover:scale-110">
+                    {teacher.name.charAt(0)}
+                  </div>
+                  <h3 className="line-clamp-1 text-lg font-bold text-zinc-900">
+                    {teacher.name}
+                  </h3>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {teacher.subjects.map((sub) => (
+                      <span
+                        key={sub}
+                        className="inline-flex rounded-lg bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-700"
+                      >
+                        {sub}
+                      </span>
+                    ))}
+                    {teacher.subjects.length === 0 && (
+                      <span className="text-xs italic text-zinc-400">No subjects assigned</span>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="mt-6 flex items-center justify-between border-t border-zinc-100 pt-4">
+                  <span className="text-sm font-medium text-zinc-500">
+                    Workload: <strong className="text-zinc-900">{teacher.workload}</strong> substitutions
+                  </span>
+                  <span className="flex items-center text-sm font-bold text-amber-700 opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-1">
+                    View Timetable &rarr;
+                  </span>
+                </div>
+              </Link>
+            ))}
+            
+            {filteredTeachers.length === 0 && (
+              <div className="col-span-full rounded-3xl border border-dashed border-zinc-300 py-12 text-center text-zinc-500">
+                No teachers found matching your search.
+              </div>
+            )}
+          </div>
+        </section>
+
         <SectionCard
-          title="All Timetables"
-          subtitle="Filter by teacher, subject, or class"
+          title="Add New Teacher"
+          subtitle="Quickly onboard a new staff member to the system"
         >
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <input
-              placeholder="Teacher name"
-              value={filters.teacher}
+              placeholder="Full Name"
+              value={newTeacher.name}
               onChange={(event) =>
-                setFilters((prev) => ({ ...prev, teacher: event.target.value }))
+                setNewTeacher((prev) => ({ ...prev, name: event.target.value }))
               }
-              className="rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
+              className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm focus:border-amber-400 focus:outline-none"
             />
             <input
-              placeholder="Subject"
-              value={filters.subject}
+              placeholder="Email Profile"
+              value={newTeacher.email}
               onChange={(event) =>
-                setFilters((prev) => ({ ...prev, subject: event.target.value }))
+                setNewTeacher((prev) => ({ ...prev, email: event.target.value }))
               }
-              className="rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
+              className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm focus:border-amber-400 focus:outline-none"
             />
             <input
-              placeholder="Class"
-              value={filters.class}
+              placeholder="Temporary Password"
+              type="password"
+              value={newTeacher.password}
               onChange={(event) =>
-                setFilters((prev) => ({ ...prev, class: event.target.value }))
+                setNewTeacher((prev) => ({ ...prev, password: event.target.value }))
               }
-              className="rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
+              className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm focus:border-amber-400 focus:outline-none"
+            />
+            <input
+              placeholder="Subjects (e.g., Math, Physics)"
+              value={newTeacher.subjects}
+              onChange={(event) =>
+                setNewTeacher((prev) => ({ ...prev, subjects: event.target.value }))
+              }
+              className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm focus:border-amber-400 focus:outline-none"
             />
             <button
-              onClick={loadTimetables}
-              className="rounded-2xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white"
+              onClick={handleCreateTeacher}
+              className="col-span-full mt-2 rounded-2xl bg-zinc-900 px-6 py-3 text-sm font-bold text-white transition hover:bg-zinc-800"
             >
-              Apply Filters
+              + Create Teacher Profile
             </button>
           </div>
-
-          {error ? <p className="mt-4 text-sm text-red-600">{error}</p> : null}
-
-          <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-zinc-100 text-xs uppercase text-zinc-600">
-                <tr>
-                  <th className="px-4 py-3">Teacher</th>
-                  <th className="px-4 py-3">Day</th>
-                  <th className="px-4 py-3">Period</th>
-                  <th className="px-4 py-3">Subject</th>
-                  <th className="px-4 py-3">Class</th>
-                  <th className="px-4 py-3">Room</th>
-                </tr>
-              </thead>
-              <tbody>
-                {timetables.map((entry) => (
-                  <tr key={entry.id} className="border-t border-zinc-200">
-                    <td className="px-4 py-3">
-                      {entry.teacher?.name ?? "-"}
-                    </td>
-                    <td className="px-4 py-3">{entry.day}</td>
-                    <td className="px-4 py-3">{entry.period}</td>
-                    <td className="px-4 py-3">{entry.subject}</td>
-                    <td className="px-4 py-3">{entry.className}</td>
-                    <td className="px-4 py-3">{entry.room ?? "-"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </SectionCard>
-
-        <SectionCard
-          title="Admin Controls"
-          subtitle="Add teachers and update timetable entries"
-        >
-          <div className="grid gap-8 lg:grid-cols-3">
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">
-                Add Teacher
-              </h3>
-              <input
-                placeholder="Name"
-                value={newTeacher.name}
-                onChange={(event) =>
-                  setNewTeacher((prev) => ({ ...prev, name: event.target.value }))
-                }
-                className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-              />
-              <input
-                placeholder="Email"
-                value={newTeacher.email}
-                onChange={(event) =>
-                  setNewTeacher((prev) => ({ ...prev, email: event.target.value }))
-                }
-                className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-              />
-              <input
-                placeholder="Password"
-                type="password"
-                value={newTeacher.password}
-                onChange={(event) =>
-                  setNewTeacher((prev) => ({ ...prev, password: event.target.value }))
-                }
-                className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-              />
-              <input
-                placeholder="Subjects (comma separated)"
-                value={newTeacher.subjects}
-                onChange={(event) =>
-                  setNewTeacher((prev) => ({ ...prev, subjects: event.target.value }))
-                }
-                className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-              />
-              <button
-                onClick={handleCreateTeacher}
-                className="w-full rounded-full bg-zinc-900 px-4 py-3 text-sm font-semibold text-white"
-              >
-                Add Teacher
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">
-                Edit Teacher
-              </h3>
-              <select
-                className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-                value={editTeacher.id}
-                onChange={(event) =>
-                  setEditTeacher((prev) => ({ ...prev, id: event.target.value }))
-                }
-              >
-                <option value="">Select teacher</option>
-                {teachers.map((teacher) => (
-                  <option key={teacher.id} value={teacher.id}>
-                    {teacher.name}
-                  </option>
-                ))}
-              </select>
-              <input
-                placeholder="New name (optional)"
-                value={editTeacher.name}
-                onChange={(event) =>
-                  setEditTeacher((prev) => ({ ...prev, name: event.target.value }))
-                }
-                className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-              />
-              <input
-                placeholder="Subjects (comma separated)"
-                value={editTeacher.subjects}
-                onChange={(event) =>
-                  setEditTeacher((prev) => ({
-                    ...prev,
-                    subjects: event.target.value,
-                  }))
-                }
-                className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-              />
-              <div className="flex gap-3">
-                <button
-                  onClick={handleUpdateTeacher}
-                  className="flex-1 rounded-full bg-zinc-900 px-4 py-3 text-sm font-semibold text-white"
-                >
-                  Update
-                </button>
-                <button
-                  onClick={handleDeleteTeacher}
-                  className="flex-1 rounded-full border border-red-200 px-4 py-3 text-sm font-semibold text-red-700"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">
-                Create Timetable Entry
-              </h3>
-              <select
-                className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-                value={newEntry.teacherId}
-                onChange={(event) =>
-                  setNewEntry((prev) => ({ ...prev, teacherId: event.target.value }))
-                }
-              >
-                <option value="">Select teacher</option>
-                {teachers.map((teacher) => (
-                  <option key={teacher.id} value={teacher.id}>
-                    {teacher.name}
-                  </option>
-                ))}
-              </select>
-              <div className="grid gap-3 md:grid-cols-2">
-                <select
-                  className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-                  value={newEntry.day}
-                  onChange={(event) =>
-                    setNewEntry((prev) => ({
-                      ...prev,
-                      day: event.target.value as typeof newEntry.day,
-                    }))
-                  }
-                >
-                  {[
-                    "MON",
-                    "TUE",
-                    "WED",
-                    "THU",
-                    "FRI",
-                  ].map((day) => (
-                    <option key={day} value={day}>
-                      {day}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  type="number"
-                  min={1}
-                  max={8}
-                  value={newEntry.period}
-                  onChange={(event) =>
-                    setNewEntry((prev) => ({
-                      ...prev,
-                      period: Number(event.target.value),
-                    }))
-                  }
-                  className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-                />
-              </div>
-              <input
-                placeholder="Subject"
-                value={newEntry.subject}
-                onChange={(event) =>
-                  setNewEntry((prev) => ({ ...prev, subject: event.target.value }))
-                }
-                className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-              />
-              <input
-                placeholder="Class"
-                value={newEntry.className}
-                onChange={(event) =>
-                  setNewEntry((prev) => ({ ...prev, className: event.target.value }))
-                }
-                className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-              />
-              <input
-                placeholder="Room (optional)"
-                value={newEntry.room}
-                onChange={(event) =>
-                  setNewEntry((prev) => ({ ...prev, room: event.target.value }))
-                }
-                className="w-full rounded-2xl border border-zinc-200 px-4 py-2 text-sm"
-              />
-              <button
-                onClick={handleCreateEntry}
-                className="w-full rounded-full border border-zinc-300 px-4 py-3 text-sm font-semibold text-zinc-900"
-              >
-                Save Entry
-              </button>
-            </div>
-          </div>
-        </SectionCard>
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   );
 }

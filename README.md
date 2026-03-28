@@ -1,325 +1,55 @@
-# Smart Teacher Class Assignment System
+# Substitute Teacher Management System
 
-A comprehensive fullstack application for managing teacher schedules, timetables, substitutions, and special classes with admin approval workflow for new teacher registrations.
+A comprehensive, modern web application designed to streamline the process of managing teacher absences and finding optimal substitute teachers. The system intelligently suggests replacements based on subject expertise and current workloads, ensuring that classes are always covered efficiently.
 
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+ installed
-- PostgreSQL database (Supabase configured)
-- Terminal windows for backend and frontend
-
-### 1. Database Setup (One-time)
-
-```bash
-cd backend-nest
-npm run seed
-```
-
-This creates:
-- **Admin Account**: `admin@example.com` / `adminpass`
-- **Teacher Accounts**: `alice@example.com` / `teacherpass`, `bob@example.com` / `teacherpass`
-
-### 2. Start Development Servers
-
-**Terminal 1 - Backend**
-```bash
-cd backend-nest
-npm run start:dev
-```
-Runs on `http://localhost:4000`
-
-**Terminal 2 - Frontend**
-```bash
-cd frontend1
-npm run dev
-```
-Runs on `http://localhost:3000`
+Built with a robust **NestJS (Node.js)** backend and a sleek, modern **Next.js (React)** frontend.
 
 ---
 
-## 📋 User Credentials
+## 🌟 Key Features
 
-### Admin Account (Full System Access)
-- **Email**: `admin@example.com`
-- **Password**: `adminpass`
-- **Role**: Administrator - Manage all teachers, approve user signups, view all timetables
-
-### Pre-Approved Teacher Accounts (Demo)
-- **Email**: `alice@example.com`
-- **Password**: `teacherpass`
-- **Email**: `bob@example.com`
-- **Password**: `teacherpass`
-
-### New Teacher Registration
-- Teachers can sign up at `/teacher/signup`
-- Account requires admin approval before login
-- Admins review pending signups in User Management panel
+- **Intelligent Substitute Suggestions**: When a teacher is marked absent for the day, the system algorithmically suggests the best available substitute for each period by matching subjects and prioritizing teachers with lower workloads.
+- **Full-Day Absence Workflow**: A streamlined 3-step admin process (Select Teacher -> Review Suggestions -> Confirm) allows principals to handle a full day's absence in seconds.
+- **Professional Admin Dashboard**: A clean, sidebar-based layout featuring a Teacher Directory and detailed individual timetable views.
+- **Teacher Portals**: Dedicated portals for teachers to view their personal weekly timetables and see any requested substitute coverages.
+- **Advanced Per-Period Management**: Tools for granular control over single-period automatic or manual substitution assignments.
 
 ---
 
-## 📖 User Workflows
+## 🏗️ Architecture
 
-### Admin Workflow
-
-1. **Login**: Go to `http://localhost:3000` → "Continue as Admin" → Use admin credentials
-   
-2. **Main Dashboard** (`/admin/dashboard`)
-   - View all teacher timetables
-   - Create/edit timetables
-   - Manage teacher assignments
-   - Filter by teacher, subject, or class
-
-3. **User Management** (`/admin/users`)
-   - **Pending Approvals Tab**:
-     - View teacher signup requests
-     - Approve new teachers (creates Teacher record)
-     - Reject signups (delete user)
-   - **All Users Tab**:
-     - View all system users
-     - See approval status
-     - Delete users (admin-only users cannot be deleted)
-
-4. **Substitution Management** (`/admin/substitutions`)
-   - Assign replacement teachers
-   - View substitution history
-   - Auto-assign substitutions by workload
+- **Backend**: NestJS, Prisma ORM, PostgreSQL. (Located in `/backend-nest`)
+- **Frontend**: Next.js 14, React, Tailwind CSS. (Located in `/frontend1`)
 
 ---
 
-### Teacher Workflow
+## 🖥️ Frontend Pages & Purposes
 
-#### For New Teachers (Signup)
+Here is a breakdown of all the pages available in the frontend application and their roles:
 
-1. Go to `http://localhost:3000` → "Continue as Teacher" → "Sign up"
-2. Enter: Name, Email, Password (min 6 chars)
-3. Submit → Account created (pending approval)
-4. **Wait for admin approval**
-5. Once approved, return to login (`/teacher/login`)
-6. Sign in with the same credentials
+### Public Pages
+- **`/` (Home)**: The main landing page providing quick access to the Admin and Teacher login portals.
+- **`/register`**: The registration portal where new teachers can create an account (accounts require admin approval before logging in).
+- **`/admin/login`**: Secure login page for school administrators/principals.
+- **`/teacher/login`**: Secure login page for teachers.
 
-#### For Approved Teachers (Dashboard)
+### Admin Portal (`/admin/*`)
+*Protected routes accessible only to users with the `ADMIN` role.*
 
-1. **Login**: Go to `http://localhost:3000` → "Continue as Teacher" → Use credentials
-   
-2. **View Schedule** (`/teacher/dashboard`)
-   - See weekly timetable (Monday-Friday)
-   - View all 8 class periods
-   - Check assigned subjects and rooms
+- **`/admin/dashboard`**: The main hub for administrators. It displays a **Teacher Directory Grid**, giving a quick overview of all faculty members, their assigned subjects, and their current workload.
+- **`/admin/teachers/[id]`**: A detailed profile for an individual teacher. It features an interactive **Timetable Grid** displaying the teacher's schedule across the week, allowing admins to easily view and edit classes.
+- **`/admin/substitutions`**: The core absence management center. 
+  - Features the **Full-Day Absence Flow**: Mark a teacher absent, review automated substitute suggestions for all their classes, and confirm the batch.
+  - Includes an **Advanced Management** section for manual, period-by-period substitution overrides.
+- **`/admin/users`**: The user management interface where administrators can review, approve, or delete pending teacher registrations.
 
-3. **Add Subject to Free Period**
-   - Find a free period (displays "Free +")
-   - Click "Free +" button
-   - Fill form:
-     - **Subject**: (Required) Name of the subject
-     - **Class Name**: (Required) Class identifier (e.g., "10A")
-     - **Room**: (Optional) Room number
-   - Click "Add Subject" to save
+### Teacher Portal (`/teacher/*`)
+*Protected routes accessible only to users with the `TEACHER` role.*
 
-4. **View Substitutions**
-   - See assigned replacement classes
-   - Check details of absences you're covering
-
-5. **Special Classes**
-   - View scheduled special events or lessons
-   - Optional sessions outside normal timetable
+- **`/teacher/dashboard`**: The teacher's personal workspace. It displays their schedule for the day, highlights their free periods, and prominently alerts them of any substitute classes they are required to cover due to absent colleagues.
 
 ---
 
-## 🏗️ Project Structure
+## 🚀 Getting Started
 
-```
-smart-teacher-system/
-├── frontend1/              # Next.js frontend app
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── page.tsx (landing page)
-│   │   │   ├── admin/
-│   │   │   │   ├── login/
-│   │   │   │   ├── dashboard/
-│   │   │   │   ├── users/        (new - user management)
-│   │   │   │   └── substitutions/
-│   │   │   └── teacher/
-│   │   │       ├── login/
-│   │   │       ├── signup/       (new - teacher registration)
-│   │   │       └── dashboard/
-│   │   ├── components/
-│   │   ├── hooks/ (useAuth)
-│   │   └── lib/ (api, types)
-│   └── package.json
-│
-├── backend-nest/          # NestJS backend API
-│   ├── src/
-│   │   ├── main.ts (bootstrap)
-│   │   ├── app.module.ts
-│   │   ├── auth/         (login/signup)
-│   │   ├── admin/        (new - user management)
-│   │   ├── teachers/
-│   │   ├── timetables/
-│   │   ├── substitutions/
-│   │   ├── special-classes/
-│   │   └── prisma/ (database service)
-│   ├── prisma/
-│   │   ├── schema.prisma
-│   │   └── seed.ts (database seeding)
-│   └── package.json
-│
-└── .github/
-    └── copilot-instructions.md
-```
-
----
-
-## 🔐 Authentication & Authorization
-
-- **JWT Tokens**: 7-day expiry
-- **Role-Based Access Control (RBAC)**:
-  - `ADMIN`: Full system access, user approval
-  - `TEACHER`: Own timetable management, view substitutions
-- **Teacher Approval Workflow**:
-  - New signups created with `approved: false`
-  - Cannot login until admin approves
-  - Admin creates associated Teacher record on approval
-  - Approved teachers get `approved: true` flag
-
----
-
-## 📡 API Endpoints
-
-### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/signup` - Teacher signup (creates unapproved user)
-- `GET /api/auth/me` - Get current user (requires token)
-
-### User Management (Admin Only)
-- `GET /api/admin/users/pending` - Get pending approvals
-- `GET /api/admin/users` - Get all users
-- `POST /api/admin/users/:id/approve` - Approve teacher
-- `DELETE /api/admin/users/:id` - Delete user
-
-### Teachers
-- `GET /api/teachers` - Get all teachers (admin only)
-- `POST /api/teachers` - Create teacher (admin only)
-- `PUT /api/teachers/:id` - Update teacher
-- `DELETE /api/teachers/:id` - Delete teacher
-
-### Timetables
-- `GET /api/timetables` - Get all (admin only)
-- `GET /api/timetables/mine` - Get own (teachers)
-- `POST /api/timetables` - Create/add subject (teachers + admin)
-
-### Substitutions
-- `GET /api/substitutions` - Get all
-- `POST /api/substitutions/manual` - Manual assignment
-- `POST /api/substitutions/auto` - Auto-assign
-
-### Special Classes
-- `GET /api/special-classes` - Get all
-- `POST /api/special-classes` - Create new
-
----
-
-## 🔄 Deployment
-
-### Frontend (Vercel)
-```bash
-# Set environment variable
-NEXT_PUBLIC_API_URL=https://your-backend-url.com
-
-# Deploy
-npx vercel deploy
-```
-
-### Backend (Any Node.js Host)
-Set environment variables:
-- `DATABASE_URL` - PostgreSQL connection string (with pooling)
-- `DIRECT_URL` - PostgreSQL direct URL (for migrations)
-- `JWT_SECRET` - Secret key for JWT signing
-- `CORS_ORIGIN` - Frontend URL for CORS
-- `PORT` - Server port (default: 4000)
-
----
-
-## 🛠️ Development
-
-### Database Migrations
-```bash
-# Push schema changes to database
-npm run prisma:push
-
-# Generate Prisma client
-npm run prisma:generate
-```
-
-### Code Quality
-```bash
-# Lint code
-npm run lint
-
-# Format code
-npm run format
-
-# Run tests
-npm run test
-```
-
----
-
-## 🎯 Key Features
-
-✅ Admin dashboard with full timetable management
-✅ Teacher self-service subject addition
-✅ Admin approval workflow for new signups
-✅ User management panel (approve/delete)
-✅ Automatic and manual substitution assignment
-✅ Special classes scheduling
-✅ JWT-based authentication with RBAC
-✅ PostgreSQL database with Prisma ORM
-✅ Responsive Tailwind CSS UI
-
----
-
-## 📝 Notes
-
-- Teachers can only manage their own timetables
-- Admins have universal access to all data
-- Deleting a user also deletes associated records (timetables, substitutions, special classes)
-- Database connections use Supabase (PostgreSQL)
-- Seed data can be rerun anytime (uses upsert for idempotency)
-
----
-
-## 🆘 Troubleshooting
-
-**Backend won't start**
-- Check `.env` file has `DATABASE_URL` and `DIRECT_URL`
-- Run `npm install` in `backend-nest/`
-- Verify PostgreSQL is accessible
-
-**Login fails with "pending admin approval"**
-- Account hasn't been approved yet
-- Admin must go to User Management and click "Approve"
-
-**Teacher signup doesn't work**
-- Verify backend is running on port 4000
-- Check browser console for API errors
-- Ensure email isn't already registered
-
-**Timetable changes not showing**
-- Hard refresh browser (Ctrl+F5)
-- Check that you're logged in as the correct teacher
-- Verify network tab shows successful API call
-
----
-
-## 📞 Support
-
-For issues or questions, check:
-- Backend logs: Terminal running `npm run start:dev`
-- Frontend console: Browser DevTools
-- Database: Supabase dashboard
-
----
-
-**Last Updated**: March 2026
-**Version**: 1.0.0
+Provide instructions here on how to set up the environment variables, run database migrations, and start both the backend and frontend servers.

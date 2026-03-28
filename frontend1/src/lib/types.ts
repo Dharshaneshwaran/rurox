@@ -46,3 +46,32 @@ export type Teacher = {
   subjects: string[];
   workload: number;
 };
+
+export type SuggestionCandidate = {
+  id: string;
+  name: string;
+  subjects: string[];
+  subjectMatch: boolean;
+  workload: number;
+};
+
+export type PeriodSuggestion = {
+  period: number;
+  subject: string;
+  className: string;
+  room: string | null;
+  suggestedTeacher: {
+    id: string;
+    name: string;
+    subjectMatch: boolean;
+  } | null;
+  allCandidates: SuggestionCandidate[];
+};
+
+export type FullDaySuggestionResponse = {
+  absentTeacher: { id: string; name: string };
+  day: string;
+  date: string;
+  suggestions: PeriodSuggestion[];
+  message?: string;
+};

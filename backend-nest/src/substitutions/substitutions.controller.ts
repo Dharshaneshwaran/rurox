@@ -6,6 +6,8 @@ import { Roles } from '../auth/roles.decorator';
 import type { AuthUser } from '../auth/auth.types';
 import { BaseSubstitutionDto } from './dto/base-substitution.dto';
 import { ManualSubstitutionDto } from './dto/manual-substitution.dto';
+import { FullDayAbsenceDto } from './dto/full-day-absence.dto';
+import { ConfirmFullDayDto } from './dto/confirm-full-day.dto';
 import { SubstitutionsService } from './substitutions.service';
 
 @Controller('api/substitutions')
@@ -31,5 +33,17 @@ export class SubstitutionsController {
   @Roles('ADMIN')
   async createAuto(@Body() body: BaseSubstitutionDto) {
     return this.substitutionsService.createAuto(body);
+  }
+
+  @Post('suggest-full-day')
+  @Roles('ADMIN')
+  async suggestFullDay(@Body() body: FullDayAbsenceDto) {
+    return this.substitutionsService.suggestFullDay(body);
+  }
+
+  @Post('confirm-full-day')
+  @Roles('ADMIN')
+  async confirmFullDay(@Body() body: ConfirmFullDayDto) {
+    return this.substitutionsService.confirmFullDay(body);
   }
 }

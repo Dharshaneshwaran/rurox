@@ -15,6 +15,8 @@ interface User {
   createdAt: string;
 }
 
+import AdminLayout from "@/components/AdminLayout";
+
 export default function AdminUsersPage() {
   const { token, user, loading, clear } = useAuth({
     role: "ADMIN",
@@ -93,30 +95,27 @@ export default function AdminUsersPage() {
   };
 
   if (loading && pendingUsers.length === 0) {
-    return <div className="p-8 text-sm text-zinc-500">Loading...</div>;
+    return (
+      <AdminLayout>
+        <div className="flex h-full items-center justify-center p-8 text-sm text-zinc-500">
+          Loading users...
+        </div>
+      </AdminLayout>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#f8f5f1_0%,_#f0efe8_45%,_#e8e3d8_100%)]">
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-12">
+    <AdminLayout>
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-8 py-12">
         <header className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-700">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
               Admin Control
             </p>
-            <h1 className="mt-2 text-4xl font-semibold text-zinc-900">
+            <h1 className="mt-2 text-3xl font-semibold text-zinc-900">
               User Management
             </h1>
           </div>
-          <button
-            onClick={() => {
-              clear();
-              window.location.href = "/";
-            }}
-            className="inline-flex h-11 items-center rounded-full bg-zinc-900 px-5 text-sm font-semibold text-white"
-          >
-            Sign out
-          </button>
         </header>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
@@ -230,15 +229,7 @@ export default function AdminUsersPage() {
           </SectionCard>
         )}
 
-        <div className="mt-8 flex justify-center">
-          <Link
-            href="/admin/dashboard"
-            className="inline-flex items-center text-sm font-semibold text-amber-700 hover:text-amber-800"
-          >
-            ← Back to Dashboard
-          </Link>
-        </div>
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   );
 }
