@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+}
+
+enum Day {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  role      Role     @default(TEACHER)
+  teacher   Teacher? @relation(fields: [teacherId], references: [id])
+  teacherId String?  @unique
+  createdAt DateTime @default(now())
+}
+
+model Teacher {
+  id                       String         @id @default(cuid())
+  name                     String
+  subjects                 String[]       @default([])
+  user                     User?
+  timetables               Timetable[]
+  specialClasses           SpecialClass[]
+  substitutionsAsReplacement Substitution[] @relation("replacement")
+  substitutionsAsAbsent    Substitution[] @relation("absent")
+  workload                 Int            @default(0)
+}
+
+model Timetable {
+  id        String   @id @default(cuid())
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+  teacherId String
+  day       Day
+  period    Int
+  subject   String
+  className String
+  room      String?
+  createdAt DateTime @default(now())
+
+  @@unique([teacherId, day, period])
+  @@index([day, period])
+}
+
+model Substitution {
+  id                   String   @id @default(cuid())
+  absentTeacher        Teacher  @relation("absent", fields: [absentTeacherId], references: [id])
+  absentTeacherId      String
+  replacementTeacher   Teacher? @relation("replacement", fields: [replacementTeacherId], references: [id])
+  replacementTeacherId String?
+  day                  Day
+  period               Int
+  date                 DateTime
+  autoAssigned         Boolean  @default(false)
+  createdAt            DateTime @default(now())
+
+  @@index([day, period])
+}
+
+model SpecialClass {
+  id        String   @id @default(cuid())
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+  teacherId String
+  date      DateTime
+  fromTime  String
+  toTime    String
+  subject   String
+  className String
+  notes     String?
+  createdAt DateTime @default(now())
+}
