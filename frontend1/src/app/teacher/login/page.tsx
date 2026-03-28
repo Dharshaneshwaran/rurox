@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import { setStoredAuth } from "@/hooks/useAuth";
 import type { User } from "@/lib/types";
+import Link from "next/link";
 
 export default function TeacherLoginPage() {
   const router = useRouter();
@@ -89,6 +90,13 @@ export default function TeacherLoginPage() {
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
+
+          <p className="mt-6 text-center text-sm text-zinc-600">
+            Don't have an account?{" "}
+            <Link href="/teacher/signup" className="font-semibold text-amber-700 hover:text-amber-800">
+              Sign up
+            </Link>
+          </p>
         </form>
       </main>
     </div>

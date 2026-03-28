@@ -6,6 +6,7 @@ import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import type { TimetableEntry, Substitution, SpecialClass } from "@/lib/types";
 import TimetableGrid from "@/components/TimetableGrid";
+import AddSubjectModal from "@/components/AddSubjectModal";
 import SectionCard from "@/components/SectionCard";
 import SubstitutionList from "@/components/SubstitutionList";
 import SpecialClassesList from "@/components/SpecialClassesList";
@@ -19,6 +20,10 @@ export default function TeacherDashboardPage() {
   const [substitutions, setSubstitutions] = useState<Substitution[]>([]);
   const [specialClasses, setSpecialClasses] = useState<SpecialClass[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<string>("");
+  const [selectedPeriod, setSelectedPeriod] = useState<number>(0);
+  const [addingSubject, setAddingSubject] = useState(false);
 
   const loadData = useCallback(async () => {
     if (!token) return;
@@ -52,6 +57,40 @@ export default function TeacherDashboardPage() {
       void loadData();
     }
   }, [loading, loadData]);
+
+  const handleAddSubject = (day: string, period: number) => {
+    setSelectedDay(day);
+    setSelectedPeriod(period);
+    setModalOpen(true);
+  };
+
+  const handleConfirmAddSubject = async (subject: string, className: string, room: string) => {
+    if (!token || !user?.teacherId) return;
+    setAddingSubject(true);
+    try {
+      await apiFetch(
+        "/api/timetables",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            teacherId: user.teacherId,
+            day: selectedDay,
+            period: selectedPeriod,
+            subject,
+            className,
+            room: room || null,
+          }),
+        },
+        token
+      );
+      setModalOpen(false);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add subject");
+    } finally {
+      setAddingSubject(false);
+    }
+  };
 
   const timetableWithSubs = useMemo(() => {
     const marked = [...timetables];
@@ -103,8 +142,21 @@ export default function TeacherDashboardPage() {
           title="Weekly Timetable"
           subtitle="Substitutions are highlighted"
         >
-          <TimetableGrid entries={timetableWithSubs} />
+          <TimetableGrid 
+            entries={timetableWithSubs} 
+            onAddSubject={handleAddSubject}
+            isTeacher={true}
+          />
         </SectionCard>
+
+        <AddSubjectModal
+          isOpen={modalOpen}
+          day={selectedDay}
+          period={selectedPeriod}
+          onClose={() => setModalOpen(false)}
+          onAdd={handleConfirmAddSubject}
+          loading={addingSubject}
+        />
 
         <div className="grid gap-6 md:grid-cols-2">
           <SectionCard title="Special Classes" subtitle="Extra sessions and events">

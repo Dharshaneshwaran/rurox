@@ -21,7 +21,13 @@ export async function apiFetch<T>(
   const data = text ? JSON.parse(text) : null;
 
   if (!response.ok) {
-    throw new Error(data?.error ?? "Request failed");
+    const message =
+      typeof data?.message === "string"
+        ? data.message
+        : Array.isArray(data?.message)
+          ? data.message.join(" ")
+          : data?.error ?? "Request failed";
+    throw new Error(message);
   }
 
   return data as T;

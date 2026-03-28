@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 import { AuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -32,8 +32,14 @@ export class TimetablesController {
   }
 
   @Post()
-  @Roles('ADMIN')
-  async create(@Body() body: CreateTimetableDto) {
+  async create(
+    @Body() body: CreateTimetableDto,
+    @Req() req: Request & { user?: AuthUser }
+  ) {
+    // Teachers can only add subjects to their own timetable
+    if (req.user?.role === 'TEACHER' && req.user.teacherId !== body.teacherId) {
+      throw new ForbiddenException('Teachers can only manage their own timetable');
+    }
     return this.timetablesService.create(body);
   }
 }

@@ -176,6 +176,12 @@ export default function AdminDashboardPage() {
           </div>
           <div className="flex gap-3">
             <Link
+              href="/admin/users"
+              className="inline-flex h-11 items-center rounded-full border border-zinc-300 px-5 text-sm font-semibold text-zinc-800 transition hover:border-zinc-800"
+            >
+              User Management
+            </Link>
+            <Link
               href="/admin/substitutions"
               className="inline-flex h-11 items-center rounded-full border border-zinc-300 px-5 text-sm font-semibold text-zinc-800 transition hover:border-zinc-800"
             >

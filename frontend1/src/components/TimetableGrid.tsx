@@ -15,9 +15,11 @@ const periods = Array.from({ length: 8 }, (_, index) => index + 1);
 
 type TimetableGridProps = {
   entries: TimetableEntry[];
+  onAddSubject?: (day: string, period: number) => void;
+  isTeacher?: boolean;
 };
 
-export default function TimetableGrid({ entries }: TimetableGridProps) {
+export default function TimetableGrid({ entries, onAddSubject, isTeacher = false }: TimetableGridProps) {
   const today = useMemo(() => {
     const dayIndex = new Date().getDay();
     const map: Record<number, string> = {
@@ -84,7 +86,19 @@ export default function TimetableGrid({ entries }: TimetableGridProps) {
                     </p>
                   </div>
                 ) : (
-                  <span className="text-xs text-zinc-400">Free</span>
+                  <>
+                    {isTeacher && onAddSubject ? (
+                      <button
+                        onClick={() => onAddSubject(day.key, period)}
+                        className="inline-flex items-center gap-1 text-xs text-amber-600 hover:text-amber-700 font-medium transition-colors"
+                      >
+                        <span>Free</span>
+                        <span className="text-lg leading-none">+</span>
+                      </button>
+                    ) : (
+                      <span className="text-xs text-zinc-400">Free</span>
+                    )}
+                  </>
                 )}
               </div>
             );

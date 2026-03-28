@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import type { AuthUser } from './auth.types';
 import { LoginDto } from './dto/login.dto';
+import { SignupDto } from './dto/signup.dto';
 
 @Controller('api/auth')
 export class AuthController {
@@ -12,6 +13,11 @@ export class AuthController {
   @Post('login')
   async login(@Body() body: LoginDto) {
     return this.authService.login(body.email, body.password);
+  }
+
+  @Post('signup')
+  async signup(@Body() body: SignupDto) {
+    return this.authService.signup(body.name, body.email, body.password);
   }
 
   @Get('me')

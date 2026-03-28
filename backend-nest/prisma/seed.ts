@@ -12,12 +12,14 @@ const seed = async () => {
       name: 'Admin User',
       password: adminPassword,
       role: 'ADMIN',
+      approved: true,
     },
     create: {
       name: 'Admin User',
       email: 'admin@example.com',
       password: adminPassword,
       role: 'ADMIN',
+      approved: true,
     },
   });
 
@@ -54,6 +56,7 @@ const seed = async () => {
       password: teacherPassword,
       role: 'TEACHER',
       teacherId: teacherOne.id,
+      approved: true,
     },
     create: {
       name: 'Alice Teacher',
@@ -61,6 +64,7 @@ const seed = async () => {
       password: teacherPassword,
       role: 'TEACHER',
       teacherId: teacherOne.id,
+      approved: true,
     },
   });
 
@@ -71,6 +75,7 @@ const seed = async () => {
       password: teacherPassword,
       role: 'TEACHER',
       teacherId: teacherTwo.id,
+      approved: true,
     },
     create: {
       name: 'Bob Teacher',
@@ -78,6 +83,7 @@ const seed = async () => {
       password: teacherPassword,
       role: 'TEACHER',
       teacherId: teacherTwo.id,
+      approved: true,
     },
   });
 
