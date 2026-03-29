@@ -18,7 +18,6 @@ import { TeachersService } from './teachers.service';
 
 @Controller('api/teachers')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles('ADMIN')
 export class TeachersController {
   constructor(private readonly teachersService: TeachersService) {}
 
@@ -33,16 +32,19 @@ export class TeachersController {
   }
 
   @Post()
+  @Roles('ADMIN')
   async create(@Body() body: CreateTeacherDto) {
     return this.teachersService.create(body);
   }
 
   @Put(':id')
+  @Roles('ADMIN')
   async update(@Param('id') id: string, @Body() body: UpdateTeacherDto) {
     return this.teachersService.update(id, body);
   }
 
   @Delete(':id')
+  @Roles('ADMIN')
   async remove(@Param('id') id: string) {
     return this.teachersService.remove(id);
   }

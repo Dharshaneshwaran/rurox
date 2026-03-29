@@ -387,4 +387,198 @@ export class SubstitutionsService {
 
     return { substitutions: created, count: created.length };
   }
+
+  async accept(id: string, user: AuthUser) {
+    const substitution = await this.prisma.substitution.findUnique({
+      where: { id },
+    });
+    if (!substitution) throw new NotFoundException('Substitution not found');
+    if (substitution.replacementTeacherId !== user.teacherId) {
+      throw new ConflictException('You are not assigned to this substitution');
+    }
+    return await this.prisma.substitution.update({
+      where: { id },
+      data: { status: 'ACCEPTED' },
+    });
+  }
+
+  async reject(id: string, user: AuthUser) {
+    const substitution = await this.prisma.substitution.findUnique({
+      where: { id },
+    });
+    if (!substitution) throw new NotFoundException('Substitution not found');
+    if (substitution.replacementTeacherId !== user.teacherId) {
+      throw new ConflictException('You are not assigned to this substitution');
+    }
+    return await this.prisma.substitution.update({
+      where: { id },
+      data: { status: 'REJECTED' },
+    });
+  }
+
+  async approveRejection(id: string) {
+    const substitution = await this.prisma.substitution.findUnique({
+      where: { id },
+    });
+    if (!substitution) throw new NotFoundException('Substitution not found');
+    if (substitution.status !== 'REJECTED') {
+      throw new ConflictException('Substitution is not rejected');
+    }
+
+    if (substitution.replacementTeacherId) {
+      await this.prisma.teacher.update({
+        where: { id: substitution.replacementTeacherId },
+        data: { workload: { decrement: 1 } },
+      });
+    }
+
+    await this.prisma.substitution.update({
+      where: { id },
+      data: { status: 'REASSIGNED' },
+    });
+    
+    return this.reassign(id);
+  }
+
+  private async reassign(id: string) {
+    const substitution = await this.prisma.substitution.findUnique({
+      where: { id },
+    });
+    if (!substitution) return;
+
+    const rejectedSubs = await this.prisma.substitution.findMany({
+       where: {
+         absentTeacherId: substitution.absentTeacherId,
+         day: substitution.day,
+         period: substitution.period,
+         date: substitution.date,
+         status: { in: ['REJECTED', 'REASSIGNED'] }
+       }
+    });
+
+    const excludedIds = new Set(rejectedSubs.map(s => s.replacementTeacherId).filter(Boolean) as string[]);
+    
+    if (substitution.specialClassId) {
+        throw new ConflictException('Auto-reassigning special classes is not fully implemented yet.');
+    } else {
+        const absentSlot = await this.prisma.timetable.findFirst({
+            where: { teacherId: substitution.absentTeacherId, day: substitution.day, period: substitution.period || 0 },
+        });
+
+        const allCandidates = await this.findAllCandidates({
+            absentTeacherId: substitution.absentTeacherId,
+            day: substitution.day,
+            period: substitution.period || 0,
+            subject: absentSlot?.subject,
+            date: substitution.date,
+            excludeIds: excludedIds
+        });
+
+        if (allCandidates.length === 0) {
+            throw new ConflictException('No more substitute teachers available');
+        }
+
+        const replacement = allCandidates[0];
+
+        const newSub = await this.prisma.substitution.create({
+            data: {
+                absentTeacherId: substitution.absentTeacherId,
+                replacementTeacherId: replacement.id,
+                day: substitution.day,
+                period: substitution.period,
+                date: substitution.date,
+                autoAssigned: true,
+                status: 'PENDING'
+            }
+        });
+
+        await this.prisma.teacher.update({
+            where: { id: replacement.id },
+            data: { workload: { increment: 1 } },
+        });
+
+        return { substitution: newSub, replacement };
+    }
+  }
+
+  async deleteByTeacherAndDate(teacherId: string, date: string) {
+    const startOfDay = new Date(date);
+    startOfDay.setUTCHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setUTCHours(23, 59, 59, 999);
+    
+    // Find all substitutions for this teacher on this date range
+    const substitutions = await this.prisma.substitution.findMany({
+      where: {
+        absentTeacherId: teacherId,
+        date: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+    });
+
+    if (substitutions.length === 0) {
+      return { count: 0 };
+    }
+
+    // Decrement workload for all replacement teachers
+    for (const sub of substitutions) {
+      if (sub.replacementTeacherId) {
+        await this.prisma.teacher.update({
+          where: { id: sub.replacementTeacherId },
+          data: { workload: { decrement: 1 } },
+        });
+      }
+    }
+
+    // Delete the substitutions
+    const result = await this.prisma.substitution.deleteMany({
+      where: {
+        absentTeacherId: teacherId,
+        date: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+    });
+
+    return { count: result.count };
+  }
+
+  async cleanupOldSubstitutions() {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    
+    const result = await this.prisma.substitution.deleteMany({
+      where: {
+        date: { lt: today },
+      },
+    });
+
+    return { count: result.count };
+  }
+
+  async delete(id: string) {
+    const substitution = await this.prisma.substitution.findUnique({
+      where: { id },
+    });
+
+    if (!substitution) {
+      throw new NotFoundException('Substitution not found');
+    }
+
+    if (substitution.replacementTeacherId) {
+      await this.prisma.teacher.update({
+        where: { id: substitution.replacementTeacherId },
+        data: { workload: { decrement: 1 } },
+      });
+    }
+
+    await this.prisma.substitution.delete({
+      where: { id },
+    });
+
+    return { success: true };
+  }
 }

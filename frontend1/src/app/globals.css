@@ -1,66 +1,47 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-tertiary-container: #f5f3f3;
-  --color-inverse-on-surface: #9c9d9d;
-  --color-primary: #5f5e5e;
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-container-high: #e4e9ea;
-  --color-surface-bright: #f9f9f9;
-  --color-on-background: #2d3435;
-  --color-primary-dim: #535252;
-  --color-on-secondary-fixed: #3f3f3f;
-  --color-on-primary-fixed: #403f3f;
-  --color-on-error: #fff7f6;
-  --color-tertiary-fixed: #f5f3f3;
-  --color-on-tertiary-container: #5b5c5c;
-  --color-outline-variant: #adb3b4;
-  --color-on-secondary-fixed-variant: #5c5b5b;
-  --color-primary-fixed-dim: #d6d4d3;
-  --color-secondary-container: #e4e2e1;
-  --color-on-error-container: #752121;
-  --color-on-secondary-container: #525252;
-  --color-error-dim: #4e0309;
-  --color-background: #f9f9f9;
-  --color-on-surface: #2d3435;
-  --color-on-tertiary-fixed: #494a4a;
-  --color-on-primary: #faf7f6;
-  --color-on-primary-container: #525151;
-  --color-error-container: #fe8983;
-  --color-surface-variant: #dde4e5;
-  --color-secondary: #5f5f5f;
-  --color-primary-fixed: #e5e2e1;
-  --color-inverse-surface: #0c0f0f;
-  --color-surface-container: #ebeeef;
-  --color-surface-tint: #5f5e5e;
-  --color-surface-container-low: #f2f4f4;
-  --color-primary-container: #e5e2e1;
-  --color-tertiary-fixed-dim: #e6e5e5;
-  --color-on-surface-variant: #5a6061;
-  --color-on-primary-fixed-variant: #5c5b5b;
-  --color-on-tertiary: #faf8f8;
-  --color-secondary-fixed: #e4e2e1;
-  --color-surface-container-highest: #dde4e5;
-  --color-outline: #757c7d;
-  --color-on-tertiary-fixed-variant: #666666;
-  --color-inverse-primary: #ffffff;
-  --color-surface-dim: #d4dbdd;
-  --color-error: #9f403d;
-  --color-surface: #f9f9f9;
-  --color-tertiary: #5f5f5f;
-  --color-tertiary-dim: #535353;
-  --color-secondary-fixed-dim: #d6d4d3;
-  --color-on-secondary: #fbf8f8;
-  --color-secondary-dim: #535353;
+  --color-background: #f8fafc;
+  --color-foreground: #020817;
+  
+  --color-primary: #000000;
+  --color-primary-strong: #1a1a1a;
+  
+  --color-secondary: #ffffff;
+  --color-secondary-soft: #f1f5f9;
 
-  --font-headline: Manrope, sans-serif;
-  --font-body: Inter, sans-serif;
-  --font-label: Inter, sans-serif;
+  --color-border: #e2e8f0;
+  
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f1f5f9;
+  --color-on-surface: #020817;
+
+  --color-text: #020817;
+  --color-text-muted: #64748b;
+  --color-text-soft: #64748b;
+  --color-muted-foreground: #64748b;
+
+  --color-accent: #000000; /* align accent with black primary */
+  --color-accent-soft: #f1f5f9;
+  
+  --color-danger: #ef4444;
+  --color-danger-soft: #fef2f2;
+  
+  --color-success: #22c55e;
+  --color-success-soft: #f0fdf4;
+
+  --font-headline: var(--font-headline);
+  --font-display: var(--font-headline);
+  --font-body: var(--font-body);
+  --font-label: var(--font-body);
+  --font-mono: Consolas, monospace;
 
   --radius-DEFAULT: 0.125rem;
   --radius-lg: 0.25rem;
   --radius-xl: 0.5rem;
   --radius-full: 0.75rem;
+
+  --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 html,
@@ -81,7 +62,7 @@ html {
 body {
   min-height: 100%;
   color: var(--color-on-surface);
-  font-family: var(--font-body), "Segoe UI", sans-serif;
+  font-family: var(--font-body);
   text-rendering: optimizeLegibility;
   background-color: var(--color-surface);
 }

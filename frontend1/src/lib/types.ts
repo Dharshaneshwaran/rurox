@@ -26,6 +26,9 @@ export type Substitution = {
   period: number;
   date: string;
   autoAssigned: boolean;
+  status: "PENDING" | "ACCEPTED" | "REJECTED" | "REASSIGNED";
+  absentTeacherId?: string | null;
+  replacementTeacherId?: string | null;
   absentTeacher?: { name: string } | null;
   replacementTeacher?: { name: string } | null;
 };

@@ -226,6 +226,7 @@ export default function TeacherDetailsPage() {
           </SectionCard>
 
           <SectionCard
+            className="min-w-0 overflow-hidden"
             title="Weekly schedule"
             subtitle="Assign classes to open slots and keep the teacher timetable current."
           >

@@ -77,14 +77,14 @@ export default function TimetableGrid({
                     {entry ? (
                       <div
                         className={cn(
-                          "border px-4 py-3",
+                          "border px-4 py-3 min-w-0",
                           entry.isSubstitution
                             ? "border-accent bg-accent-soft/70"
                             : "border-border bg-background/55"
                         )}
                       >
-                        <p className="font-medium text-foreground">{entry.subject}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">
+                        <p className="font-medium text-foreground truncate">{entry.subject}</p>
+                        <p className="mt-1 text-sm text-muted-foreground truncate">
                           {entry.className}
                           {entry.room ? ` | Room ${entry.room}` : ""}
                         </p>
@@ -153,17 +153,17 @@ export default function TimetableGrid({
                     {entry ? (
                       <div
                         className={cn(
-                          "h-full border px-4 py-3",
+                          "h-full border px-4 py-3 min-w-0 flex flex-col",
                           entry.isSubstitution
                             ? "border-accent bg-accent-soft/80"
                             : "border-border bg-white"
                         )}
                       >
-                        <p className="font-medium text-foreground">{entry.subject}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">
+                        <p className="font-medium text-foreground truncate">{entry.subject}</p>
+                        <p className="mt-1 text-sm text-muted-foreground truncate">
                           {entry.className}
                         </p>
-                        <p className="mt-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                        <p className="mt-3 text-xs uppercase tracking-[0.2em] text-muted-foreground truncate mt-auto">
                           {entry.room ? `Room ${entry.room}` : "Room not assigned"}
                         </p>
                       </div>

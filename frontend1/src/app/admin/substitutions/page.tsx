@@ -153,6 +153,7 @@ export default function SubstitutionManagementPage() {
   const [confirmedCount, setConfirmedCount] = useState(0);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [confirmingAll, setConfirmingAll] = useState(false);
+  const [subLoadingId, setSubLoadingId] = useState<string | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [manualForm, setManualForm] = useState({
     absentTeacherId: "",
@@ -325,6 +326,74 @@ export default function SubstitutionManagementPage() {
     }
   };
 
+  const handleMarkPresent = async () => {
+    if (!token || !selectedTeacherId || !selectedDate) return;
+    
+    const confirm = window.confirm("Are you sure? This will cancel all scheduled substitutions for this teacher on this day.");
+    if (!confirm) return;
+
+    setLoadingSuggestions(true);
+    setError(null);
+
+    try {
+      const response = await apiFetch(`/api/substitutions/teacher/${selectedTeacherId}/date/${selectedDate}`, {
+        method: "DELETE",
+      }, token) as { count?: number };
+      
+      handleReset();
+      await loadData();
+      alert(`Teacher marked as present. ${response.count || 0} substitutions canceled.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to mark present");
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  };
+
+  const handleCleanup = async () => {
+    if (!token) return;
+    
+    const confirm = window.confirm("Cleanup will delete all past substitution records. Proceed?");
+    if (!confirm) return;
+
+    try {
+      const response = await apiFetch("/api/substitutions/cleanup", { method: "DELETE" }, token) as { count?: number };
+      await loadData();
+      alert(`Cleanup complete. Deleted ${response.count || 0} old records.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Cleanup failed");
+    }
+  };
+
+  const handleApproveRejection = async (id: string) => {
+    if (!token) return;
+    setSubLoadingId(id);
+    try {
+      await apiFetch(`/api/substitutions/${id}/approve-rejection`, { method: "POST" }, token);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to reassign substitute");
+    } finally {
+      setSubLoadingId(null);
+    }
+  };
+
+  const handleDeleteSubstitution = async (id: string) => {
+    if (!token) return;
+    
+    if (!window.confirm("Delete this substitution record?")) return;
+
+    setSubLoadingId(id);
+    try {
+      await apiFetch(`/api/substitutions/${id}`, { method: "DELETE" }, token);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete substitution");
+    } finally {
+      setSubLoadingId(null);
+    }
+  };
+
   const selectedTeacher = teachers.find((teacher) => teacher.id === selectedTeacherId);
   const assignedCount = Object.values(assignments).filter(Boolean).length;
 
@@ -347,7 +416,7 @@ export default function SubstitutionManagementPage() {
           description="Run the complete substitution workflow from teacher selection to confirmed assignments, then use the advanced tools for manual or single-period overrides."
         />
 
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <MetricCard
             label="Teachers available"
             value={teachers.length.toString()}
@@ -389,52 +458,70 @@ export default function SubstitutionManagementPage() {
             </div>
 
             {step === "select" ? (
-              <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <SelectField
-                    label="Absent teacher"
-                    value={selectedTeacherId}
-                    onChange={(event) => setSelectedTeacherId(event.target.value)}
-                  >
-                    <option value="">Select a teacher</option>
-                    {teachers.map((teacher) => (
-                      <option key={teacher.id} value={teacher.id}>
-                        {teacher.name} • {teacher.subjects.join(", ")}
-                      </option>
-                    ))}
-                  </SelectField>
+              <div className="grid gap-6 lg:grid-cols-12">
+                <div className="lg:col-span-8">
+                  <SurfaceCard className="bg-[var(--color-panel-muted)]/50 border-dashed border-[var(--color-stroke)] p-6">
+                    <div className="grid gap-6 sm:grid-cols-2">
+                      <SelectField
+                        label="Absent teacher"
+                        value={selectedTeacherId}
+                        onChange={(event) => setSelectedTeacherId(event.target.value)}
+                      >
+                        <option value="">Select a teacher</option>
+                        {teachers.map((teacher) => (
+                          <option key={teacher.id} value={teacher.id}>
+                            {teacher.name} • {teacher.subjects.join(", ")}
+                          </option>
+                        ))}
+                      </SelectField>
 
-                  <TextField
-                    label="Date of absence"
-                    type="date"
-                    value={selectedDate}
-                    onChange={(event) => setSelectedDate(event.target.value)}
-                  />
+                      <TextField
+                        label="Date of absence"
+                        type="date"
+                        value={selectedDate}
+                        onChange={(event) => setSelectedDate(event.target.value)}
+                      />
+                    </div>
+                  </SurfaceCard>
                 </div>
 
-                <SurfaceCard className="bg-[var(--color-panel-muted)] px-5 py-5">
-                  <div className="space-y-4">
-                    <Badge tone="default">Selection summary</Badge>
-                    <div>
-                      <h2 className="font-[family-name:var(--font-heading)] text-xl font-semibold text-[var(--color-text)]">
-                        Prepare a full-day coverage plan
-                      </h2>
-                      <p className="mt-2 text-sm leading-6 text-[var(--color-text-muted)]">
-                        Select the absent teacher and the date, then the system will
-                        assemble the best available substitutes period by period.
-                      </p>
+                <div className="lg:col-span-4">
+                  <div className="h-full rounded-[28px] bg-zinc-950 p-6 text-white shadow-xl ring-1 ring-white/10">
+                    <div className="flex flex-col h-full justify-between gap-6">
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                           <div className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)] animate-pulse" />
+                           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Selection Engine</span>
+                        </div>
+                        <h2 className="text-lg font-black leading-tight tracking-tight">
+                          Orchestrate Coverage
+                        </h2>
+                        <p className="text-[13px] font-medium leading-relaxed text-zinc-400">
+                          Select the absent teacher and date to generate optimized matchings based on workload and subject expertise.
+                        </p>
+                      </div>
+                      
+                      <div className="space-y-3 pt-4 border-t border-white/5">
+                        <Button
+                          className="w-full"
+                          size="lg"
+                          disabled={!selectedTeacherId || !selectedDate || loadingSuggestions}
+                          icon={<SearchIcon className="h-4 w-4" />}
+                          onClick={handleFindSubstitutes}
+                        >
+                          {loadingSuggestions ? "Analyzing..." : "Find candidates"}
+                        </Button>
+                        <button
+                          disabled={!selectedTeacherId || !selectedDate || loadingSuggestions}
+                          onClick={handleMarkPresent}
+                          className="flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-3 text-[11px] font-black uppercase tracking-widest text-white transition-all hover:bg-white/10 disabled:opacity-30"
+                        >
+                          Mark as present
+                        </button>
+                      </div>
                     </div>
-                    <Button
-                      className="w-full"
-                      size="lg"
-                      disabled={!selectedTeacherId || !selectedDate || loadingSuggestions}
-                      icon={<SearchIcon className="h-4 w-4" />}
-                      onClick={handleFindSubstitutes}
-                    >
-                      {loadingSuggestions ? "Finding substitutes..." : "Find substitutes"}
-                    </Button>
                   </div>
-                </SurfaceCard>
+                </div>
               </div>
             ) : null}
 
@@ -453,15 +540,15 @@ export default function SubstitutionManagementPage() {
                         })}
                       </Badge>
                     </div>
-                    <h2 className="font-[family-name:var(--font-heading)] text-2xl font-semibold tracking-[-0.04em] text-[var(--color-text)]">
+                    <h2 className="text-3xl font-black tracking-tight text-[var(--color-text)]">
                       Review suggested coverage
                     </h2>
-                    <p className="text-sm leading-6 text-[var(--color-text-muted)]">
-                      Adjust substitute selections before confirming the full-day plan.
+                    <p className="text-[14px] font-medium leading-relaxed text-zinc-500">
+                      Verify selected teachers for each period before confirming the entire day.
                     </p>
                   </div>
-                  <Button variant="secondary" onClick={handleReset}>
-                    Change teacher
+                  <Button variant="secondary" size="md" onClick={handleReset} className="font-black text-[10px] uppercase tracking-widest">
+                    Switch Teacher
                   </Button>
                 </div>
 
@@ -480,14 +567,14 @@ export default function SubstitutionManagementPage() {
                   />
                 ) : (
                   <>
-                    <div className="hidden overflow-hidden rounded-[28px] border border-[var(--color-stroke)] bg-white lg:block">
-                      <div className="grid grid-cols-[84px_1fr_1fr_1fr_1.35fr_140px] border-b border-[var(--color-stroke)] bg-[var(--color-panel-muted)] px-5 py-4 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-text-soft)]">
+                    <div className="hidden overflow-hidden rounded-[28px] border border-[var(--color-stroke)] bg-white lg:block shadow-sm">
+                      <div className="grid grid-cols-[84px_1fr_1fr_1fr_1.35fr_140px] items-center border-b border-[var(--color-stroke)] bg-zinc-50 px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
                         <span>Period</span>
-                        <span>Class</span>
+                        <span>Classroom</span>
                         <span>Subject</span>
-                        <span>Room</span>
-                        <span>Substitute</span>
-                        <span>Status</span>
+                        <span>Location</span>
+                        <span>Substitute Selection</span>
+                        <span className="text-center">Selection</span>
                       </div>
                       {suggestions.suggestions.map((suggestion) => {
                         const assignment = assignments[suggestion.period];
@@ -589,43 +676,55 @@ export default function SubstitutionManagementPage() {
             ) : null}
 
             {step === "confirmed" ? (
-              <SurfaceCard className="border border-[color:color-mix(in_oklab,var(--color-success)_18%,white)] bg-[color:color-mix(in_oklab,var(--color-success)_8%,white)] px-6 py-8">
-                <div className="mx-auto flex max-w-2xl flex-col items-center gap-4 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-[var(--color-success)]">
-                    <CheckCircleIcon className="h-8 w-8" />
+              <div className="mx-auto max-w-2xl py-12 px-6">
+                <div className="flex flex-col items-center gap-6 text-center">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-zinc-950 text-white shadow-2xl ring-1 ring-white/10">
+                    <CheckCircleIcon className="h-10 w-10" />
                   </div>
-                  <Badge tone="success">Assignments confirmed</Badge>
-                  <h2 className="font-[family-name:var(--font-heading)] text-3xl font-semibold tracking-[-0.05em] text-[var(--color-text)]">
-                    {confirmedCount} substitution{confirmedCount === 1 ? "" : "s"} confirmed
-                  </h2>
-                  <p className="text-sm leading-7 text-[var(--color-text-muted)]">
-                    Coverage has been assigned for{" "}
-                    <span className="font-semibold text-[var(--color-text)]">
-                      {selectedTeacher?.name || "the selected teacher"}
-                    </span>
-                    . Start another full-day plan or continue refining period-level
-                    changes below.
-                  </p>
-                  <Button size="lg" onClick={handleReset}>
-                    Mark another teacher absent
-                  </Button>
+                  <div className="space-y-4">
+                    <h2 className="text-4xl font-black tracking-tight text-[var(--color-text)]">
+                      Coverage Orchestrated
+                    </h2>
+                    <p className="text-[15px] font-bold leading-relaxed text-zinc-500">
+                      Successfully assigned {confirmedCount} substitution{confirmedCount === 1 ? "" : "s"} for{" "}
+                      <span className="text-zinc-900 font-black">
+                        {selectedTeacher?.name || "the selected teacher"}
+                      </span>.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3 sm:flex-row pt-6">
+                    <Button size="lg" onClick={handleReset} className="min-w-[200px] shadow-lg">
+                      Start new session
+                    </Button>
+                  </div>
                 </div>
-              </SurfaceCard>
+              </div>
             ) : null}
           </div>
         </SurfaceCard>
 
         <SurfaceCard className="px-5 py-5 sm:px-6 sm:py-6">
           <div className="space-y-5">
-            <div className="space-y-1">
-              <h2 className="font-[family-name:var(--font-heading)] text-2xl font-semibold tracking-[-0.04em] text-[var(--color-text)]">
-                Recent substitutions
-              </h2>
-              <p className="text-sm leading-6 text-[var(--color-text-muted)]">
-                Monitor the latest substitution activity across the system.
-              </p>
-            </div>
-            <SubstitutionList substitutions={substitutions} />
+              <div className="flex items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <h2 className="font-[family-name:var(--font-heading)] text-2xl font-semibold tracking-[-0.04em] text-[var(--color-text)]">
+                    Recent substitutions
+                  </h2>
+                  <p className="text-sm leading-6 text-[var(--color-text-muted)]">
+                    Monitor the latest substitution activity across the system.
+                  </p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={handleCleanup} className="text-xs text-red-500 hover:text-red-600">
+                   Cleanup old records
+                </Button>
+              </div>
+            <SubstitutionList
+              substitutions={substitutions}
+              isAdmin={true}
+              onApproveRejection={handleApproveRejection}
+              onDelete={handleDeleteSubstitution}
+              loadingId={subLoadingId}
+            />
           </div>
         </SurfaceCard>
 

@@ -40,26 +40,26 @@ export default function MetricCard({
 
   return (
     <article
-      className={`rounded-[28px] border p-5 shadow-[var(--shadow-card)] ${toneStyles[tone]}`}
+      className={`rounded-3xl border p-6 shadow-sm transition-all hover:shadow-md ${toneStyles[tone]}`}
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="space-y-2">
-          <p className="font-mono-display text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--color-text-muted)]">
+        <div className="space-y-3">
+          <p className="font-mono-display text-[11px] font-black uppercase tracking-[0.3em] text-zinc-500">
             {label}
           </p>
           {badge ? <Badge tone={badgeTone}>{badge}</Badge> : null}
         </div>
         {icon ? (
-          <span className="rounded-2xl bg-white/65 p-2 text-[var(--color-text)]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900/5 text-zinc-900 ring-1 ring-zinc-900/5">
             {icon}
-          </span>
+          </div>
         ) : null}
       </div>
-      <p className="mt-6 font-display text-3xl font-semibold tracking-[-0.05em] text-[var(--color-text)]">
+      <p className="mt-8 font-display text-4xl font-black tracking-tight text-[var(--color-text)]">
         {value}
       </p>
       {supportingText ? (
-        <p className="mt-2 text-sm leading-6 text-[var(--color-text-soft)]">
+        <p className="mt-2.5 text-[13px] font-bold leading-relaxed text-zinc-500">
           {supportingText}
         </p>
       ) : null}

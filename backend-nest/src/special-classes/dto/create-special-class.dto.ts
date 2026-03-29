@@ -22,4 +22,8 @@ export class CreateSpecialClassDto {
   @IsOptional()
   @IsString()
   notes?: string;
+
+  @IsOptional()
+  @IsString()
+  substituteTeacherId?: string;
 }

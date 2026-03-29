@@ -49,7 +49,7 @@ function NavItems({
   onNavigate?: () => void;
 }) {
   return (
-    <nav className="flex flex-col gap-2">
+    <nav className="flex flex-col gap-1">
       {navItems.map((item) => {
         const isActive = pathname.startsWith(item.href);
         const Icon = item.icon;
@@ -60,28 +60,31 @@ function NavItems({
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              "group flex items-center gap-4 rounded-[24px] border px-4 py-3.5 transition",
+              "group relative flex items-center gap-3.5 rounded-xl px-3.5 py-3 transition-all duration-200",
               isActive
-                ? "border-[color:color-mix(in_oklab,var(--color-brand)_18%,white)] bg-[var(--color-brand-soft)] text-[var(--color-brand)]"
-                : "border-transparent bg-transparent text-[var(--color-text-muted)] hover:border-[var(--color-stroke)] hover:bg-white hover:text-[var(--color-text)]"
+                ? "bg-white/10 text-white shadow-sm"
+                : "text-zinc-400 hover:bg-white/5 hover:text-zinc-100"
             )}
           >
+            {isActive && (
+              <div className="absolute left-0 h-6 w-1 rounded-r-full bg-[var(--color-brand)] shadow-[0_0_10px_var(--color-brand)]" />
+            )}
             <div
               className={cn(
-                "flex h-11 w-11 items-center justify-center rounded-2xl transition",
+                "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all duration-300",
                 isActive
-                  ? "bg-white text-[var(--color-brand)]"
-                  : "bg-[var(--color-panel-muted)] text-[var(--color-text-soft)] group-hover:bg-[var(--color-brand-soft)] group-hover:text-[var(--color-brand)]"
+                  ? "bg-[var(--color-brand)] text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]"
+                  : "bg-zinc-900 text-zinc-500 group-hover:bg-zinc-800 group-hover:text-zinc-200"
               )}
             >
-              <Icon className="h-5 w-5" />
+              <Icon className="h-4.5 w-4.5" />
             </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold">{item.label}</p>
+            <div className="min-w-0 flex-1 py-0.5">
+              <p className="text-[14px] font-black leading-none tracking-tight">{item.label}</p>
               <p
                 className={cn(
-                  "truncate text-xs",
-                  isActive ? "text-[var(--color-brand)]/80" : "text-[var(--color-text-soft)]"
+                  "mt-1.5 truncate text-[10px] uppercase font-bold tracking-[0.12em] transition-colors",
+                  isActive ? "text-white/60" : "text-zinc-500 group-hover:text-zinc-400"
                 )}
               >
                 {item.description}
@@ -126,53 +129,58 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="page-shell min-h-screen lg:grid lg:grid-cols-[296px_minmax(0,1fr)]">
-      <aside className="hidden border-r border-[var(--color-stroke)] bg-[rgba(255,255,255,0.62)] px-5 py-5 backdrop-blur-xl lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-6">
-        <Panel tone="highlight" className="px-5 py-5">
-          <div className="space-y-4">
-            <AppMark />
-            <div className="space-y-2">
-              <Badge tone="brand">Admin portal</Badge>
-              <p className="text-sm leading-6 text-[var(--color-text-muted)]">
-                Manage staff records, substitution coverage, and pending approvals
-                from a single command surface.
-              </p>
-            </div>
+    <div className="page-shell min-h-screen lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
+      <aside className="hidden border-r border-zinc-900 bg-zinc-950 px-3 py-6 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-8">
+        <div className="px-3 space-y-6">
+          <div className="flex items-center gap-3.5 px-1.5">
+             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
+                <AppMark className="invert opacity-100 h-5 w-5" />
+             </div>
+             <div className="flex flex-col">
+                <span className="text-[14px] font-black tracking-[-0.02em] text-white">Antigravity</span>
+                <span className="text-[10px] uppercase tracking-[0.25em] text-zinc-500 font-bold leading-none mt-0.5">Admin Portal</span>
+             </div>
           </div>
-        </Panel>
+          
+          <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4.5 backdrop-blur-md">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-2.5">System Status</h3>
+            <p className="text-[12px] font-bold leading-[1.6] text-zinc-500">
+              Operational oversight and resource orchestration in real-time.
+            </p>
+          </div>
+        </div>
 
-        <Panel tone="muted" className="flex-1 px-4 py-4">
-          <div className="space-y-3">
-            <p className="px-2 text-xs font-semibold uppercase tracking-[0.28em] text-[var(--color-text-soft)]">
+        <div className="flex-1 px-1">
+          <div className="space-y-4">
+            <p className="px-3 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
               Navigation
             </p>
             <NavItems pathname={pathname} />
           </div>
-        </Panel>
+        </div>
 
-        <Panel className="px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-brand)] text-sm font-bold text-white">
+        <div className="px-3 py-4 mt-auto">
+          <div className="rounded-2xl bg-zinc-900/40 border border-white/5 p-4 flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand)] text-xs font-black text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]">
               {initials}
             </div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-[var(--color-text)]">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[13px] font-black text-zinc-100">
                 {user.name || "Administrator"}
               </p>
-              <p className="truncate text-xs text-[var(--color-text-soft)]">
+              <p className="truncate text-[10px] text-zinc-500 font-bold tracking-tight">
                 {user.email}
               </p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            className="mt-4 w-full justify-start"
-            icon={<LogOutIcon className="h-4 w-4" />}
+          <button
             onClick={handleSignOut}
+            className="mt-4 flex w-full items-center gap-3 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 transition-all hover:bg-red-500/10 hover:text-red-400"
           >
+            <LogOutIcon className="h-4 w-4" />
             Sign out
-          </Button>
-        </Panel>
+          </button>
+        </div>
       </aside>
 
       <div className="flex min-h-screen flex-col">

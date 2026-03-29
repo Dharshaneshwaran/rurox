@@ -1,10 +1,11 @@
-import { IsArray, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class PeriodAssignment {
   @IsString()
   replacementTeacherId: string;
 
+  @IsNumber()
   period: number;
 }
 

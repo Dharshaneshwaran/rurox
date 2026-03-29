@@ -21,6 +21,13 @@ enum Day {
   FRI
 }
 
+enum SubstitutionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  REASSIGNED
+}
+
 model User {
   id        String   @id @default(cuid())
   name      String?
@@ -67,9 +74,12 @@ model Substitution {
   replacementTeacher   Teacher? @relation("replacement", fields: [replacementTeacherId], references: [id])
   replacementTeacherId String?
   day                  Day
-  period               Int
+  period               Int?
   date                 DateTime
   autoAssigned         Boolean  @default(false)
+  status               SubstitutionStatus @default(PENDING)
+  specialClass         SpecialClass? @relation(fields: [specialClassId], references: [id])
+  specialClassId       String?       @unique
   createdAt            DateTime @default(now())
 
   @@index([day, period])
@@ -86,4 +96,5 @@ model SpecialClass {
   className String
   notes     String?
   createdAt DateTime @default(now())
+  substitution Substitution?
 }

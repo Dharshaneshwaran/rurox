@@ -2,14 +2,30 @@ import type { Substitution } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { badgeClasses } from "@/components/ui/Badge";
 
+import Button from "@/components/ui/Button";
+
 type SubstitutionListProps = {
   substitutions: Substitution[];
   variant?: "light" | "dark";
+  onAccept?: (id: string) => Promise<void>;
+  onReject?: (id: string) => Promise<void>;
+  onApproveRejection?: (id: string) => Promise<void>;
+  currentTeacherId?: string;
+  isAdmin?: boolean;
+  loadingId?: string | null;
+  onDelete?: (id: string) => Promise<void>;
 };
 
 export default function SubstitutionList({
   substitutions,
   variant = "light",
+  onAccept,
+  onReject,
+  onApproveRejection,
+  currentTeacherId,
+  isAdmin,
+  loadingId,
+  onDelete,
 }: SubstitutionListProps) {
   if (!substitutions.length) {
     return <p className="text-sm text-muted-foreground">No substitutions scheduled.</p>;
@@ -34,49 +50,99 @@ export default function SubstitutionList({
               <div className="flex flex-wrap items-center gap-2">
                 <p
                   className={cn(
-                    "font-medium",
-                    dark ? "text-white" : "text-foreground"
+                    "font-black tracking-tight",
+                    dark ? "text-white" : "text-zinc-900"
                   )}
                 >
                   {item.day} / Period {item.period}
                 </p>
                 <span
                   className={cn(
-                    "text-xs uppercase tracking-[0.2em]",
-                    dark ? "text-white/55" : "text-muted-foreground"
+                    "text-[11px] uppercase tracking-[0.14em] font-bold",
+                    dark ? "text-zinc-400" : "text-zinc-500"
                   )}
                 >
                   {new Date(item.date).toLocaleDateString(undefined, {
+                    weekday: "short",
                     month: "short",
                     day: "numeric",
-                    year: "numeric",
                   })}
                 </span>
               </div>
               <p
                 className={cn(
-                  "mt-3 text-sm",
-                  dark ? "text-white/75" : "text-muted-foreground"
+                  "mt-4 text-[13px] font-bold",
+                  dark ? "text-zinc-400" : "text-zinc-600"
                 )}
               >
-                Absent: {item.absentTeacher?.name ?? "Unknown"}
+                Absent: <span className={cn("font-black", dark ? "text-white" : "text-zinc-900")}>{item.absentTeacher?.name ?? "Unknown"}</span>
               </p>
               <p
                 className={cn(
-                  "mt-1 text-sm",
-                  dark ? "text-white/75" : "text-muted-foreground"
+                  "mt-1 text-[13px] font-bold",
+                  dark ? "text-zinc-400" : "text-zinc-600"
                 )}
               >
-                Cover: {item.replacementTeacher?.name ?? "Pending"}
+                Cover: <span className={cn("font-black", dark ? "text-zinc-100" : "text-zinc-800")}>{item.replacementTeacher?.name ?? "Searching..."}</span>
               </p>
             </div>
-            <span
-              className={badgeClasses({
-                variant: item.autoAssigned ? "success" : "warning",
-              })}
-            >
-              {item.autoAssigned ? "Auto" : "Manual"}
-            </span>
+            <div className="flex flex-col items-end gap-2">
+              <span
+                className={badgeClasses({
+                  variant: 
+                    item.status === "PENDING" ? "warning" :
+                    item.status === "REJECTED" ? "danger" :
+                    item.status === "REASSIGNED" ? "neutral" :
+                    "success",
+                })}
+              >
+                {item.status || (item.autoAssigned ? "Auto" : "Manual")}
+              </span>
+              
+              {onAccept && onReject && item.status === "PENDING" && item.replacementTeacherId === currentTeacherId && (
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => onReject(item.id)}
+                    disabled={loadingId === item.id}
+                  >
+                    Reject
+                  </Button>
+                  <Button
+                    variant="accent"
+                    size="sm"
+                    onClick={() => onAccept(item.id)}
+                    disabled={loadingId === item.id}
+                  >
+                    Accept
+                  </Button>
+                </div>
+              )}
+              
+              {isAdmin && onApproveRejection && item.status === "REJECTED" && (
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    variant="accent"
+                    size="sm"
+                    onClick={() => onApproveRejection(item.id)}
+                    disabled={loadingId === item.id}
+                  >
+                    Reassign cover
+                  </Button>
+                </div>
+              )}
+
+              {isAdmin && onDelete && (
+                <button
+                  onClick={() => onDelete(item.id)}
+                  disabled={loadingId === item.id}
+                  className="mt-2 text-[10px] font-bold uppercase tracking-widest text-red-500/60 hover:text-red-500 transition-colors"
+                >
+                  Delete Record
+                </button>
+              )}
+            </div>
           </div>
         </article>
       ))}

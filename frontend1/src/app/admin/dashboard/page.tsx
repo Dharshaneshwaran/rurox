@@ -129,6 +129,9 @@ export default function AdminDashboardPage() {
               <Link href="/admin/users" className={buttonClasses({ variant: "secondary" })}>
                 Review approvals
               </Link>
+              <Link href="/admin/special-class" className={buttonClasses({ variant: "secondary" })}>
+                Special classes
+              </Link>
               <Link href="/admin/substitutions" className={buttonClasses({ variant: "accent" })}>
                 Manage absences
               </Link>

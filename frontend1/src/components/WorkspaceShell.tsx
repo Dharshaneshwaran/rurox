@@ -88,7 +88,7 @@ export default function WorkspaceShell({
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto flex min-h-screen w-full max-w-[1600px]">
+      <div className="flex min-h-screen w-full">
         <aside className="hidden w-72 flex-col border-r border-border bg-white lg:flex">
           <div className="flex h-full flex-col p-8">
             <Link href="/" className="inline-flex items-center gap-3 text-foreground">

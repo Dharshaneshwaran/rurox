@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import AddSubjectModal from "@/components/AddSubjectModal";
+import AddSpecialClassModal from "@/components/AddSpecialClassModal";
 import SectionCard from "@/components/SectionCard";
 import SpecialClassesList from "@/components/SpecialClassesList";
 import SubstitutionList from "@/components/SubstitutionList";
@@ -9,11 +10,12 @@ import TeacherLayout from "@/components/TeacherLayout";
 import TimetableGrid from "@/components/TimetableGrid";
 import { BookIcon, CalendarIcon, ClockIcon, SwapIcon } from "@/components/icons";
 import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
 import PageHeader from "@/components/ui/PageHeader";
 import StatCard from "@/components/ui/StatCard";
 import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/api";
-import type { SpecialClass, Substitution, TimetableEntry } from "@/lib/types";
+import type { SpecialClass, Substitution, TimetableEntry, Teacher } from "@/lib/types";
 
 const SKELETON_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
@@ -71,6 +73,10 @@ export default function TeacherDashboardPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<number>(0);
   const [addingSubject, setAddingSubject] = useState(false);
   const [dashboardLoading, setDashboardLoading] = useState(true);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [specialModalOpen, setSpecialModalOpen] = useState(false);
+  const [addingSpecialClass, setAddingSpecialClass] = useState(false);
+  const [subLoadingId, setSubLoadingId] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     if (!token) return;
@@ -91,10 +97,16 @@ export default function TeacherDashboardPage() {
         {},
         token
       );
+      const teachersData = await apiFetch<{ teachers: Teacher[] }>(
+        "/api/teachers",
+        {},
+        token
+      );
 
       setTimetables(timetableData.timetables);
       setSubstitutions(substitutionData.substitutions);
       setSpecialClasses(specialData.specialClasses);
+      setTeachers(teachersData.teachers);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load dashboard");
     } finally {
@@ -143,6 +155,56 @@ export default function TeacherDashboardPage() {
       setError(err instanceof Error ? err.message : "Failed to add subject");
     } finally {
       setAddingSubject(false);
+    }
+  };
+
+  const handleAddSpecialClass = async (data: any) => {
+    if (!token || !user?.teacherId) return;
+    setAddingSpecialClass(true);
+    try {
+      await apiFetch(
+        "/api/special-classes",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            ...data,
+            teacherId: user.teacherId,
+          }),
+        },
+        token
+      );
+      setSpecialModalOpen(false);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add special class");
+    } finally {
+      setAddingSpecialClass(false);
+    }
+  };
+
+  const handleAcceptSub = async (id: string) => {
+    if (!token) return;
+    setSubLoadingId(id);
+    try {
+      await apiFetch(`/api/substitutions/${id}/accept`, { method: "POST" }, token);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to accept");
+    } finally {
+      setSubLoadingId(null);
+    }
+  };
+
+  const handleRejectSub = async (id: string) => {
+    if (!token) return;
+    setSubLoadingId(id);
+    try {
+      await apiFetch(`/api/substitutions/${id}/reject`, { method: "POST" }, token);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to reject");
+    } finally {
+      setSubLoadingId(null);
     }
   };
 
@@ -215,8 +277,9 @@ export default function TeacherDashboardPage() {
           />
         </div>
 
-        <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_360px]">
+        <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
           <SectionCard
+            className="min-w-0 overflow-hidden"
             title="Weekly timetable"
             subtitle="Review the full week and add classes directly into any open slot."
           >
@@ -232,12 +295,23 @@ export default function TeacherDashboardPage() {
               title="Substitution alerts"
               subtitle="Your assigned cover periods appear here as soon as they are confirmed."
             >
-              <SubstitutionList substitutions={substitutions} />
+              <SubstitutionList
+                substitutions={substitutions}
+                onAccept={handleAcceptSub}
+                onReject={handleRejectSub}
+                currentTeacherId={user?.teacherId ?? undefined}
+                loadingId={subLoadingId}
+              />
             </SectionCard>
 
             <SectionCard
               title="Special classes"
               subtitle="Additional sessions, events, and timetable exceptions."
+              actions={
+                <Button variant="secondary" size="sm" onClick={() => setSpecialModalOpen(true)}>
+                  mon to fri only one class
+                </Button>
+              }
             >
               <SpecialClassesList items={specialClasses} />
             </SectionCard>
@@ -251,6 +325,13 @@ export default function TeacherDashboardPage() {
           onClose={() => setModalOpen(false)}
           onAdd={handleConfirmAddSubject}
           loading={addingSubject}
+        />
+        <AddSpecialClassModal
+          isOpen={specialModalOpen}
+          onClose={() => setSpecialModalOpen(false)}
+          onAdd={handleAddSpecialClass}
+          loading={addingSpecialClass}
+          teachers={teachers}
         />
       </div>
     </TeacherLayout>
