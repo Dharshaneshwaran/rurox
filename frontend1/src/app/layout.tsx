@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Manrope, Space_Grotesk } from "next/font/google";
+import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 
-const displayFont = Space_Grotesk({
-  variable: "--font-display",
+const headlineFont = Manrope({
+  variable: "--font-headline",
   subsets: ["latin"],
 });
 
-const bodyFont = Manrope({
+const bodyFont = Inter({
   variable: "--font-body",
-  subsets: ["latin"],
-});
-
-const monoFont = JetBrains_Mono({
-  variable: "--font-mono",
   subsets: ["latin"],
 });
 
@@ -34,9 +29,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable} h-full antialiased`}
+      className={`${headlineFont.variable} ${bodyFont.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-background font-body text-foreground">
+      <head>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+      </head>
+      <body className="min-h-full font-body text-on-surface">
         <div className="flex min-h-full flex-col">{children}</div>
       </body>
     </html>

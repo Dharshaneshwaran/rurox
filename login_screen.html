@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduLogistics | Secure Access</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#f5f3f3",
+              "inverse-on-surface": "#9c9d9d",
+              "primary": "#5f5e5e",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#e4e9ea",
+              "surface-bright": "#f9f9f9",
+              "on-background": "#2d3435",
+              "primary-dim": "#535252",
+              "on-secondary-fixed": "#3f3f3f",
+              "on-primary-fixed": "#403f3f",
+              "on-error": "#fff7f6",
+              "tertiary-fixed": "#f5f3f3",
+              "on-tertiary-container": "#5b5c5c",
+              "outline-variant": "#adb3b4",
+              "on-secondary-fixed-variant": "#5c5b5b",
+              "primary-fixed-dim": "#d6d4d3",
+              "secondary-container": "#e4e2e1",
+              "on-error-container": "#752121",
+              "on-secondary-container": "#525252",
+              "error-dim": "#4e0309",
+              "background": "#f9f9f9",
+              "on-surface": "#2d3435",
+              "on-tertiary-fixed": "#494a4a",
+              "on-primary": "#faf7f6",
+              "on-primary-container": "#525151",
+              "error-container": "#fe8983",
+              "surface-variant": "#dde4e5",
+              "secondary": "#5f5f5f",
+              "primary-fixed": "#e5e2e1",
+              "inverse-surface": "#0c0f0f",
+              "surface-container": "#ebeeef",
+              "surface-tint": "#5f5e5e",
+              "surface-container-low": "#f2f4f4",
+              "primary-container": "#e5e2e1",
+              "tertiary-fixed-dim": "#e6e5e5",
+              "on-surface-variant": "#5a6061",
+              "on-primary-fixed-variant": "#5c5b5b",
+              "on-tertiary": "#faf8f8",
+              "secondary-fixed": "#e4e2e1",
+              "surface-container-highest": "#dde4e5",
+              "outline": "#757c7d",
+              "on-tertiary-fixed-variant": "#666666",
+              "inverse-primary": "#ffffff",
+              "surface-dim": "#d4dbdd",
+              "error": "#9f403d",
+              "surface": "#f9f9f9",
+              "tertiary": "#5f5f5f",
+              "tertiary-dim": "#535353",
+              "secondary-fixed-dim": "#d6d4d3",
+              "on-secondary": "#fbf8f8",
+              "secondary-dim": "#535353"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #f9f9f9 0%, #f2f4f4 100%);
+        }
+        .spine-gradient {
+            background: linear-gradient(180deg, #0c0f0f 0%, #2d3435 100%);
+        }
+        .milled-button {
+            background: linear-gradient(180deg, #5f5e5e 0%, #535252 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex overflow-hidden">
+<!-- Asymmetric Background Split -->
+<div class="hidden lg:flex lg:w-1/2 spine-gradient items-center justify-center p-12 relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<div class="grid grid-cols-12 h-full w-full">
+<div class="border-r border-stone-500/20 h-full"></div>
+<div class="border-r border-stone-500/20 h-full"></div>
+<div class="border-r border-stone-500/20 h-full"></div>
+<div class="border-r border-stone-500/20 h-full"></div>
+<div class="border-r border-stone-500/20 h-full"></div>
+<div class="border-r border-stone-500/20 h-full"></div>
+<div class="border-r border-stone-500/20 h-full"></div>
+<div class="border-r border-stone-500/20 h-full"></div>
+<div class="border-r border-stone-500/20 h-full"></div>
+<div class="border-r border-stone-500/20 h-full"></div>
+<div class="border-r border-stone-500/20 h-full"></div>
+<div class="border-r border-stone-500/20 h-full"></div>
+</div>
+</div>
+<div class="z-10 max-w-md">
+<div class="mb-8">
+<h1 class="font-headline text-5xl font-extrabold text-white tracking-tighter mb-4">EduLogistics</h1>
+<div class="h-1 w-12 bg-white/20 mb-6"></div>
+<p class="font-body text-stone-400 text-lg leading-relaxed">
+                    The Architectural Ledger for educational resource management. Precision-engineered for substitute coordination and administrative clarity.
+                </p>
+</div>
+<div class="flex flex-col gap-6">
+<div class="flex items-start gap-4 p-4 rounded bg-white/5 border border-white/10">
+<span class="material-symbols-outlined text-stone-400">speed</span>
+<div>
+<p class="text-white font-semibold text-sm">Real-time Allocation</p>
+<p class="text-stone-500 text-xs mt-1">Instant substitute matching across 40+ institutions.</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 rounded bg-white/5 border border-white/10">
+<span class="material-symbols-outlined text-stone-400">verified_user</span>
+<div>
+<p class="text-white font-semibold text-sm">Enterprise Security</p>
+<p class="text-stone-500 text-xs mt-1">Multi-factor authentication and role-based access control.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-8 left-12">
+<p class="font-label text-[10px] uppercase tracking-[0.2em] text-stone-600">© 2024 Architectural Ledger Systems</p>
+</div>
+</div>
+<!-- Main Workspace Page -->
+<main class="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-12 hero-gradient">
+<div class="w-full max-w-[400px] flex flex-col">
+<!-- Branding Mobile Only -->
+<div class="lg:hidden mb-12 text-center">
+<h1 class="font-headline text-3xl font-extrabold text-inverse-surface tracking-tighter">EduLogistics</h1>
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Resource Management Portal</p>
+</div>
+<!-- Role Selection (Asymmetric Tabs) -->
+<div class="flex items-center gap-4 mb-10 overflow-x-auto pb-2 scrollbar-hide">
+<button class="flex-shrink-0 group flex flex-col items-start">
+<span class="font-label text-[11px] uppercase tracking-wider text-primary font-bold">Administrator Login</span>
+<span class="h-[2px] w-full bg-primary mt-1 scale-x-100 transition-transform origin-left"></span>
+</button>
+<button class="flex-shrink-0 group flex flex-col items-start opacity-40 hover:opacity-100 transition-opacity">
+<span class="font-label text-[11px] uppercase tracking-wider text-on-surface-variant">Teacher Portal</span>
+<span class="h-[2px] w-full bg-outline-variant mt-1 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+</button>
+<div class="flex-grow h-[1px] bg-outline-variant/20 mb-[2px]"></div>
+</div>
+<!-- Focus Container -->
+<div class="bg-surface-container-lowest p-8 rounded shadow-sm border border-surface-container-high relative">
+<div class="mb-8">
+<h2 class="font-headline text-2xl font-bold tracking-tight text-on-background">Sign In</h2>
+<p class="font-body text-xs text-on-surface-variant mt-1">Enter your credentials to access the ledger.</p>
+</div>
+<form class="space-y-6">
+<!-- Email Field -->
+<div class="space-y-1.5">
+<label class="font-label text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold" for="email">Institutional Email</label>
+<div class="relative group">
+<input class="w-full h-9 bg-surface-container-low border-0 focus:ring-1 focus:ring-primary text-sm font-body px-3 transition-all placeholder:text-outline-variant" id="email" name="email" placeholder="name@school.edu" required="" type="email"/>
+<div class="absolute bottom-0 left-0 h-[1px] w-0 bg-primary group-focus-within:w-full transition-all duration-300"></div>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-1.5">
+<div class="flex justify-between items-center">
+<label class="font-label text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold" for="password">Security Token</label>
+<a class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">Recover?</a>
+</div>
+<div class="relative group">
+<input class="w-full h-9 bg-surface-container-low border-0 focus:ring-1 focus:ring-primary text-sm font-body px-3 transition-all placeholder:text-outline-variant" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<div class="absolute bottom-0 left-0 h-[1px] w-0 bg-primary group-focus-within:w-full transition-all duration-300"></div>
+</div>
+</div>
+<!-- Options -->
+<div class="flex items-center gap-2 py-2">
+<input class="w-3 h-3 rounded-none border-outline-variant text-primary focus:ring-0 focus:ring-offset-0" id="remember" type="checkbox"/>
+<label class="font-body text-[11px] text-on-surface-variant select-none" for="remember">Maintain active session for 8 hours</label>
+</div>
+<!-- Primary CTA -->
+<button class="w-full h-9 milled-button text-on-primary font-label text-[11px] uppercase tracking-[0.15em] font-bold rounded shadow-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" type="submit">
+                        Initialize Access
+                        <span class="material-symbols-outlined text-sm">login</span>
+</button>
+</form>
+<!-- Footer Text -->
+<div class="mt-8 pt-6 border-t border-surface-container-high text-center">
+<p class="font-body text-[10px] text-on-surface-variant leading-relaxed">
+                        Authorized Personnel Only. All session activities are logged for auditing and security compliance within the EduLogistics framework.
+                    </p>
+</div>
+</div>
+<!-- External Navigation Links -->
+<div class="mt-8 flex items-center justify-between gap-4 px-2">
+<a class="flex items-center gap-2 group" href="#">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant group-hover:text-primary transition-colors">support_agent</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant group-hover:text-primary transition-colors">System Support</span>
+</a>
+<div class="h-1 w-1 bg-outline-variant/30 rounded-full"></div>
+<a class="flex items-center gap-2 group" href="#">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant group-hover:text-primary transition-colors">public</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant group-hover:text-primary transition-colors">Public Directory</span>
+</a>
+</div>
+</div>
+<!-- Decorative Floating Image - Editorial Quality -->
+<div class="mt-20 w-full max-w-2xl hidden md:block opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
+<div class="grid grid-cols-3 gap-1 h-24 overflow-hidden rounded-sm">
+<img alt="Clean modern office architecture" class="w-full h-full object-cover" data-alt="monochrome architectural detail of a modern educational building with rhythmic windows and soft daylight reflecting on grey surfaces" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANNgODKlhCLrnvGrLOpu6L-Al5UndlfJZKhe-MVeP_-p9zA34bpaESfeejvVBKJ2ZFXK1PM4bsxl6R-ucJMAsVQPiOkBowzSsDLdCPxC75aYqcayeFzrORNnXpo3xENdgPbfqHUWhkSOq68xoIhGuZN93RT_yUuuM-vfIh5nrEpwgUSwAzRxAkR4Tkqe7nYqO8jO0gntv9nYdjwtuULlJmDhas3taSN2s1I-gdlA49EpRbhJCfirwQOIZ9WUNxPwrI-vcwU7LSgFo"/>
+<img alt="Structured library" class="w-full h-full object-cover" data-alt="minimalist library interior with rows of books organized by color on grey metal shelves in soft diffused light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8kdtqmiKVxmERklbu55t4uCoXebe8x0Edfx1qM0mvoBmI4-WYIrFKLEI8lCwawu6LGZEL6mpyEsOL8VNJlsiRe8g1lsA9x1umuPJTDKckiAsL0LnOhdycfcZBMRJQCaTTYduLV6xZttJlilHJMngG2Bax8YK6o-3gg9Bqanh3CqHrZOk8RfUwZ8aLejP3xBWi1N2RnYDbGlUNQNUN4gpPCGmtn8lqbb_ySa5-QCFLjGBSYTpPvmUMFBzNJxiO7HmXOxGLfgI5tfM"/>
+<img alt="Professional planner" class="w-full h-full object-cover" data-alt="close-up of a high-end physical planner with architectural sketches and technical drawings on thick textured off-white paper" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDENQCdnwbwaaX7pw1QI_w4KWw90oIIx6cOPLWyYgL8q6NzvXZSIoY57KyQ04Gne_zJM4cko2tW6rkNk3XCr7W-60-gcvp_NEwtLhZiahT8MQexQT8staSgsWK9l-n7ZiJ5a_7RzmBA4V2EKExwjM7K0Sp9l5-E5nDujMrzsXDW184FTFUn5d0UfY6rgkY9--58OqT3kgGozDP8tzvGGbpiXbIKUJZf9ri64INfyjwrlvrPIeo1ssTD6_J5AVJGR1tanyf8r3ggoZQ"/>
+</div>
+</div>
+</main>
+</body></html>
