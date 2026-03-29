@@ -37,8 +37,8 @@ export default function TeacherLayout({
         {
           label: "My Dashboard",
           href: "/teacher/dashboard",
-          matches: ["/teacher/dashboard"],
-          icon: <CalendarIcon className="h-4 w-4" />,
+          description: "Timetable and coverage",
+          icon: <CalendarIcon className="h-full w-full" />,
         },
       ]}
     >

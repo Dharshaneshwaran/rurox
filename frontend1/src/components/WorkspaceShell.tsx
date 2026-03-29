@@ -14,6 +14,7 @@ export type WorkspaceNavItem = {
   label: string;
   href: string;
   icon: ReactNode;
+  description?: string;
   matches?: string[];
 };
 
@@ -44,7 +45,7 @@ function SidebarNav({
   onNavigate?: () => void;
 }) {
   return (
-    <nav className="space-y-2">
+    <nav className="flex flex-col gap-1.5">
       {navItems.map((item) => {
         const active = matchesPath(pathname, item);
         return (
@@ -53,16 +54,38 @@ function SidebarNav({
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              "flex items-center gap-3 border px-4 py-3 text-sm font-medium transition",
+              "group relative flex items-center gap-3.5 rounded-xl px-3.5 py-3 transition-all duration-300",
               active
-                ? "border-accent/25 bg-accent-soft text-accent"
-                : "border-transparent text-muted-foreground hover:border-border hover:bg-background hover:text-foreground"
+                ? "bg-white/10 text-white shadow-sm ring-1 ring-white/10"
+                : "text-zinc-400 hover:bg-white/5 hover:text-zinc-100"
             )}
           >
-            <span className="flex h-9 w-9 items-center justify-center border border-current/15">
-              {item.icon}
-            </span>
-            <span>{item.label}</span>
+            {active && (
+              <div className="absolute left-0 h-6 w-1 rounded-r-full bg-[var(--color-brand)] shadow-[0_0_15px_var(--color-brand)]" />
+            )}
+            <div
+              className={cn(
+                "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all duration-300",
+                active
+                  ? "bg-[var(--color-brand)] text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]"
+                  : "bg-zinc-900 border border-white/5 text-zinc-500 group-hover:bg-zinc-800 group-hover:text-zinc-200"
+              )}
+            >
+              <div className="h-4.5 w-4.5">{item.icon}</div>
+            </div>
+            <div className="min-w-0 flex-1 py-0.5">
+              <span className="text-[14px] font-black tracking-tight">{item.label}</span>
+              {item.description && (
+                <p
+                  className={cn(
+                    "mt-1.5 truncate text-[10px] uppercase font-bold tracking-[0.12em] transition-colors",
+                    active ? "text-white/60" : "text-zinc-500 group-hover:text-zinc-400"
+                  )}
+                >
+                  {item.description}
+                </p>
+              )}
+            </div>
           </Link>
         );
       })}
@@ -87,94 +110,99 @@ export default function WorkspaceShell({
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[var(--color-surface)]">
       <div className="flex min-h-screen w-full">
-        <aside className="hidden w-72 flex-col border-r border-border bg-white lg:flex">
-          <div className="flex h-full flex-col p-8">
-            <Link href="/" className="inline-flex items-center gap-3 text-foreground">
-              <AppMark className="h-10 w-10" />
+        <aside className="hidden w-72 flex-col border-r border-zinc-900 bg-zinc-950 lg:flex sticky top-0 h-screen">
+          <div className="flex flex-col h-full gap-8 p-6">
+            <Link href="/" className="inline-flex items-center gap-3.5 px-1.5 group">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md transition-transform group-hover:scale-105">
+                <AppMark className="h-6 w-6 invert opacity-100" />
+              </div>
               <div>
-                <p className="font-display text-lg tracking-[-0.03em]">
-                  Smart Teacher Assignment
+                <p className="text-[14px] font-black tracking-tight text-white leading-tight">
+                  Smart Teacher
                 </p>
-                <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-zinc-500 font-bold mt-0.5">
                   {roleLabel}
                 </p>
               </div>
             </Link>
 
-            <div className="mt-10 border border-border bg-background p-4">
-              <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
-                Workspace
+            <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-5 backdrop-blur-md">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-2.5">
+                Focus Mode
+              </h3>
+              <p className="text-[12px] font-bold leading-relaxed text-zinc-500">
+                {subtitle}
               </p>
-              <p className="mt-3 text-sm leading-6 text-foreground">{subtitle}</p>
             </div>
 
-            <div className="mt-10">
+            <div className="flex-1 space-y-4">
+              <p className="px-3 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
+                Workspace
+              </p>
               <SidebarNav pathname={pathname} navItems={navItems} />
             </div>
 
-            <div className="mt-auto border border-border bg-background p-5">
-              <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
-                Signed in as
-              </p>
-              <p className="mt-4 font-display text-2xl tracking-[-0.04em] text-foreground">
-                {user.name ?? "Unnamed user"}
-              </p>
-              <p className="mt-2 text-sm text-muted-foreground">{user.email}</p>
-              <Button
+            <div className="mt-auto space-y-4">
+              <div className="rounded-2xl bg-zinc-900/40 border border-white/5 p-4.5 flex items-center gap-3.5">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand)] text-xs font-black text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]">
+                  {user.name?.slice(0, 2).toUpperCase() || user.email[0].toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[14px] font-black text-zinc-100 tracking-tight">
+                    {user.name ?? "Unnamed user"}
+                  </p>
+                  <p className="truncate text-[10px] text-zinc-500 font-bold tracking-tight mt-0.5">
+                    {user.email}
+                  </p>
+                </div>
+              </div>
+              <button
                 onClick={onSignOut}
-                variant="secondary"
-                className="mt-6 w-full justify-between"
+                className="flex w-full items-center gap-3.5 rounded-xl px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 transition-all hover:bg-red-500/10 hover:text-red-400"
               >
-                Sign out
                 <LogoutIcon className="h-4 w-4" />
-              </Button>
+                Terminating Session
+              </button>
             </div>
           </div>
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-30 border-b border-border bg-white/92 backdrop-blur">
-            <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-8">
+          <header className="sticky top-0 z-30 border-b border-[var(--color-stroke)] bg-white/80 backdrop-blur-xl transition-all">
+            <div className="flex items-center justify-between gap-4 px-6 py-4">
               <div className="flex min-w-0 items-center gap-4">
                 <button
                   type="button"
                   onClick={() => setMenuOpen(true)}
-                  className="inline-flex h-11 w-11 items-center justify-center border border-border bg-white text-foreground transition hover:bg-background lg:hidden"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--color-stroke)] bg-white text-zinc-900 shadow-sm transition-all hover:bg-zinc-50 active:scale-95 lg:hidden"
                   aria-label="Open navigation"
                 >
                   <MenuIcon className="h-5 w-5" />
                 </button>
                 <div className="min-w-0">
-                  <p className="text-xs font-medium uppercase tracking-[0.24em] text-accent">
+                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[var(--color-brand)]">
                     {roleLabel}
                   </p>
-                  <h1 className="truncate font-display text-2xl tracking-[-0.04em] text-foreground">
+                  <h1 className="truncate text-2xl font-black tracking-tight text-zinc-900">
                     {activeItem?.label ?? "Workspace"}
                   </h1>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <Badge variant="accent" className="hidden sm:inline-flex">
-                  {roleLabel}
-                </Badge>
+              <div className="flex items-center gap-4">
                 <div className="hidden text-right md:block">
-                  <p className="text-sm font-medium text-foreground">{user.name ?? user.email}</p>
-                  <p className="text-xs text-muted-foreground">{user.email}</p>
+                  <p className="text-[13px] font-black text-zinc-900 leading-none">
+                    {user.name || "User"}
+                  </p>
+                  <p className="text-[10px] text-zinc-500 font-bold mt-1 tracking-tight">
+                    {user.email}
+                  </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={onSignOut}
-                  className={buttonClasses({
-                    variant: "secondary",
-                    size: "sm",
-                    className: "hidden sm:inline-flex",
-                  })}
-                >
-                  Exit
-                </button>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 text-[11px] font-black text-white shadow-lg md:h-11 md:w-11">
+                  {user.name?.slice(0, 2).toUpperCase() || "U"}
+                </div>
               </div>
             </div>
           </header>
@@ -191,42 +219,54 @@ export default function WorkspaceShell({
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 bg-black/35"
           />
-          <aside className="relative flex h-full w-[min(88vw,20rem)] flex-col border-r border-border bg-white">
-            <div className="flex items-center justify-between border-b border-border px-5 py-5">
-              <div>
-                <p className="font-display text-lg tracking-[-0.03em] text-foreground">
-                  Smart Teacher Assignment
-                </p>
-                <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
-                  {roleLabel}
-                </p>
+          <aside className="relative flex h-full w-[min(88vw,21rem)] flex-col border-r border-zinc-900 bg-zinc-950 p-6 shadow-2xl">
+            <div className="flex items-center justify-between gap-3 px-1.5 mb-8">
+              <div className="flex items-center gap-3.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
+                  <AppMark className="invert opacity-100 h-5 w-5" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[14px] font-black tracking-[-0.02em] text-white">Smart Teacher</span>
+                  <span className="text-[10px] uppercase tracking-[0.25em] text-zinc-500 font-bold leading-none mt-0.5">{roleLabel}</span>
+                </div>
               </div>
               <button
                 type="button"
                 onClick={() => setMenuOpen(false)}
-                className={buttonClasses({ variant: "secondary", size: "sm" })}
+                className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-zinc-400 hover:text-white"
               >
-                Close
+                <LogoutIcon className="h-4 w-4 rotate-180" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-5">
+
+            <div className="flex-1 space-y-4 overflow-y-auto">
+              <p className="px-3 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
+                Navigation
+              </p>
               <SidebarNav
                 pathname={pathname}
                 navItems={navItems}
                 onNavigate={() => setMenuOpen(false)}
               />
             </div>
-            <div className="border-t border-border p-5">
-              <p className="text-sm font-medium text-foreground">{user.name ?? user.email}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{user.email}</p>
-              <Button
+
+            <div className="mt-auto pt-6 border-t border-white/5">
+              <div className="flex items-center gap-3.5 px-3 py-4 rounded-2xl bg-white/5 border border-white/5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-brand)] text-xs font-black text-white">
+                   {user.name?.slice(0, 2).toUpperCase() || "U"}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-black text-white">{user.name || "Teacher"}</p>
+                  <p className="truncate text-[10px] text-zinc-500 font-bold tracking-tight">{user.email}</p>
+                </div>
+              </div>
+              <button
                 onClick={onSignOut}
-                variant="secondary"
-                className="mt-5 w-full justify-between"
+                className="mt-4 flex w-full items-center gap-3.5 rounded-xl px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 hover:text-red-400 hover:bg-red-400/10 transition-all font-bold"
               >
-                Sign out
                 <LogoutIcon className="h-4 w-4" />
-              </Button>
+                Sign Out
+              </button>
             </div>
           </aside>
         </div>
