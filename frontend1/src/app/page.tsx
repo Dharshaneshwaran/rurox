@@ -64,7 +64,7 @@ export default function LoginPage() {
           <div className="w-12 h-1 bg-white/20 mb-8"></div>
 
           <p className="text-lg xl:text-xl text-[#8E959E] mb-12 leading-relaxed">
-            The Architectural Ledger for educational resource management. Precision-engineered for substitute coordination and administrative clarity.
+            Smart timetable management—automated assignments, instant substitutions, zero confusion.
           </p>
 
           <div className="space-y-4">
@@ -75,7 +75,7 @@ export default function LoginPage() {
                 </div>
                 <h3 className="font-semibold text-white">Real-time Allocation</h3>
               </div>
-              <p className="text-sm text-[#8E959E] pl-9">Instant substitute matching across 40+ institutions.</p>
+              <p className="text-sm text-[#8E959E] pl-9">.....</p>
             </div>
 
             <div className="bg-[#242629] border border-white/5 p-6 rounded-md">
@@ -87,13 +87,13 @@ export default function LoginPage() {
                 </div>
                 <h3 className="font-semibold text-white">Enterprise Security</h3>
               </div>
-              <p className="text-sm text-[#8E959E] pl-9">Multi-factor authentication and role-based access control.</p>
+              <p className="text-sm text-[#8E959E] pl-9">.....</p>
             </div>
           </div>
         </div>
 
         <div className="absolute bottom-8 left-16 xl:left-24 text-[10px] uppercase tracking-[0.2em] text-[#8E959E]/50">
-          © 2024 ARCHITECTURAL LEDGER SYSTEMS
+          © 2026 Ruroxz Timetable Assignment Systems. All rights reserved.
         </div>
       </div>
 

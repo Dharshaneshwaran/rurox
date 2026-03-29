@@ -5,18 +5,20 @@ type AppMarkProps = {
   href?: string;
   className?: string;
   inverse?: boolean;
+  hideText?: boolean;
 };
 
 export default function AppMark({
   href = "/",
   className,
   inverse = false,
+  hideText = false,
 }: AppMarkProps) {
   return (
     <Link href={href} className={cn("inline-flex items-center gap-3", className)}>
       <span
         className={cn(
-          "flex h-11 w-11 items-center justify-center rounded-2xl border text-sm font-black",
+          "flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border text-sm font-black transition-transform active:scale-95",
           inverse
             ? "border-white/20 bg-white/10 text-white"
             : "border-accent/15 bg-accent text-white"
@@ -24,7 +26,8 @@ export default function AppMark({
       >
         ST
       </span>
-      <span>
+      {!hideText && (
+        <span>
         <span
           className={cn(
             "block font-display text-sm font-extrabold uppercase tracking-[0.28em]",
@@ -41,7 +44,8 @@ export default function AppMark({
         >
           Assignment System
         </span>
-      </span>
+        </span>
+      )}
     </Link>
   );
 }
