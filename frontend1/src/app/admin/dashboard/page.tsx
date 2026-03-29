@@ -5,6 +5,7 @@ import Link from "next/link";
 import AdminLayout from "@/components/AdminLayout";
 import SectionCard from "@/components/SectionCard";
 import { ArrowRightIcon, BookIcon, SearchIcon, SwapIcon, UsersIcon } from "@/components/icons";
+import { cn } from "@/lib/cn";
 import Badge from "@/components/ui/Badge";
 import Button, { buttonClasses } from "@/components/ui/Button";
 import EmptyState from "@/components/ui/EmptyState";
@@ -121,26 +122,34 @@ export default function AdminDashboardPage() {
     <AdminLayout>
       <div className="px-4 py-6 sm:px-8 lg:px-10 xl:px-12">
         <PageHeader
-          eyebrow="Teacher directory"
-          title="Staffing overview"
-          description="Monitor teacher capacity, search subjects, and open profile-level timetable editing from one operations view."
+          variant="command"
+          backgroundImage="/teacher.png"
+          eyebrow="Teacher Roster & Deployment"
+          title="Staffing Overview"
+          description="Monitor teacher capacity, search subjects, and orchestrate profile-level timetable deployment from the centralized hub."
           actions={
-            <>
-              <Link href="/admin/users" className={buttonClasses({ variant: "secondary" })}>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link href="/admin/users" className={cn(buttonClasses({ variant: "secondary" }), "bg-white/10 border-white/10 text-white hover:bg-white/20 transition-all")}>
                 Review approvals
               </Link>
-              <Link href="/admin/special-class" className={buttonClasses({ variant: "secondary" })}>
+              <Link href="/admin/special-class" className={cn(buttonClasses({ variant: "secondary" }), "bg-white/10 border-white/10 text-white hover:bg-white/20 transition-all")}>
                 Special classes
               </Link>
               <Link href="/admin/substitutions" className={buttonClasses({ variant: "accent" })}>
                 Manage absences
               </Link>
-            </>
+            </div>
           }
           meta={
             <>
-              <Badge variant="neutral">{teachers.length} teachers</Badge>
-              <Badge variant="accent">{subjectCount} subjects covered</Badge>
+              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md">
+                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                 <span className="text-[10px] font-black uppercase tracking-widest text-white/80">{teachers.length} teachers</span>
+              </div>
+              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md">
+                 <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                 <span className="text-[10px] font-black uppercase tracking-widest text-white/80">{subjectCount} subjects</span>
+              </div>
             </>
           }
         />
@@ -151,29 +160,32 @@ export default function AdminDashboardPage() {
           </div>
         ) : null}
 
-        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           <StatCard
-            label="Teachers"
+            backgroundImage="/thumb1.png"
+            label="Unified Roster"
             value={String(teachers.length)}
-            detail="Active teacher profiles currently in the system."
+            detail="Active teacher profiles synchronized."
             icon={<UsersIcon className="h-5 w-5" />}
           />
           <StatCard
-            label="Subjects"
+            backgroundImage="/thumb2.png"
+            label="Curriculum"
             value={String(subjectCount)}
-            detail="Distinct subjects represented across staff profiles."
+            detail="Distinct subjects represented."
             icon={<BookIcon className="h-5 w-5" />}
           />
           <StatCard
-            label="Cover workload"
+            backgroundImage="/thumb3.png"
+            label="Current Load"
             value={String(totalWorkload)}
-            detail="Total substitution assignments currently carried."
+            detail="Total substitutions orchestrated."
             icon={<SwapIcon className="h-5 w-5" />}
           />
           <StatCard
-            label="Search results"
+            label="Filter Match"
             value={String(filteredTeachers.length)}
-            detail="Profiles matching the current teacher or subject filter."
+            detail="Profiles matching current filters."
             tone={searchTerm ? "accent" : "default"}
             icon={<SearchIcon className="h-5 w-5" />}
           />
@@ -181,12 +193,13 @@ export default function AdminDashboardPage() {
 
         <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_360px]">
           <SectionCard
+            backgroundImage="/teacher_2.png"
             title={
               directoryLoading
-                ? "Teacher directory"
-                : `Teacher directory (${filteredTeachers.length})`
+                ? "Teacher Directory"
+                : `Teacher Directory (${filteredTeachers.length})`
             }
-            subtitle="Search by teacher name or subject, then open the full profile to update timetable slots."
+            subtitle="Search by teacher name or subject, then open the full profile to update deployment slots."
             actions={
               <div className="relative w-full sm:w-80">
                 <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -279,7 +292,8 @@ export default function AdminDashboardPage() {
           </SectionCard>
 
           <SectionCard
-            title="Add teacher"
+            backgroundImage="/sign_up.jpeg"
+            title="Add Teacher"
             subtitle="Create a teacher profile and assign initial teaching subjects."
           >
             <div className="space-y-4">

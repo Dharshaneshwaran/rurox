@@ -132,31 +132,31 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     <div className="page-shell min-h-screen lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
       <aside className="hidden border-r border-zinc-900 bg-zinc-950 px-3 py-6 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-8">
         <div className="px-3 space-y-6">
-          <div className="flex items-center gap-4 px-2 translate-x-[-4px]">
-             <AppMark hideText inverse className="shrink-0" />
-             <div className="flex flex-col">
-                <span className="text-[14px] font-black tracking-tight text-white leading-none">Antigravity</span>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-zinc-500 font-bold mt-1">Admin Portal</span>
-             </div>
+          <div className="flex items-center gap-4 px-2 translate-x-[-2px]">
+            <AppMark hideText inverse className="shrink-0 scale-105" />
+            <div className="flex flex-col">
+              <span className="text-[15px] font-black tracking-tight text-white leading-none">ruroxz</span>
+              <span className="text-[10px] uppercase tracking-[0.25em] text-zinc-500 font-black mt-1.5 opacity-80">Command Hub</span>
+            </div>
           </div>
-          
-          <div className="relative group overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50 p-5 shadow-2xl transition-all hover:bg-zinc-900/80">
-            {/* Background Image Integration */}
-            <div 
-              className="absolute inset-0 opacity-15 mix-blend-overlay grayscale group-hover:grayscale-0 transition-all duration-700 scale-125 group-hover:scale-110"
-              style={{ 
+
+          <div className="relative group overflow-hidden rounded-2xl border border-white/5 bg-zinc-900/60 p-5 shadow-2xl transition-all hover:bg-zinc-900/90">
+            {/* Professional Texture Integration */}
+            <div
+              className="absolute inset-0 opacity-[0.08] mix-blend-screen pointer-events-none grayscale group-hover:opacity-20 transition-all duration-700 scale-150 group-hover:scale-100"
+              style={{
                 backgroundImage: "url('/substitution.png')",
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               }}
             />
             <div className="relative z-10">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-3 flex items-center gap-2">
-                <span className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" />
-                System Active
+              <h3 className="text-[9px] font-black uppercase tracking-[0.35em] text-zinc-500 mb-2.5 flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
+                Network Live
               </h3>
-              <p className="text-[12px] font-bold leading-relaxed text-zinc-300">
-                Operational oversight and resource orchestration in real-time.
+              <p className="text-[12px] font-bold leading-relaxed text-zinc-400">
+                Orchestrating school resources and deployment in real-time.
               </p>
             </div>
           </div>
@@ -242,7 +242,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           ) : null}
         </header>
 
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 overflow-y-auto bg-zinc-50/60 transition-colors duration-500">
+          {children}
+        </main>
       </div>
     </div>
   );

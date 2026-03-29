@@ -48,15 +48,18 @@ function StepPill({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-full border px-4 py-3 text-sm font-semibold transition",
+        "flex flex-1 items-center gap-3 rounded-2xl border px-4 py-3 text-[11px] font-black uppercase tracking-widest transition-all duration-300",
         active
-          ? "border-[color:color-mix(in_oklab,var(--color-brand)_18%,white)] bg-[var(--color-brand-soft)] text-[var(--color-brand)]"
+          ? "border-[var(--color-brand)] bg-[var(--color-brand)] text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]"
           : complete
-            ? "border-[color:color-mix(in_oklab,var(--color-success)_18%,white)] bg-[color:color-mix(in_oklab,var(--color-success)_9%,white)] text-[var(--color-success)]"
-            : "border-[var(--color-stroke)] bg-white text-[var(--color-text-muted)]"
+            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+            : "border-zinc-200 bg-zinc-50 text-zinc-400"
       )}
     >
-      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-xs font-bold">
+      <span className={cn(
+        "flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-black",
+        active ? "bg-white text-[var(--color-brand)]" : "bg-zinc-200 text-zinc-500"
+      )}>
         {step}
       </span>
       <span>{label}</span>
@@ -411,32 +414,37 @@ export default function SubstitutionManagementPage() {
     <AdminLayout>
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <PageHeader
-          kicker="Substitution management"
-          title="Coordinate full-day absences and period coverage"
-          description="Run the complete substitution workflow from teacher selection to confirmed assignments, then use the advanced tools for manual or single-period overrides."
+          variant="command"
+          backgroundImage="/substitution.png"
+          kicker="Substitution Management"
+          title="Coordinate Absences & Coverage"
+          description="Identify coverage gaps, analyze workloads, and deploy optimized substitutions from the centralized orchestrator hub."
         />
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <MetricCard
+            backgroundImage="/thumb1.png"
             label="Teachers available"
             value={teachers.length.toString()}
-            detail="Total teachers currently available for substitution matching."
+            detail="Active teacher roster synchronized."
             badge="Roster"
             badgeTone="brand"
             icon={<UsersIcon className="h-5 w-5" />}
           />
           <MetricCard
+            backgroundImage="/thumb2.png"
             label="Recent substitutions"
             value={substitutions.length.toString()}
-            detail="All substitution records currently tracked by the system."
+            detail="Substitutions tracked by system."
             badge="Live updates"
             badgeTone="success"
             icon={<SwapIcon className="h-5 w-5" />}
           />
           <MetricCard
+            backgroundImage="/thumb3.png"
             label="Assignments selected"
             value={assignedCount.toString()}
-            detail="Current assignments selected in the active full-day review step."
+            detail="Assignments in active session."
             badge="Wizard state"
             badgeTone="warning"
             icon={<SparklesIcon className="h-5 w-5" />}
@@ -485,25 +493,35 @@ export default function SubstitutionManagementPage() {
                   </SurfaceCard>
                 </div>
 
-                <div className="lg:col-span-4">
-                  <div className="h-full rounded-[28px] bg-zinc-950 p-6 text-white shadow-xl ring-1 ring-white/10">
-                    <div className="flex flex-col h-full justify-between gap-6">
+                <div className="lg:col-span-4 translate-y-[-1px]">
+                  <div className="relative group overflow-hidden h-full rounded-[32px] bg-zinc-950 p-8 text-white shadow-2xl ring-1 ring-white/10">
+                    {/* Integrated Imagery */}
+                    <div 
+                      className="absolute inset-0 opacity-20 mix-blend-overlay grayscale group-hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-100 pointer-events-none"
+                      style={{ 
+                        backgroundImage: "url('/substitution.png')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}
+                    />
+                    
+                    <div className="relative z-10 flex flex-col h-full justify-between gap-8">
                       <div className="space-y-4">
                         <div className="flex items-center gap-2">
-                           <div className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)] animate-pulse" />
-                           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Selection Engine</span>
+                           <div className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)] shadow-[0_0_8px_var(--color-brand)] animate-pulse" />
+                           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Automation Engine</span>
                         </div>
-                        <h2 className="text-lg font-black leading-tight tracking-tight">
+                        <h2 className="text-2xl font-black leading-tight tracking-tight">
                           Orchestrate Coverage
                         </h2>
-                        <p className="text-[13px] font-medium leading-relaxed text-zinc-400">
+                        <p className="text-[14px] font-medium leading-relaxed text-zinc-400">
                           Select the absent teacher and date to generate optimized matchings based on workload and subject expertise.
                         </p>
                       </div>
                       
-                      <div className="space-y-3 pt-4 border-t border-white/5">
+                      <div className="space-y-3 pt-6 border-t border-white/10">
                         <Button
-                          className="w-full"
+                          className="w-full shadow-2xl"
                           size="lg"
                           disabled={!selectedTeacherId || !selectedDate || loadingSuggestions}
                           icon={<SearchIcon className="h-4 w-4" />}
@@ -514,7 +532,7 @@ export default function SubstitutionManagementPage() {
                         <button
                           disabled={!selectedTeacherId || !selectedDate || loadingSuggestions}
                           onClick={handleMarkPresent}
-                          className="flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-3 text-[11px] font-black uppercase tracking-widest text-white transition-all hover:bg-white/10 disabled:opacity-30"
+                          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 py-3.5 text-[11px] font-black uppercase tracking-widest text-white transition-all hover:bg-white/10 disabled:opacity-30 active:scale-95"
                         >
                           Mark as present
                         </button>
@@ -676,24 +694,34 @@ export default function SubstitutionManagementPage() {
             ) : null}
 
             {step === "confirmed" ? (
-              <div className="mx-auto max-w-2xl py-12 px-6">
-                <div className="flex flex-col items-center gap-6 text-center">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-zinc-950 text-white shadow-2xl ring-1 ring-white/10">
-                    <CheckCircleIcon className="h-10 w-10" />
+              <div className="relative mx-auto max-w-2xl py-20 px-6 overflow-hidden rounded-[48px] bg-zinc-50 border border-zinc-200 shadow-2xl">
+                {/* Decorative Success Background */}
+                <div 
+                  className="absolute inset-0 opacity-[0.03] grayscale pointer-events-none"
+                  style={{ 
+                    backgroundImage: "url('/substitution.png')",
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}
+                />
+                
+                <div className="relative z-10 flex flex-col items-center gap-8 text-center">
+                  <div className="flex h-24 w-24 items-center justify-center rounded-[32px] bg-zinc-950 text-white shadow-2xl ring-1 ring-white/10 animate-in zoom-in duration-500">
+                    <CheckCircleIcon className="h-12 w-12 text-emerald-400" />
                   </div>
-                  <div className="space-y-4">
-                    <h2 className="text-4xl font-black tracking-tight text-[var(--color-text)]">
+                  <div className="space-y-4 max-w-md">
+                    <h2 className="text-4xl font-black tracking-tight text-zinc-950">
                       Coverage Orchestrated
                     </h2>
-                    <p className="text-[15px] font-bold leading-relaxed text-zinc-500">
+                    <p className="text-[16px] font-bold leading-relaxed text-zinc-500">
                       Successfully assigned {confirmedCount} substitution{confirmedCount === 1 ? "" : "s"} for{" "}
-                      <span className="text-zinc-900 font-black">
+                      <span className="text-[var(--color-brand)] font-black">
                         {selectedTeacher?.name || "the selected teacher"}
                       </span>.
                     </p>
                   </div>
-                  <div className="flex flex-col gap-3 sm:flex-row pt-6">
-                    <Button size="lg" onClick={handleReset} className="min-w-[200px] shadow-lg">
+                  <div className="flex flex-col gap-3 sm:flex-row pt-8">
+                    <Button size="lg" onClick={handleReset} className="min-w-[240px] shadow-2xl">
                       Start new session
                     </Button>
                   </div>

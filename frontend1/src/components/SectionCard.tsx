@@ -8,6 +8,7 @@ type SectionCardProps = {
   children: ReactNode;
   className?: string;
   contentClassName?: string;
+  backgroundImage?: string;
 };
 
 export default function SectionCard({
@@ -17,23 +18,36 @@ export default function SectionCard({
   children,
   className,
   contentClassName,
+  backgroundImage,
 }: SectionCardProps) {
   return (
-    <section className={cn("border border-border bg-white", className)}>
-      <div className="flex flex-wrap items-start justify-between gap-4 bg-[linear-gradient(180deg,rgba(255,255,255,1),rgba(241,236,229,0.6))] px-6 py-5 sm:px-8">
-        <div>
-          <h2 className="font-display text-2xl tracking-[-0.04em] text-foreground">
+    <section className={cn("relative overflow-hidden rounded-[40px] border border-zinc-200 bg-white shadow-sm transition-all duration-500 hover:shadow-md", className)}>
+      {/* Subtle Integrated Imagery */}
+      {backgroundImage && (
+        <div 
+          className="absolute inset-0 opacity-[0.03] grayscale pointer-events-none transition-opacity duration-700 hover:opacity-[0.06]"
+          style={{ 
+            backgroundImage: `url('${backgroundImage}')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        />
+      )}
+
+      <div className="relative z-10 flex flex-wrap items-start justify-between gap-6 border-b border-zinc-100 bg-white/80 px-8 py-7 backdrop-blur-sm sm:px-10">
+        <div className="space-y-1.5">
+          <h2 className="font-display text-2xl font-black tracking-tight text-zinc-900">
             {title}
           </h2>
           {subtitle ? (
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+            <p className="max-w-xl text-[13px] font-medium leading-relaxed text-zinc-500">
               {subtitle}
             </p>
           ) : null}
         </div>
         {actions}
       </div>
-      <div className={cn("border-t border-border px-6 py-6 sm:px-8", contentClassName)}>
+      <div className={cn("relative z-10 px-8 py-8 sm:px-10", contentClassName)}>
         {children}
       </div>
     </section>

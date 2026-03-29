@@ -9,6 +9,7 @@ type StatCardProps = {
   icon?: ReactNode;
   tone?: "default" | "accent" | "success";
   className?: string;
+  backgroundImage?: string;
 };
 
 const toneClasses: Record<NonNullable<StatCardProps["tone"]>, string> = {
@@ -25,34 +26,50 @@ export default function StatCard({
   icon,
   tone = "default",
   className,
+  backgroundImage,
 }: StatCardProps) {
   const supportingText = helper ?? detail;
 
   return (
     <section
       className={cn(
-        "rounded-[26px] border border-border bg-white p-6 shadow-[var(--shadow-card)]",
+        "relative group overflow-hidden rounded-[32px] border border-zinc-200 bg-white p-7 shadow-sm transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px]",
         toneClasses[tone],
         className
       )}
     >
-      <div className="flex items-start justify-between gap-4">
+      {/* Subtle Background Texture Implementation */}
+      {backgroundImage && (
+        <div 
+          className="absolute inset-0 opacity-[0.04] grayscale pointer-events-none transition-opacity duration-700 group-hover:opacity-[0.08]"
+          style={{ 
+            backgroundImage: `url('${backgroundImage}')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        />
+      )}
+
+      <div className="relative z-10 flex flex-col items-start justify-between gap-6 h-full">
+        <div className="flex w-full items-center justify-between">
+           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">
+             {label}
+           </p>
+           {icon ? (
+             <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-zinc-100 bg-zinc-50 text-zinc-900 transition-colors group-hover:border-[var(--color-brand)] group-hover:text-[var(--color-brand)]">
+               {icon}
+             </div>
+           ) : null}
+        </div>
+        
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
-            {label}
-          </p>
-          <p className="mt-4 font-display text-4xl tracking-[-0.04em] text-foreground">
+          <p className="font-display text-5xl font-extrabold tracking-tighter text-zinc-900">
             {value}
           </p>
           {supportingText ? (
-            <p className="mt-3 text-sm text-muted-foreground">{supportingText}</p>
+            <p className="mt-3 text-[13px] font-medium leading-relaxed text-zinc-500 max-w-[200px]">{supportingText}</p>
           ) : null}
         </div>
-        {icon ? (
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border bg-surface text-foreground">
-            {icon}
-          </div>
-        ) : null}
       </div>
     </section>
   );
