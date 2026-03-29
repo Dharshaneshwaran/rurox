@@ -71,36 +71,45 @@ export default function TimetableGrid({
                     key={`${day.key}-${period}`}
                     className="grid grid-cols-[auto_1fr] gap-4 px-4 py-4"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center border border-border text-sm font-medium text-foreground">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-50 text-[13px] font-black text-zinc-900 shadow-sm">
                       {period}
                     </div>
                     {entry ? (
                       <div
                         className={cn(
-                          "border px-4 py-3 min-w-0",
+                          "rounded-2xl border p-4 min-w-0 flex-1 shadow-sm",
                           entry.isSubstitution
-                            ? "border-accent bg-accent-soft/70"
-                            : "border-border bg-background/55"
+                            ? "border-emerald-200 bg-emerald-50/80"
+                            : "border-zinc-200 bg-white"
                         )}
                       >
-                        <p className="font-medium text-foreground truncate">{entry.subject}</p>
-                        <p className="mt-1 text-sm text-muted-foreground truncate">
+                        <div className="flex items-start justify-between">
+                          <p className="font-black text-[14px] text-zinc-900 leading-tight uppercase tracking-tight truncate">
+                            {entry.subject}
+                          </p>
+                          {entry.isSubstitution && (
+                            <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-[8px] text-white">
+                              S
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-1.5 text-[11px] font-bold text-zinc-500 uppercase tracking-tight">
                           {entry.className}
-                          {entry.room ? ` | Room ${entry.room}` : ""}
+                          {entry.room ? ` • RM ${entry.room}` : ""}
                         </p>
                       </div>
                     ) : onAddSubject ? (
                       <button
                         type="button"
                         onClick={() => onAddSubject(day.key, period)}
-                        className="inline-flex items-center justify-between gap-3 border border-dashed border-border px-4 py-3 text-left text-sm font-medium text-accent transition hover:bg-accent-soft/40"
+                        className="flex-1 flex items-center justify-between gap-3 rounded-2xl border border-dashed border-zinc-200 bg-zinc-50/30 px-5 py-4 text-left text-[11px] font-black uppercase tracking-widest text-[var(--color-brand)] transition-all active:scale-[0.98]"
                       >
-                        <span>Assign class to this free slot</span>
-                        <PlusIcon className="h-4 w-4 flex-none" />
+                        <span>Assign Class</span>
+                        <PlusIcon className="h-4 w-4" />
                       </button>
                     ) : (
-                      <div className="border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">
-                        Free slot
+                      <div className="flex-1 border border-dashed border-zinc-100 rounded-2xl px-5 py-4 text-[11px] font-bold uppercase tracking-widest text-zinc-300">
+                        Free Slot
                       </div>
                     )}
                   </div>
@@ -111,74 +120,98 @@ export default function TimetableGrid({
         ))}
       </div>
 
-      <div className="hidden overflow-x-auto border border-border bg-white lg:block">
-        <div className="scroll-area min-w-[980px]">
+      <div className="hidden border border-border bg-white lg:block shadow-sm rounded-2xl overflow-hidden">
+        <div className="w-full">
+          {/* Header Row: Periods */}
           <div
-            className="grid border-b border-border bg-background/80 text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground"
-            style={{ gridTemplateColumns: "92px repeat(5, minmax(0, 1fr))" }}
+            className="grid border-b border-border bg-zinc-50 text-[9px] font-black uppercase tracking-[0.15em] text-zinc-500"
+            style={{ gridTemplateColumns: "80px repeat(8, minmax(0, 1fr))" }}
           >
-            <div className="px-4 py-4">Period</div>
-            {days.map((day) => (
+            <div className="px-4 py-3.5 flex items-center bg-zinc-100 font-bold border-r border-zinc-200">
+              DAY
+            </div>
+            {periods.map((period) => (
               <div
-                key={day.key}
-                className={cn(
-                  "border-l border-border px-4 py-4",
-                  today === day.key && "bg-accent-soft/70 text-accent"
-                )}
+                key={period}
+                className="px-2 py-3.5 text-center border-l border-zinc-200 first:border-l-0"
               >
-                {day.label}
+                P{period}
               </div>
             ))}
           </div>
 
-          {periods.map((period) => (
+          {/* Data Rows: Days */}
+          {days.map((day) => (
             <div
-              key={period}
-              className="grid border-b border-border last:border-b-0"
-              style={{ gridTemplateColumns: "92px repeat(5, minmax(0, 1fr))" }}
+              key={day.key}
+              className="grid border-b border-border last:border-b-0 hover:bg-zinc-50/30 transition-colors"
+              style={{ gridTemplateColumns: "80px repeat(8, minmax(0, 1fr))" }}
             >
-              <div className="flex items-start justify-center px-4 py-5 text-sm font-medium text-foreground">
-                {period}
+              {/* Day Label (First Column) */}
+              <div
+                className={cn(
+                  "flex items-center justify-center px-4 py-6 font-black text-[12px] uppercase tracking-wider border-r border-zinc-200",
+                  today === day.key ? "bg-[var(--color-brand)] text-white shadow-inner" : "bg-zinc-100 text-zinc-900"
+                )}
+              >
+                {day.key}
               </div>
-              {days.map((day) => {
+
+              {/* Period Cells */}
+              {periods.map((period) => {
                 const entry = byKey.get(`${day.key}-${period}`);
                 return (
                   <div
                     key={`${day.key}-${period}`}
                     className={cn(
-                      "border-l border-border px-3 py-3",
-                      today === day.key && "bg-accent-soft/20"
+                      "border-l border-zinc-200 px-1.5 py-1.5 flex flex-col min-h-[140px]",
+                      today === day.key && "bg-[rgba(var(--color-brand-rgb),0.02)]"
                     )}
                   >
                     {entry ? (
                       <div
                         className={cn(
-                          "h-full border px-4 py-3 min-w-0 flex flex-col",
+                          "h-full rounded-xl border p-2.5 transition-all shadow-sm",
                           entry.isSubstitution
-                            ? "border-accent bg-accent-soft/80"
-                            : "border-border bg-white"
+                            ? "border-emerald-200 bg-emerald-50/80"
+                            : "border-zinc-200 bg-white"
                         )}
                       >
-                        <p className="font-medium text-foreground truncate">{entry.subject}</p>
-                        <p className="mt-1 text-sm text-muted-foreground truncate">
+                         <div className="flex items-start justify-between gap-1">
+                           <p className="font-extrabold text-[12px] text-zinc-900 leading-none uppercase tracking-tight line-clamp-2">
+                             {entry.subject}
+                           </p>
+                           {entry.isSubstitution && (
+                             <span className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-[7px] font-black text-white">
+                               S
+                             </span>
+                           )}
+                         </div>
+                        
+                        <p className="mt-2 text-[10px] font-bold text-zinc-400 uppercase tracking-tight">
                           {entry.className}
                         </p>
-                        <p className="mt-3 text-xs uppercase tracking-[0.2em] text-muted-foreground truncate mt-auto">
-                          {entry.room ? `Room ${entry.room}` : "Room not assigned"}
-                        </p>
+                        
+                        <div className="mt-auto pt-2 flex items-center justify-between border-t border-zinc-50">
+                           <span className="text-[8px] font-black uppercase tracking-tight text-zinc-300 truncate">
+                              {entry.room ? `RM ${entry.room}` : "No Rm"}
+                           </span>
+                        </div>
                       </div>
                     ) : onAddSubject ? (
                       <button
                         type="button"
                         onClick={() => onAddSubject(day.key, period)}
-                        className="flex h-full min-h-24 w-full items-center justify-between border border-dashed border-border px-4 py-3 text-left text-sm text-accent transition hover:bg-accent-soft/40"
+                        className="group flex h-full w-full flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-zinc-200 bg-zinc-50/10 text-zinc-300 transition-all hover:bg-[rgba(var(--color-brand-rgb),0.05)] hover:text-[var(--color-brand)]"
                       >
-                        <span className="font-medium">Assign class</span>
-                        <PlusIcon className="h-4 w-4 flex-none" />
+                        <PlusIcon className="h-4 w-4 transition-transform group-hover:scale-110" />
+                        <span className="text-[8px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                          Assign
+                        </span>
                       </button>
                     ) : (
-                      <div className="flex h-full min-h-24 items-center border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">
-                        Free slot
+                      <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-zinc-50 bg-zinc-50/5 text-[9px] font-bold uppercase tracking-widest text-zinc-200">
+                        -
                       </div>
                     )}
                   </div>
@@ -188,6 +221,7 @@ export default function TimetableGrid({
           ))}
         </div>
       </div>
+
     </div>
   );
 }
