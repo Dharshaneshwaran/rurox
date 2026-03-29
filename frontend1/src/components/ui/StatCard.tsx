@@ -41,7 +41,7 @@ export default function StatCard({
       {/* Subtle Background Texture Implementation */}
       {backgroundImage && (
         <div 
-          className="absolute inset-0 opacity-[0.04] grayscale pointer-events-none transition-opacity duration-700 group-hover:opacity-[0.08]"
+          className="absolute inset-0 opacity-[0.10] grayscale pointer-events-none transition-opacity duration-700 group-hover:opacity-[0.22] scale-110 group-hover:scale-100"
           style={{ 
             backgroundImage: `url('${backgroundImage}')`,
             backgroundSize: 'cover',
@@ -67,7 +67,7 @@ export default function StatCard({
             {value}
           </p>
           {supportingText ? (
-            <p className="mt-3 text-[13px] font-medium leading-relaxed text-zinc-500 max-w-[200px]">{supportingText}</p>
+            <p className="mt-3 text-[13px] font-semibold leading-relaxed text-zinc-600 max-w-[200px]">{supportingText}</p>
           ) : null}
         </div>
       </div>

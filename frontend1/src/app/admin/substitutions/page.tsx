@@ -423,7 +423,7 @@ export default function SubstitutionManagementPage() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <MetricCard
-            backgroundImage="/thumb1.png"
+            backgroundImage="/teacher.png"
             label="Teachers available"
             value={teachers.length.toString()}
             detail="Active teacher roster synchronized."
@@ -432,7 +432,7 @@ export default function SubstitutionManagementPage() {
             icon={<UsersIcon className="h-5 w-5" />}
           />
           <MetricCard
-            backgroundImage="/thumb2.png"
+            backgroundImage="/teacher_2.png"
             label="Recent substitutions"
             value={substitutions.length.toString()}
             detail="Substitutions tracked by system."
@@ -441,7 +441,7 @@ export default function SubstitutionManagementPage() {
             icon={<SwapIcon className="h-5 w-5" />}
           />
           <MetricCard
-            backgroundImage="/thumb3.png"
+            backgroundImage="/substitution.png"
             label="Assignments selected"
             value={assignedCount.toString()}
             detail="Assignments in active session."

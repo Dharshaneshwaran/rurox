@@ -26,7 +26,7 @@ export default function TeacherLayout({
 
   return (
     <WorkspaceShell
-      roleLabel="Teacher workspace"
+      roleLabel="Teacher Hub"
       subtitle="Track your week, review substitute assignments, and update open timetable slots."
       user={user}
       onSignOut={() => {

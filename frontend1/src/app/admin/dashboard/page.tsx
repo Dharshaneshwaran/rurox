@@ -162,21 +162,21 @@ export default function AdminDashboardPage() {
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           <StatCard
-            backgroundImage="/thumb1.png"
+            backgroundImage="/teacher.png"
             label="Unified Roster"
             value={String(teachers.length)}
             detail="Active teacher profiles synchronized."
             icon={<UsersIcon className="h-5 w-5" />}
           />
           <StatCard
-            backgroundImage="/thumb2.png"
+            backgroundImage="/teacher_2.png"
             label="Curriculum"
             value={String(subjectCount)}
             detail="Distinct subjects represented."
             icon={<BookIcon className="h-5 w-5" />}
           />
           <StatCard
-            backgroundImage="/thumb3.png"
+            backgroundImage="/substitution.png"
             label="Current Load"
             value={String(totalWorkload)}
             detail="Total substitutions orchestrated."
@@ -292,7 +292,6 @@ export default function AdminDashboardPage() {
           </SectionCard>
 
           <SectionCard
-            backgroundImage="/sign_up.jpeg"
             title="Add Teacher"
             subtitle="Create a teacher profile and assign initial teaching subjects."
           >

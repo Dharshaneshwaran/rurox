@@ -39,7 +39,7 @@ export default function PageHeader({
         <div 
           className={cn(
             "absolute inset-0 pointer-events-none transition-opacity duration-700",
-            isCommand ? "opacity-[0.12] mix-blend-screen scale-110" : "opacity-[0.05] grayscale"
+            isCommand ? "opacity-30 mix-blend-screen scale-110" : "opacity-[0.08] grayscale"
           )}
           style={{ 
             backgroundImage: `url('${backgroundImage}')`,

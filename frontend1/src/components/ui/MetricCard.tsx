@@ -51,7 +51,7 @@ export default function MetricCard({
       {/* Subtle Integrated Imagery */}
       {backgroundImage && (
         <div 
-          className="absolute inset-0 opacity-[0.03] grayscale pointer-events-none transition-opacity duration-700 group-hover:opacity-[0.06]"
+          className="absolute inset-0 opacity-[0.12] grayscale pointer-events-none transition-opacity duration-700 group-hover:opacity-[0.20]"
           style={{ 
             backgroundImage: `url('${backgroundImage}')`,
             backgroundSize: 'cover',
@@ -80,7 +80,7 @@ export default function MetricCard({
             {value}
           </p>
           {supportingText ? (
-            <p className="mt-3 text-[13px] font-bold leading-relaxed text-zinc-500 max-w-[200px]">
+            <p className="mt-3 text-[13px] font-bold leading-relaxed text-zinc-600 max-w-[200px]">
               {supportingText}
             </p>
           ) : null}

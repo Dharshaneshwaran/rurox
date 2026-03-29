@@ -57,7 +57,7 @@ function SidebarNav({
               "group relative flex items-center gap-3.5 rounded-xl px-3.5 py-3 transition-all duration-300",
               active
                 ? "bg-white/10 text-white shadow-sm ring-1 ring-white/10"
-                : "text-zinc-400 hover:bg-white/5 hover:text-zinc-100"
+                : "text-zinc-300 hover:bg-white/5 hover:text-white"
             )}
           >
             {active && (
@@ -74,12 +74,19 @@ function SidebarNav({
               <div className="h-4.5 w-4.5">{item.icon}</div>
             </div>
             <div className="min-w-0 flex-1 py-0.5">
-              <span className="text-[14px] font-black tracking-tight">{item.label}</span>
+              <span 
+                className={cn(
+                  "text-[14px] font-black tracking-tight transition-colors",
+                  active ? "text-white" : "text-zinc-200 group-hover:text-white"
+                )}
+              >
+                {item.label}
+              </span>
               {item.description && (
                 <p
                   className={cn(
-                    "mt-1.5 truncate text-[10px] uppercase font-bold tracking-[0.12em] transition-colors",
-                    active ? "text-white/60" : "text-zinc-500 group-hover:text-zinc-400"
+                    "mt-1.5 truncate text-[10px] uppercase font-bold tracking-[0.14em] transition-colors",
+                    active ? "text-white/70" : "text-zinc-500 group-hover:text-zinc-300"
                   )}
                 >
                   {item.description}
@@ -110,19 +117,29 @@ export default function WorkspaceShell({
   );
 
   return (
-    <div className="min-h-screen bg-[var(--color-surface)]">
+    <div className="min-h-screen bg-zinc-50/60">
       <div className="flex min-h-screen w-full">
-        <aside className="hidden w-72 flex-col border-r border-zinc-900 bg-zinc-950 lg:flex sticky top-0 h-screen">
-          <div className="flex flex-col h-full gap-8 p-6">
+        <aside className="hidden w-72 flex-col border-r border-zinc-900 bg-zinc-950 lg:flex sticky top-0 h-screen overflow-hidden group/sidebar">
+          {/* Background Texture */}
+          <div 
+            className="absolute inset-0 opacity-[0.25] mix-blend-overlay grayscale transition-opacity duration-700 group-hover/sidebar:opacity-[0.40] pointer-events-none"
+            style={{ 
+              backgroundImage: 'url(/substitution.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'contrast(1.2) brightness(0.8)'
+            }}
+          />
+          <div className="relative z-10 flex flex-col h-full gap-8 p-6">
             <Link href="/" className="inline-flex items-center gap-3.5 px-1.5 group">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md transition-transform group-hover:scale-105">
                 <AppMark className="h-6 w-6 invert opacity-100" />
               </div>
               <div>
                 <p className="text-[14px] font-black tracking-tight text-white leading-tight">
-                  Smart Teacher
+                  ruroxz
                 </p>
-                <p className="text-[10px] uppercase tracking-[0.25em] text-zinc-500 font-bold mt-0.5">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-brand)] font-black mt-2 leading-none">
                   {roleLabel}
                 </p>
               </div>
@@ -145,24 +162,24 @@ export default function WorkspaceShell({
             </div>
 
             <div className="mt-auto space-y-4">
-              <div className="rounded-2xl bg-zinc-900/40 border border-white/5 p-4.5 flex items-center gap-3.5">
+              <div className="rounded-2xl bg-white/[0.04] border border-white/5 p-4.5 flex items-center gap-3.5 backdrop-blur-md transition-colors hover:bg-white/[0.07]">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand)] text-xs font-black text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]">
                   {user.name?.slice(0, 2).toUpperCase() || user.email[0].toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[14px] font-black text-zinc-100 tracking-tight">
+                  <p className="truncate text-[14px] font-black text-white tracking-tight">
                     {user.name ?? "Unnamed user"}
                   </p>
-                  <p className="truncate text-[10px] text-zinc-500 font-bold tracking-tight mt-0.5">
+                  <p className="truncate text-[10px] text-zinc-400 font-bold tracking-tight mt-0.5">
                     {user.email}
                   </p>
                 </div>
               </div>
               <button
                 onClick={onSignOut}
-                className="flex w-full items-center gap-3.5 rounded-xl px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 transition-all hover:bg-red-500/10 hover:text-red-400"
+                className="flex w-full items-center gap-3.5 rounded-xl px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 transition-all hover:bg-red-500/15 hover:text-red-400 ring-1 ring-white/5"
               >
-                <LogoutIcon className="h-4 w-4" />
+                <LogoutIcon className="h-4 w-4 opacity-70" />
                 Terminating Session
               </button>
             </div>

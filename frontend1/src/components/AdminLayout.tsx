@@ -60,10 +60,10 @@ function NavItems({
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              "group relative flex items-center gap-3.5 rounded-xl px-3.5 py-3 transition-all duration-200",
+              "group relative flex items-center gap-3.5 rounded-xl px-3.5 py-3 transition-all duration-300",
               isActive
                 ? "bg-white/10 text-white shadow-sm"
-                : "text-zinc-400 hover:bg-white/5 hover:text-zinc-100"
+                : "text-zinc-300 hover:bg-white/5 hover:text-white"
             )}
           >
             {isActive && (
@@ -80,11 +80,18 @@ function NavItems({
               <Icon className="h-4.5 w-4.5" />
             </div>
             <div className="min-w-0 flex-1 py-0.5">
-              <p className="text-[14px] font-black leading-none tracking-tight">{item.label}</p>
+              <p 
+                className={cn(
+                  "text-[14px] font-black leading-none tracking-tight transition-colors",
+                  isActive ? "text-white" : "text-zinc-200 group-hover:text-white"
+                )}
+              >
+                {item.label}
+              </p>
               <p
                 className={cn(
-                  "mt-1.5 truncate text-[10px] uppercase font-bold tracking-[0.12em] transition-colors",
-                  isActive ? "text-white/60" : "text-zinc-500 group-hover:text-zinc-400"
+                  "mt-1.5 truncate text-[10px] uppercase font-bold tracking-[0.15em] transition-colors",
+                  isActive ? "text-white/70" : "text-zinc-500 group-hover:text-zinc-300"
                 )}
               >
                 {item.description}
@@ -130,20 +137,30 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="page-shell min-h-screen lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
-      <aside className="hidden border-r border-zinc-900 bg-zinc-950 px-3 py-6 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-8">
+      <aside className="hidden border-r border-zinc-900 bg-zinc-950 px-3 py-6 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-8 overflow-hidden group/sidebar">
+        {/* Background Texture */}
+        <div 
+          className="absolute inset-0 opacity-[0.25] mix-blend-overlay grayscale transition-opacity duration-700 group-hover/sidebar:opacity-[0.40] pointer-events-none"
+          style={{ 
+            backgroundImage: 'url(/substitution.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'contrast(1.2) brightness(0.8)'
+          }}
+        />
         <div className="px-3 space-y-6">
           <div className="flex items-center gap-4 px-2 translate-x-[-2px]">
             <AppMark hideText inverse className="shrink-0 scale-105" />
             <div className="flex flex-col">
               <span className="text-[15px] font-black tracking-tight text-white leading-none">ruroxz</span>
-              <span className="text-[10px] uppercase tracking-[0.25em] text-zinc-500 font-black mt-1.5 opacity-80">Command Hub</span>
+              <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-brand)] font-black mt-2">Command Hub</span>
             </div>
           </div>
 
           <div className="relative group overflow-hidden rounded-2xl border border-white/5 bg-zinc-900/60 p-5 shadow-2xl transition-all hover:bg-zinc-900/90">
             {/* Professional Texture Integration */}
             <div
-              className="absolute inset-0 opacity-[0.08] mix-blend-screen pointer-events-none grayscale group-hover:opacity-20 transition-all duration-700 scale-150 group-hover:scale-100"
+              className="absolute inset-0 opacity-[0.25] mix-blend-screen pointer-events-none grayscale group-hover:opacity-40 transition-all duration-700 scale-[1.3] group-hover:scale-100"
               style={{
                 backgroundImage: "url('/substitution.png')",
                 backgroundSize: 'cover',
@@ -177,19 +194,19 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               {initials}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[13px] font-black text-zinc-100">
+              <p className="truncate text-[13px] font-black text-white">
                 {user.name || "Administrator"}
               </p>
-              <p className="truncate text-[10px] text-zinc-500 font-bold tracking-tight">
+              <p className="truncate text-[10px] text-zinc-400 font-bold tracking-tight">
                 {user.email}
               </p>
             </div>
           </div>
           <button
             onClick={handleSignOut}
-            className="mt-4 flex w-full items-center gap-3 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 transition-all hover:bg-red-500/10 hover:text-red-400"
+            className="mt-4 flex w-full items-center gap-3 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 transition-all hover:bg-red-500/15 hover:text-red-400 ring-1 ring-white/5"
           >
-            <LogOutIcon className="h-4 w-4" />
+            <LogOutIcon className="h-4 w-4 opacity-70" />
             Sign out
           </button>
         </div>

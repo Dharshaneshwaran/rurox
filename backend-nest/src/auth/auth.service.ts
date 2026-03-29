@@ -19,18 +19,28 @@ const adminApprovalEmail = process.env.ADMIN_APPROVAL_EMAIL ?? '';
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async login(email: string, password: string) {
+  async login(emailStr: string, passwordStr: string) {
+    const email = emailStr.toLowerCase().trim();
+    const password = passwordStr.trim();
+
+    console.log(`[AuthService] Attempting login for email: ${email}`);
     const user = await this.prisma.user.findUnique({ where: { email } });
+    
     if (!user) {
+      console.log(`[AuthService] User not found for email: ${email}`);
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    console.log(`[AuthService] User found. ID: ${user.id}, Role: ${user.role}, Approved: ${user.approved}`);
+    
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
+      console.log(`[AuthService] Password mismatch for user: ${email}`);
       throw new UnauthorizedException('Invalid email or password');
     }
 
     if (user.role === 'TEACHER' && !user.approved) {
+      console.log(`[AuthService] Teacher login blocked: Pending approval for ${email}`);
       throw new UnauthorizedException('Your account is pending admin approval');
     }
 
@@ -66,7 +76,10 @@ export class AuthService {
     return { user };
   }
 
-  async signup(name: string, email: string, password: string) {
+  async signup(name: string, emailStr: string, passwordStr: string) {
+    const email = emailStr.toLowerCase().trim();
+    const password = passwordStr.trim();
+
     try {
       const existing = await this.prisma.user.findUnique({ where: { email } });
       if (existing) {

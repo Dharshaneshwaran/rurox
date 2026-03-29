@@ -231,13 +231,15 @@ export default function TeacherDashboardPage() {
     <TeacherLayout>
       <div className="px-4 py-6 sm:px-8 lg:px-10 xl:px-12">
         <PageHeader
+          variant="command"
+          backgroundImage="/teacher.png"
           eyebrow="Teacher dashboard"
           title={`Hello${user?.name ? `, ${user.name}` : ""}`}
           description="Review your week, monitor special sessions, and keep open timetable slots filled without losing sight of assigned cover work."
           meta={
             <>
-              <Badge variant="accent">Live timetable</Badge>
-              <Badge variant="neutral">{openSlots} open slots this week</Badge>
+              <Badge variant="accent" className="bg-white/10 text-white border-white/20">Live timetable</Badge>
+              <Badge variant="neutral" className="bg-white/5 text-zinc-300 border-white/10">{openSlots} open slots this week</Badge>
             </>
           }
         />
@@ -254,6 +256,7 @@ export default function TeacherDashboardPage() {
             value={String(timetables.length)}
             detail="Core timetable entries assigned to your week."
             icon={<CalendarIcon className="h-5 w-5" />}
+            backgroundImage="/teacher_2.png"
           />
           <StatCard
             label="Open slots"
@@ -267,6 +270,7 @@ export default function TeacherDashboardPage() {
             detail="Cover assignments currently assigned to you."
             tone={substitutions.length ? "accent" : "default"}
             icon={<SwapIcon className="h-5 w-5" />}
+            backgroundImage="/substitution.png"
           />
           <StatCard
             label="Special classes"
@@ -274,11 +278,13 @@ export default function TeacherDashboardPage() {
             detail="Additional sessions and extra events."
             tone={specialClasses.length ? "success" : "default"}
             icon={<BookIcon className="h-5 w-5" />}
+            backgroundImage="/teacher.png"
           />
         </div>
 
         <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
           <SectionCard
+            backgroundImage="/teacher_2.png"
             className="min-w-0 overflow-hidden"
             title="Weekly timetable"
             subtitle="Review the full week and add classes directly into any open slot."
@@ -292,6 +298,7 @@ export default function TeacherDashboardPage() {
 
           <div className="space-y-6">
             <SectionCard
+              backgroundImage="/substitution.png"
               title="Substitution alerts"
               subtitle="Your assigned cover periods appear here as soon as they are confirmed."
             >

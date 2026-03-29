@@ -106,6 +106,17 @@ export class SubstitutionsService {
       select: { id: true, name: true, subjects: true, workload: true },
     });
 
+    // Also exclude teachers who are themselves marked as absent for this date/period
+    const absentTeachers: Array<{ absentTeacherId: string }> =
+      await this.prisma.substitution.findMany({
+        where: {
+          day: params.day,
+          period: params.period,
+          date: params.date,
+        },
+        select: { absentTeacherId: true },
+      });
+
     const existingAssignments: Array<{ replacementTeacherId: string | null }> =
       await this.prisma.substitution.findMany({
         where: {
@@ -119,9 +130,11 @@ export class SubstitutionsService {
 
     const unavailableIds = new Set<string>(
       existingAssignments
-        .map((item) => item.replacementTeacherId)
+        .map((item: { replacementTeacherId: string | null }) => item.replacementTeacherId)
         .filter((id): id is string => Boolean(id))
     );
+
+    absentTeachers.forEach((item) => unavailableIds.add(item.absentTeacherId));
 
     // Also exclude teachers already suggested for earlier periods in this batch
     if (params.excludeIds) {
@@ -206,10 +219,20 @@ export class SubstitutionsService {
       },
     });
 
-    await this.prisma.teacher.update({
+    console.log(`[SubstitutionsService] Created manual substitution. ID: ${substitution.id}`);
+    
+    // Cleanup: If this newly absent teacher was previously assigned to cover someone else, clear that.
+    await this.cleanupCascadingAssignments(absentTeacherId, [period], dateValue);
+
+    console.log(`[SubstitutionsService] Incrementing workload for teacher: ${replacementTeacherId}`);
+
+    const updatedTeacher = await this.prisma.teacher.update({
       where: { id: replacementTeacherId },
       data: { workload: { increment: 1 } },
+      include: { user: true },
     });
+
+    console.log(`[SubstitutionsService] Teacher ${replacementTeacherId} workload incremented. New workload: ${updatedTeacher.workload}. Linked user: ${updatedTeacher.user?.email || 'NONE'}`);
 
     return { substitution };
   }
@@ -349,6 +372,10 @@ export class SubstitutionsService {
 
     const created = [];
 
+    // Cleanup: If this newly absent teacher was previously assigned to cover anyone else today, clear those.
+    // FULL DAY: We clear ALL possible periods (1-8) to ensure any covers in their "free" gaps are also removed.
+    await this.cleanupCascadingAssignments(absentTeacherId, [1, 2, 3, 4, 5, 6, 7, 8], dateValue);
+
     for (const assignment of assignments) {
       // Check for clash
       const clash = await this.prisma.timetable.findFirst({
@@ -386,10 +413,14 @@ export class SubstitutionsService {
         include: { absentTeacher: true, replacementTeacher: true },
       });
 
+      console.log(`[SubstitutionsService] Created full-day substitution. ID: ${substitution.id}. Replacement: ${substitution.replacementTeacher?.name}`);
+
       await this.prisma.teacher.update({
         where: { id: assignment.replacementTeacherId },
         data: { workload: { increment: 1 } },
       });
+      
+      console.log(`[SubstitutionsService] Workload incremented for: ${assignment.replacementTeacherId}`);
 
       created.push(substitution);
     }
@@ -589,5 +620,39 @@ export class SubstitutionsService {
     });
 
     return { success: true };
+  }
+
+  /**
+   * Helper to cleanup substitutions where a now-absent teacher was assigned as a replacement.
+   */
+  private async cleanupCascadingAssignments(teacherId: string, periods: number[], date: Date) {
+    console.log(`[SubstitutionsService] Running cleanup for teacher ${teacherId} on ${date.toISOString().split('T')[0]} for periods: ${periods.join(', ')}`);
+
+    const assignmentsToClear = await this.prisma.substitution.findMany({
+      where: {
+        replacementTeacherId: teacherId,
+        date: date,
+        period: { in: periods }
+      }
+    });
+
+    if (assignmentsToClear.length > 0) {
+      console.log(`[SubstitutionsService] Found ${assignmentsToClear.length} cascading assignments to clear`);
+      
+      for (const assignment of assignmentsToClear) {
+        // Delete the invalid cover
+        await this.prisma.substitution.delete({ where: { id: assignment.id } });
+        
+        // Decrement their workload since they are no longer covering
+        await this.prisma.teacher.update({
+          where: { id: teacherId },
+          data: { workload: { decrement: 1 } }
+        });
+        
+        console.log(`[SubstitutionsService] Cleared cascading cover for Alice/Bob: Period ${assignment.period} (ID: ${assignment.id})`);
+      }
+    } else {
+      console.log(`[SubstitutionsService] No cascading assignments found for this teacher/date/period set.`);
+    }
   }
 }

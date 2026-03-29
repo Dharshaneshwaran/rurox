@@ -25,7 +25,7 @@ export default function SectionCard({
       {/* Subtle Integrated Imagery */}
       {backgroundImage && (
         <div 
-          className="absolute inset-0 opacity-[0.03] grayscale pointer-events-none transition-opacity duration-700 hover:opacity-[0.06]"
+          className="absolute inset-0 opacity-[0.08] grayscale pointer-events-none transition-opacity duration-700 hover:opacity-[0.18] scale-105 hover:scale-100"
           style={{ 
             backgroundImage: `url('${backgroundImage}')`,
             backgroundSize: 'cover',
@@ -40,7 +40,7 @@ export default function SectionCard({
             {title}
           </h2>
           {subtitle ? (
-            <p className="max-w-xl text-[13px] font-medium leading-relaxed text-zinc-500">
+            <p className="max-w-xl text-[13.5px] font-semibold leading-relaxed text-zinc-600">
               {subtitle}
             </p>
           ) : null}
