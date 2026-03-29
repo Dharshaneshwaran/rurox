@@ -1,187 +1,217 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import {
-  AppMark,
-  ArrowRightIcon,
-  CalendarIcon,
-  ShieldIcon,
-  SwapIcon,
-  UsersIcon,
-} from "@/components/icons";
-import Badge from "@/components/ui/Badge";
-import { buttonClasses } from "@/components/ui/Button";
+import { useRouter } from "next/navigation";
+import { setStoredAuth } from "@/hooks/useAuth";
+import { apiFetch } from "@/lib/api";
+import type { User } from "@/lib/types";
 
-export default function Home() {
+export default function LoginPage() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<"ADMIN" | "TEACHER">("ADMIN");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const data = await apiFetch<{ token: string; user: User }>(
+        "/api/auth/login",
+        {
+          method: "POST",
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      if (activeTab === "ADMIN" && data.user.role !== "ADMIN") {
+        setError("This account does not have admin access.");
+        setLoading(false);
+        return;
+      }
+      if (activeTab === "TEACHER" && data.user.role !== "TEACHER") {
+        setError("This account is not approved for teacher access.");
+        setLoading(false);
+        return;
+      }
+
+      setStoredAuth(data.token, data.user);
+      router.push(activeTab === "ADMIN" ? "/admin/dashboard" : "/teacher/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background px-4 py-4 sm:px-6 lg:p-6">
-      <main className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-[1500px] flex-col border border-border bg-white">
-        <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border px-6 py-5 sm:px-10">
-          <div className="flex items-center gap-3">
-            <AppMark className="h-10 w-10 text-foreground" />
-            <div>
-              <p className="font-display text-lg tracking-[-0.03em] text-foreground">
-                Smart Teacher Assignment
-              </p>
-              <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
-                Scheduling workspace
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <Link href="/teacher/signup" className={buttonClasses({ variant: "secondary" })}>
-              Request teacher access
-            </Link>
-            <Link href="/admin/login" className={buttonClasses({ variant: "accent" })}>
-              Admin login
-            </Link>
-          </div>
-        </header>
+    <div className="flex min-h-screen w-full font-body">
+      {/* Left Panel */}
+      <div className="hidden lg:flex flex-col justify-center w-1/2 bg-[#1b1c1e] text-white p-16 xl:p-24 relative overflow-hidden">
+        {/* Subtle grid background */}
+        <div
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}
+        />
 
-        <section className="grid flex-1 gap-0 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="relative border-b border-border px-6 py-10 sm:px-10 sm:py-14 lg:border-b-0 lg:border-r lg:py-18">
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(194,65,12,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(194,65,12,0.06)_1px,transparent_1px)] bg-[size:48px_48px]" />
-            <div className="relative max-w-3xl">
-              <Badge variant="accent">Real-time staffing operations</Badge>
-              <h1 className="mt-8 font-display text-5xl tracking-[-0.07em] text-foreground sm:text-6xl lg:text-7xl">
-                Keep timetables stable even when the day shifts underneath you.
-              </h1>
-              <p className="mt-6 max-w-2xl text-base leading-8 text-muted-foreground sm:text-lg">
-                Give admins one place to assign coverage, review staffing, and
-                approve accounts. Give teachers a clearer view of their week,
-                substitutions, and special sessions.
-              </p>
+        <div className="max-w-xl z-10 relative">
+          <h1 className="text-5xl xl:text-6xl font-display font-bold mb-6 tracking-tight">Ruroxz Time Management</h1>
+          <div className="w-12 h-1 bg-white/20 mb-8"></div>
 
-              <div className="mt-10 flex flex-wrap gap-3">
-                <Link href="/admin/login" className={buttonClasses({ variant: "accent", size: "lg" })}>
-                  Open admin workspace
-                  <ArrowRightIcon className="h-4 w-4" />
-                </Link>
-                <Link href="/teacher/login" className={buttonClasses({ variant: "secondary", size: "lg" })}>
-                  Open teacher workspace
-                </Link>
-              </div>
+          <p className="text-lg xl:text-xl text-[#8E959E] mb-12 leading-relaxed">
+            The Architectural Ledger for educational resource management. Precision-engineered for substitute coordination and administrative clarity.
+          </p>
 
-              <div className="mt-12 grid gap-4 sm:grid-cols-3">
-                {[
-                  {
-                    label: "Live coverage",
-                    value: "8 periods",
-                    detail: "Review, assign, and confirm substitutions without leaving the screen.",
-                  },
-                  {
-                    label: "Teacher access",
-                    value: "Approval flow",
-                    detail: "Pending accounts and staff visibility stay inside the same admin system.",
-                  },
-                  {
-                    label: "Weekly clarity",
-                    value: "40 slots",
-                    detail: "Teachers get a full-week schedule with free slots and special classes surfaced clearly.",
-                  },
-                ].map((item) => (
-                  <div key={item.label} className="border border-border bg-white/92 p-5">
-                    <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
-                      {item.label}
-                    </p>
-                    <p className="mt-3 font-display text-3xl tracking-[-0.04em] text-foreground">
-                      {item.value}
-                    </p>
-                    <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                      {item.detail}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="grid content-start gap-0">
-            <div className="border-b border-border px-6 py-8 sm:px-8 sm:py-10">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.24em] text-accent">
-                    Workspace split
-                  </p>
-                  <h2 className="mt-3 font-display text-3xl tracking-[-0.05em] text-foreground">
-                    One system, two focused experiences
-                  </h2>
+          <div className="space-y-4">
+            <div className="bg-[#242629] border border-white/5 p-6 rounded-md">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
+                  <div className="w-2.5 h-2.5 rounded-full bg-white/70"></div>
                 </div>
-                <ShieldIcon className="h-8 w-8 text-accent" />
+                <h3 className="font-semibold text-white">Real-time Allocation</h3>
               </div>
+              <p className="text-sm text-[#8E959E] pl-9">Instant substitute matching across 40+ institutions.</p>
             </div>
 
-            <div className="grid gap-0 sm:grid-cols-2 lg:grid-cols-1">
-              <article className="border-b border-border px-6 py-8 sm:px-8">
-                <div className="flex items-center gap-3 text-foreground">
-                  <UsersIcon className="h-5 w-5" />
-                  <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
-                    Admin experience
-                  </p>
+            <div className="bg-[#242629] border border-white/5 p-6 rounded-md">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white/70" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
                 </div>
-                <h3 className="mt-4 font-display text-2xl tracking-[-0.04em] text-foreground">
-                  Command center for staffing decisions
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                  Review teacher capacity, approve new accounts, manage full-day
-                  absences, and assign substitute coverage from a consistent
-                  operations layout.
-                </p>
-                <Link
-                  href="/admin/login"
-                  className={buttonClasses({
-                    variant: "secondary",
-                    className: "mt-6 w-full justify-between sm:w-auto",
-                  })}
-                >
-                  Continue as admin
-                  <ArrowRightIcon className="h-4 w-4" />
-                </Link>
-              </article>
+                <h3 className="font-semibold text-white">Enterprise Security</h3>
+              </div>
+              <p className="text-sm text-[#8E959E] pl-9">Multi-factor authentication and role-based access control.</p>
+            </div>
+          </div>
+        </div>
 
-              <article className="border-b border-border px-6 py-8 sm:border-l sm:border-b-0 sm:px-8 lg:border-l-0 lg:border-b">
-                <div className="flex items-center gap-3 text-foreground">
-                  <CalendarIcon className="h-5 w-5" />
-                  <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
-                    Teacher experience
-                  </p>
+        <div className="absolute bottom-8 left-16 xl:left-24 text-[10px] uppercase tracking-[0.2em] text-[#8E959E]/50">
+          © 2024 ARCHITECTURAL LEDGER SYSTEMS
+        </div>
+      </div>
+
+      {/* Right Panel */}
+      <div className="flex-1 flex flex-col bg-[#F9FAFB] relative overflow-y-auto">
+        <div className="flex-1 flex flex-col px-8 sm:px-16 pt-16 pb-8 max-w-[600px] w-full mx-auto justify-center">
+
+          {/* Tabs */}
+          <div className="flex gap-6 border-b border-[#E2E8F0] mb-12 uppercase text-xs tracking-widest font-semibold text-[#8E959E]">
+            <button
+              onClick={() => { setActiveTab("ADMIN"); setError(null); }}
+              className={`pb-4 border-b-2 transition-colors ${activeTab === "ADMIN" ? "border-black text-black" : "border-transparent hover:text-black/70"}`}
+            >
+              Administrator Login
+            </button>
+            <button
+              onClick={() => { setActiveTab("TEACHER"); setError(null); }}
+              className={`pb-4 border-b-2 transition-colors ${activeTab === "TEACHER" ? "border-black text-black" : "border-transparent hover:text-black/70"}`}
+            >
+              Teacher Portal
+            </button>
+          </div>
+
+          {/* Form Card */}
+          <div className="bg-white border text-left border-[#E2E8F0] shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-sm p-10 pb-8 mb-10">
+            <h2 className="text-2xl font-semibold text-[#111827] mb-2 font-display">Sign In</h2>
+            <p className="text-sm text-[#6B7280] mb-8">Enter your credentials to access the ledger.</p>
+
+            <form onSubmit={onSubmit} className="space-y-6">
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-[#4B5563] mb-2">
+                  Institutional Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@school.edu"
+                  className="w-full bg-[#F3F4F6] border-none text-sm px-4 py-3 focus:ring-1 focus:ring-black outline-none transition-all placeholder:text-[#9CA3AF]"
+                  required
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-[#4B5563]">
+                    Security Token
+                  </label>
+                  <a href="#" className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9CA3AF] hover:text-[#4B5563]">Recover?</a>
                 </div>
-                <h3 className="mt-4 font-display text-2xl tracking-[-0.04em] text-foreground">
-                  Weekly view built for the day-to-day
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                  Check your timetable, spot substitutions, review special
-                  classes, and fill open slots without the interface getting in
-                  the way.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <Link href="/teacher/login" className={buttonClasses({ variant: "secondary" })}>
-                    Teacher sign in
-                  </Link>
-                  <Link href="/teacher/signup" className={buttonClasses({ variant: "accent" })}>
-                    Request access
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-[#F3F4F6] border-none text-sm px-4 py-3 focus:ring-1 focus:ring-black outline-none transition-all placeholder:text-[#9CA3AF]"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <input type="checkbox" id="session" className="w-3.5 h-3.5 border-gray-300 rounded-sm text-black focus:ring-black" />
+                <label htmlFor="session" className="text-xs text-[#6B7280]">
+                  Maintain active session for 8 hours
+                </label>
+              </div>
+
+              {error && (
+                <div className="text-xs text-red-500 bg-red-50 p-3 rounded-sm">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#4B4B4B] hover:bg-[#333333] text-white text-[11px] font-bold uppercase tracking-[0.15em] py-4 px-4 transition-colors flex justify-center items-center gap-2"
+              >
+                {loading ? "INITIALIZING..." : activeTab === "ADMIN" ? "INITIALIZE ACCESS →" : "ACCESS PORTAL →"}
+              </button>
+
+              {activeTab === "TEACHER" && (
+                <div className="mt-4 text-center">
+                  <Link href="/teacher/signup" className="text-xs text-blue-600 hover:text-blue-800 transition-colors uppercase tracking-widest font-semibold border-b border-transparent hover:border-blue-800 pb-0.5">
+                    Don't have an account? Sign up
                   </Link>
                 </div>
-              </article>
+              )}
+            </form>
 
-              <article className="px-6 py-8 sm:col-span-2 sm:px-8 lg:col-span-1">
-                <div className="flex items-center gap-3 text-foreground">
-                  <SwapIcon className="h-5 w-5" />
-                  <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
-                    Built for change
-                  </p>
-                </div>
-                <h3 className="mt-4 font-display text-2xl tracking-[-0.04em] text-foreground">
-                  Absences, coverage, and class updates stay traceable
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                  The product is structured like a real operational tool: clear
-                  action hierarchy, visible system state, and responsive layouts
-                  that stay usable on mobile, tablet, and desktop.
-                </p>
-              </article>
+            <div className="mt-8 pt-6 border-t border-[#F3F4F6]">
+              <p className="text-[10px] text-center text-[#9CA3AF] leading-relaxed max-w-[280px] mx-auto">
+                Authorized Personnel Only. All session activities are logged for auditing and security compliance within the Ruroxz Time Management framework.
+              </p>
             </div>
           </div>
-        </section>
-      </main>
+
+          {/* Support Links */}
+          <div className="flex justify-between items-center px-4 w-full mb-12">
+            <button className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6B7280] flex items-center gap-2 hover:text-black transition-colors">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              SYSTEM SUPPORT
+            </button>
+            <div className="w-1 h-1 rounded-full bg-[#D1D5DB]"></div>
+            <button className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6B7280] flex items-center gap-2 hover:text-black transition-colors">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              PUBLIC DIRECTORY
+            </button>
+          </div>
+
+        </div>
+
+
+      </div>
     </div>
   );
 }

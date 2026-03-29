@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { Prisma } from '@prisma/client';
+
 import { PrismaService } from '../prisma/prisma.service';
 
 const jwtSecret = process.env.JWT_SECRET ?? 'change_me';
@@ -110,11 +110,12 @@ export class AuthService {
       if (error instanceof ConflictException) {
         throw error;
       }
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
+      if (typeof error === 'object' && error !== null && 'code' in error && typeof (error as any).code === 'string') {
+        const prismaError = error as { code: string };
+        if (prismaError.code === 'P2002') {
           throw new ConflictException('Email already registered');
         }
-        if (error.code === 'P2022') {
+        if (prismaError.code === 'P2022') {
           throw new BadRequestException(
             'Database schema out of date. Run `npm run prisma:push`.'
           );
