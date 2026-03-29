@@ -22,6 +22,15 @@ const DAY_MAP: Record<number, 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI'> = {
 export class SubstitutionsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private parseLocalDateBounds(date: string) {
+    const [year, month, day] = date.split('-').map(Number);
+
+    const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+    return { startOfDay, endOfDay };
+  }
+
   private async findReplacement(params: {
     absentTeacherId: string;
     day: 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI';
@@ -502,10 +511,7 @@ export class SubstitutionsService {
   }
 
   async deleteByTeacherAndDate(teacherId: string, date: string) {
-    const startOfDay = new Date(date);
-    startOfDay.setUTCHours(0, 0, 0, 0);
-    const endOfDay = new Date(date);
-    endOfDay.setUTCHours(23, 59, 59, 999);
+    const { startOfDay, endOfDay } = this.parseLocalDateBounds(date);
     
     // Find all substitutions for this teacher on this date range
     const substitutions = await this.prisma.substitution.findMany({
@@ -547,13 +553,16 @@ export class SubstitutionsService {
   }
 
   async cleanupOldSubstitutions() {
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-    
-    const result = await this.prisma.substitution.deleteMany({
-      where: {
-        date: { lt: today },
-      },
+    const result = await this.prisma.$transaction(async (tx) => {
+      const deleted = await tx.substitution.deleteMany({});
+
+      if (deleted.count > 0) {
+        await tx.teacher.updateMany({
+          data: { workload: 0 },
+        });
+      }
+
+      return deleted;
     });
 
     return { count: result.count };

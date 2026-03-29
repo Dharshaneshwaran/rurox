@@ -353,13 +353,13 @@ export default function SubstitutionManagementPage() {
   const handleCleanup = async () => {
     if (!token) return;
     
-    const confirm = window.confirm("Cleanup will delete all past substitution records. Proceed?");
+    const confirm = window.confirm("Cleanup will delete all substitution records. Proceed?");
     if (!confirm) return;
 
     try {
       const response = await apiFetch("/api/substitutions/cleanup", { method: "DELETE" }, token) as { count?: number };
       await loadData();
-      alert(`Cleanup complete. Deleted ${response.count || 0} old records.`);
+      alert(`Cleanup complete. Deleted ${response.count || 0} records.`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Cleanup failed");
     }
@@ -714,8 +714,8 @@ export default function SubstitutionManagementPage() {
                     Monitor the latest substitution activity across the system.
                   </p>
                 </div>
-                <Button variant="ghost" size="sm" onClick={handleCleanup} className="text-xs text-red-500 hover:text-red-600">
-                   Cleanup old records
+                 <Button variant="ghost" size="sm" onClick={handleCleanup} className="text-xs text-red-500 hover:text-red-600">
+                   Cleanup records
                 </Button>
               </div>
             <SubstitutionList
