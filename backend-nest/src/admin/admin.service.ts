@@ -1,10 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
-const brevoApiKey = process.env.BREVO_API_KEY ?? '';
-const brevoSenderEmail = process.env.BREVO_SENDER_EMAIL ?? '';
-const brevoSenderName = process.env.BREVO_SENDER_NAME ?? 'Smart Teacher System';
-const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
 
 @Injectable()
 export class AdminService {
@@ -123,6 +119,11 @@ export class AdminService {
     name: string;
     email: string;
   }) {
+    const brevoApiKey = process.env.BREVO_API_KEY ?? '';
+    const brevoSenderEmail = process.env.BREVO_SENDER_EMAIL ?? '';
+    const brevoSenderName = process.env.BREVO_SENDER_NAME ?? 'Smart Teacher System';
+    const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+
     if (!brevoApiKey || !brevoSenderEmail) {
       throw new BadRequestException(
         'Email service not configured. Set BREVO_API_KEY and BREVO_SENDER_EMAIL.'
