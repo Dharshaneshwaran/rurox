@@ -129,10 +129,10 @@ export default function AdminDashboardPage() {
           description="Monitor teacher capacity, search subjects, and orchestrate profile-level timetable deployment from the centralized hub."
           actions={
             <div className="flex flex-wrap items-center gap-3">
-              <Link href="/admin/users" className={cn(buttonClasses({ variant: "secondary" }), "bg-white/10 border-white/10 text-white hover:bg-white/20 transition-all")}>
+              <Link href="/admin/users" className={cn(buttonClasses({ variant: "secondary" }), "bg-primary-strong/20 border-white/10 text-white hover:bg-primary-strong/40 transition-all")}>
                 Review approvals
               </Link>
-              <Link href="/admin/special-class" className={cn(buttonClasses({ variant: "secondary" }), "bg-white/10 border-white/10 text-white hover:bg-white/20 transition-all")}>
+              <Link href="/admin/special-class" className={cn(buttonClasses({ variant: "secondary" }), "bg-primary-strong/20 border-white/10 text-white hover:bg-primary-strong/40 transition-all")}>
                 Special classes
               </Link>
               <Link href="/admin/substitutions" className={buttonClasses({ variant: "accent" })}>
@@ -142,13 +142,13 @@ export default function AdminDashboardPage() {
           }
           meta={
             <>
-              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md">
-                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                 <span className="text-[10px] font-black uppercase tracking-widest text-white/80">{teachers.length} teachers</span>
+              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-primary-strong/10 px-3 py-1.5 backdrop-blur-md">
+                 <div className="h-1.5 w-1.5 rounded-full bg-accent" />
+                 <span className="text-[10px] font-black uppercase tracking-widest text-primary/80">{teachers.length} teachers</span>
               </div>
-              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md">
-                 <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-                 <span className="text-[10px] font-black uppercase tracking-widest text-white/80">{subjectCount} subjects</span>
+              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-primary-strong/10 px-3 py-1.5 backdrop-blur-md">
+                 <div className="h-1.5 w-1.5 rounded-full bg-secondary" />
+                 <span className="text-[10px] font-black uppercase tracking-widest text-primary/80">{subjectCount} subjects</span>
               </div>
             </>
           }
@@ -209,7 +209,7 @@ export default function AdminDashboardPage() {
                   value={searchTerm}
                   onChange={(event) => setSearchTerm(event.target.value)}
                   disabled={directoryLoading}
-                  className="h-11 w-full border border-border bg-white pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
+                  className="h-11 w-full border border-border bg-surface pl-10 pr-4 text-sm text-primary placeholder:text-primary/40 focus:border-accent focus:outline-none"
                 />
               </div>
             }
@@ -247,10 +247,10 @@ export default function AdminDashboardPage() {
                   <Link
                     href={`/admin/teachers/${teacher.id}`}
                     key={teacher.id}
-                    className="group border border-border bg-background/45 p-5 transition hover:bg-white"
+                    className="group border border-border bg-surface-subtle/10 p-5 transition hover:bg-surface-subtle hover:border-primary/20"
                   >
                     <div className="flex items-start justify-between gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center border border-border bg-white font-display text-xl text-foreground">
+                      <div className="flex h-12 w-12 items-center justify-center border border-border/10 bg-surface-subtle font-display text-xl text-primary font-bold">
                         {teacher.name.charAt(0)}
                       </div>
                       <Badge variant={teacher.workload ? "accent" : "neutral"}>

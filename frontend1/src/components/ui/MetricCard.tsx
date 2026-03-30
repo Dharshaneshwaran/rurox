@@ -19,13 +19,13 @@ type MetricCardProps = {
 
 const toneStyles: Record<MetricTone, string> = {
   neutral:
-    "border-zinc-200 bg-white text-zinc-950",
+    "border-border bg-surface text-primary",
   brand:
-    "border-[color:rgba(var(--color-brand-rgb),0.1)] bg-[var(--color-brand-soft)] text-zinc-950",
+    "border-[color:rgba(var(--color-brand-rgb),0.1)] bg-[var(--color-brand-soft)] text-primary",
   accent:
-    "border-[color:rgba(193,132,37,0.1)] bg-[var(--color-accent-soft)] text-zinc-950",
+    "border-[color:rgba(193,132,37,0.1)] bg-[var(--color-accent-soft)] text-primary",
   success:
-    "border-[color:rgba(45,123,102,0.1)] bg-[var(--color-success-soft)] text-zinc-950",
+    "border-[color:rgba(45,123,102,0.1)] bg-[var(--color-success-soft)] text-primary",
 };
 
 export default function MetricCard({
@@ -63,24 +63,24 @@ export default function MetricCard({
       <div className="relative z-10 flex flex-col justify-between h-full gap-10">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-3">
-            <p className="font-mono-display text-[10px] font-black uppercase tracking-[0.35em] text-zinc-400 group-hover:text-[var(--color-brand)] transition-colors">
+            <p className="font-mono-display text-[10px] font-black uppercase tracking-[0.35em] text-primary/60 group-hover:text-accent transition-colors">
               {label}
             </p>
             {badge ? <Badge tone={badgeTone}>{badge}</Badge> : null}
           </div>
           {icon ? (
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-zinc-950/5 text-zinc-900 border border-zinc-100 transition-all group-hover:border-[var(--color-brand)] group-hover:text-[var(--color-brand)]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-subtle text-primary border border-border/10 transition-all group-hover:border-accent group-hover:text-accent">
               {icon}
             </div>
           ) : null}
         </div>
         
         <div>
-          <p className="font-display text-5xl font-black tracking-tighter text-zinc-900 leading-none">
+          <p className="font-display text-5xl font-black tracking-tighter text-primary leading-none">
             {value}
           </p>
           {supportingText ? (
-            <p className="mt-3 text-[13px] font-bold leading-relaxed text-zinc-600 max-w-[200px]">
+            <p className="mt-3 text-[13px] font-bold leading-relaxed text-primary/70 max-w-[200px]">
               {supportingText}
             </p>
           ) : null}

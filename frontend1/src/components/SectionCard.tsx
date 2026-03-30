@@ -21,7 +21,7 @@ export default function SectionCard({
   backgroundImage,
 }: SectionCardProps) {
   return (
-    <section className={cn("relative overflow-hidden rounded-[40px] border border-zinc-200 bg-white shadow-sm transition-all duration-500 hover:shadow-md", className)}>
+    <section className={cn("relative overflow-hidden rounded-[40px] border border-border bg-surface shadow-sm transition-all duration-500 hover:shadow-md", className)}>
       {/* Subtle Integrated Imagery */}
       {backgroundImage && (
         <div 
@@ -34,13 +34,13 @@ export default function SectionCard({
         />
       )}
 
-      <div className="relative z-10 flex flex-wrap items-start justify-between gap-6 border-b border-zinc-100 bg-white/80 px-8 py-7 backdrop-blur-sm sm:px-10">
+      <div className="relative z-10 flex flex-wrap items-start justify-between gap-6 border-b border-border/10 bg-surface-subtle/80 px-8 py-7 backdrop-blur-sm sm:px-10">
         <div className="space-y-1.5">
-          <h2 className="font-display text-2xl font-black tracking-tight text-zinc-900">
+          <h2 className="font-display text-2xl font-black tracking-tight text-primary">
             {title}
           </h2>
           {subtitle ? (
-            <p className="max-w-xl text-[13.5px] font-semibold leading-relaxed text-zinc-600">
+            <p className="max-w-xl text-[13.5px] font-semibold leading-relaxed text-primary/70">
               {subtitle}
             </p>
           ) : null}

@@ -63,7 +63,7 @@ function NavItems({
               "group relative flex items-center gap-3.5 rounded-xl px-3.5 py-3 transition-all duration-300",
               isActive
                 ? "bg-white/10 text-white shadow-sm"
-                : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                : "text-secondary/70 hover:bg-white/5 hover:text-white"
             )}
           >
             {isActive && (
@@ -73,8 +73,8 @@ function NavItems({
               className={cn(
                 "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all duration-300",
                 isActive
-                  ? "bg-[var(--color-brand)] text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]"
-                  : "bg-zinc-900 text-zinc-500 group-hover:bg-zinc-800 group-hover:text-zinc-200"
+                  ? "bg-accent text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]"
+                  : "bg-primary-strong/40 text-secondary/50 group-hover:bg-primary-strong/60 group-hover:text-secondary/90"
               )}
             >
               <Icon className="h-4.5 w-4.5" />
@@ -83,7 +83,7 @@ function NavItems({
               <p 
                 className={cn(
                   "text-[14px] font-black leading-none tracking-tight transition-colors",
-                  isActive ? "text-white" : "text-zinc-200 group-hover:text-white"
+                  isActive ? "text-white" : "text-secondary group-hover:text-white"
                 )}
               >
                 {item.label}
@@ -91,7 +91,7 @@ function NavItems({
               <p
                 className={cn(
                   "mt-1.5 truncate text-[10px] uppercase font-bold tracking-[0.15em] transition-colors",
-                  isActive ? "text-white/70" : "text-zinc-500 group-hover:text-zinc-300"
+                  isActive ? "text-white/70" : "text-secondary/50 group-hover:text-secondary/80"
                 )}
               >
                 {item.description}
@@ -136,8 +136,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="page-shell min-h-screen lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
-      <aside className="hidden border-r border-zinc-900 bg-zinc-950 px-3 py-6 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-8 overflow-hidden group/sidebar">
+    <div className="admin-theme page-shell min-h-screen lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
+      <aside className="hidden border-r border-primary/20 bg-primary px-3 py-6 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-8 overflow-hidden group/sidebar">
         {/* Background Texture */}
         <div 
           className="absolute inset-0 opacity-[0.25] mix-blend-overlay grayscale transition-opacity duration-700 group-hover/sidebar:opacity-[0.40] pointer-events-none"
@@ -152,12 +152,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-4 px-2 translate-x-[-2px]">
             <AppMark hideText inverse className="shrink-0 scale-105" />
             <div className="flex flex-col">
-              <span className="text-[15px] font-black tracking-tight text-white leading-none">ruroxz</span>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-brand)] font-black mt-2">Command Hub</span>
+              <span className="text-[15px] font-black tracking-tight text-secondary leading-none">ruroxz</span>
+              <span className="text-[10px] uppercase tracking-[0.3em] text-accent font-black mt-2">Command Hub</span>
             </div>
           </div>
 
-          <div className="relative group overflow-hidden rounded-2xl border border-white/5 bg-zinc-900/60 p-5 shadow-2xl transition-all hover:bg-zinc-900/90">
+          <div className="relative group overflow-hidden rounded-2xl border border-white/5 bg-primary-strong/60 p-5 shadow-2xl transition-all hover:bg-primary-strong/90">
             {/* Professional Texture Integration */}
             <div
               className="absolute inset-0 opacity-[0.25] mix-blend-screen pointer-events-none grayscale group-hover:opacity-40 transition-all duration-700 scale-[1.3] group-hover:scale-100"
@@ -168,11 +168,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               }}
             />
             <div className="relative z-10">
-              <h3 className="text-[9px] font-black uppercase tracking-[0.35em] text-zinc-500 mb-2.5 flex items-center gap-2">
+              <h3 className="text-[9px] font-black uppercase tracking-[0.35em] text-secondary/50 mb-2.5 flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
                 Network Live
               </h3>
-              <p className="text-[12px] font-bold leading-relaxed text-zinc-400">
+              <p className="text-[12px] font-bold leading-relaxed text-secondary/70">
                 Orchestrating school resources and deployment in real-time.
               </p>
             </div>
@@ -181,7 +181,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
         <div className="flex-1 px-1">
           <div className="space-y-4">
-            <p className="px-3 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
+            <p className="px-3 text-[10px] font-black uppercase tracking-[0.3em] text-secondary/40">
               Navigation
             </p>
             <NavItems pathname={pathname} />
@@ -189,22 +189,22 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </div>
 
         <div className="px-3 py-4 mt-auto">
-          <div className="rounded-2xl bg-zinc-900/40 border border-white/5 p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand)] text-xs font-black text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]">
+          <div className="rounded-2xl bg-primary-strong/40 border border-white/5 p-4 flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-xs font-black text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]">
               {initials}
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-[13px] font-black text-white">
                 {user.name || "Administrator"}
               </p>
-              <p className="truncate text-[10px] text-zinc-400 font-bold tracking-tight">
+              <p className="truncate text-[10px] text-secondary/60 font-bold tracking-tight">
                 {user.email}
               </p>
             </div>
           </div>
           <button
             onClick={handleSignOut}
-            className="mt-4 flex w-full items-center gap-3 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 transition-all hover:bg-red-500/15 hover:text-red-400 ring-1 ring-white/5"
+            className="mt-4 flex w-full items-center gap-3 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-secondary/50 transition-all hover:bg-red-500/15 hover:text-red-400 ring-1 ring-white/5"
           >
             <LogOutIcon className="h-4 w-4 opacity-70" />
             Sign out
@@ -213,7 +213,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-h-screen flex-col">
-        <header className="sticky top-0 z-30 border-b border-[var(--color-stroke)] bg-[rgba(247,249,252,0.84)] px-4 py-3 backdrop-blur-xl lg:hidden">
+        <header className="sticky top-0 z-30 border-b border-primary/10 bg-surface/80 px-4 py-3 backdrop-blur-xl lg:hidden">
           <div className="flex items-center justify-between gap-3">
             <AppMark className="min-w-0" />
             <button
@@ -259,7 +259,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           ) : null}
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-zinc-50/60 transition-colors duration-500">
+        <main className="flex-1 overflow-y-auto bg-surface transition-colors duration-500">
           {children}
         </main>
       </div>

@@ -43,7 +43,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen flex overflow-hidden">
+    <div className="admin-theme bg-surface text-on-surface min-h-screen flex overflow-hidden">
       {/* Asymmetric Background Split */}
       <div className="hidden lg:flex lg:w-1/2 spine-gradient items-center justify-center p-12 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -95,8 +95,8 @@ export default function AdminLoginPage() {
           {/* Role Selection (Asymmetric Tabs) */}
           <div className="flex items-center gap-4 mb-10 overflow-x-auto pb-2 scrollbar-hide">
             <button className="flex-shrink-0 group flex flex-col items-start" type="button">
-              <span className="font-label text-[11px] uppercase tracking-wider text-primary font-bold">Administrator Login</span>
-              <span className="h-[2px] w-full bg-primary mt-1 scale-x-100 transition-transform origin-left"></span>
+              <span className="font-label text-[11px] uppercase tracking-wider text-primary font-black">Administrator Login</span>
+              <span className="h-[2px] w-full bg-primary mt-1.5 scale-x-100 transition-transform origin-left"></span>
             </button>
             <button
               type="button"

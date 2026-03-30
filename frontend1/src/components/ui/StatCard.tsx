@@ -33,7 +33,7 @@ export default function StatCard({
   return (
     <section
       className={cn(
-        "relative group overflow-hidden rounded-[32px] border border-zinc-200 bg-white p-7 shadow-sm transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px]",
+        "relative group overflow-hidden rounded-[32px] border border-border bg-surface p-7 shadow-sm transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px]",
         toneClasses[tone],
         className
       )}
@@ -52,22 +52,22 @@ export default function StatCard({
 
       <div className="relative z-10 flex flex-col items-start justify-between gap-6 h-full">
         <div className="flex w-full items-center justify-between">
-           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/50">
              {label}
            </p>
            {icon ? (
-             <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-zinc-100 bg-zinc-50 text-zinc-900 transition-colors group-hover:border-[var(--color-brand)] group-hover:text-[var(--color-brand)]">
-               {icon}
-             </div>
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border/10 bg-surface-subtle text-primary transition-colors group-hover:border-accent group-hover:text-accent">
+                {icon}
+              </div>
            ) : null}
         </div>
         
         <div>
-          <p className="font-display text-5xl font-extrabold tracking-tighter text-zinc-900">
+          <p className="font-display text-5xl font-extrabold tracking-tighter text-primary">
             {value}
           </p>
           {supportingText ? (
-            <p className="mt-3 text-[13px] font-semibold leading-relaxed text-zinc-600 max-w-[200px]">{supportingText}</p>
+            <p className="mt-3 text-[13px] font-semibold leading-relaxed text-primary/70 max-w-[200px]">{supportingText}</p>
           ) : null}
         </div>
       </div>

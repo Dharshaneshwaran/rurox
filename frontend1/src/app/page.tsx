@@ -50,9 +50,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen w-full font-body">
+    <div className="admin-theme flex min-h-screen w-full font-body">
       {/* Left Panel */}
-      <div className="hidden lg:flex flex-col justify-center w-1/2 bg-[#1b1c1e] text-white p-16 xl:p-24 relative overflow-hidden">
+      <div className="hidden lg:flex flex-col justify-center w-1/2 spine-gradient text-white p-16 xl:p-24 relative overflow-hidden">
         {/* Subtle grid background */}
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -98,33 +98,33 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel */}
-      <div className="flex-1 flex flex-col bg-[#F9FAFB] relative overflow-y-auto">
+      <div className="flex-1 flex flex-col hero-gradient relative overflow-y-auto">
         <div className="flex-1 flex flex-col px-8 sm:px-16 pt-16 pb-8 max-w-[600px] w-full mx-auto justify-center">
 
           {/* Tabs */}
-          <div className="flex gap-6 border-b border-[#E2E8F0] mb-12 uppercase text-xs tracking-widest font-semibold text-[#8E959E]">
+          <div className="flex gap-6 border-b border-primary/10 mb-12 uppercase text-xs tracking-widest font-semibold text-primary/40">
             <button
               onClick={() => { setActiveTab("ADMIN"); setError(null); }}
-              className={`pb-4 border-b-2 transition-colors ${activeTab === "ADMIN" ? "border-black text-black" : "border-transparent hover:text-black/70"}`}
+              className={`pb-4 border-b-2 transition-colors ${activeTab === "ADMIN" ? "border-primary text-primary" : "border-transparent hover:text-primary/70"}`}
             >
               Administrator Login
             </button>
             <button
               onClick={() => { setActiveTab("TEACHER"); setError(null); }}
-              className={`pb-4 border-b-2 transition-colors ${activeTab === "TEACHER" ? "border-black text-black" : "border-transparent hover:text-black/70"}`}
+              className={`pb-4 border-b-2 transition-colors ${activeTab === "TEACHER" ? "border-primary text-primary" : "border-transparent hover:text-primary/70"}`}
             >
               Teacher Portal
             </button>
           </div>
 
           {/* Form Card */}
-          <div className="bg-white border text-left border-[#E2E8F0] shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-sm p-10 pb-8 mb-10">
-            <h2 className="text-2xl font-semibold text-[#111827] mb-2 font-display">Sign In</h2>
-            <p className="text-sm text-[#6B7280] mb-8">Enter your credentials to access the ledger.</p>
+          <div className="bg-white border text-left border-primary/10 shadow-[0_8px_30px_rgba(52,103,57,0.06)] rounded-sm p-10 pb-8 mb-10">
+            <h2 className="text-2xl font-semibold text-primary mb-2 font-display">Sign In</h2>
+            <p className="text-sm text-primary/60 mb-8">Enter your credentials to access the ledger.</p>
 
             <form onSubmit={onSubmit} className="space-y-6">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-[#4B5563] mb-2">
+                <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-primary mb-2">
                   Institutional Email
                 </label>
                 <input
@@ -132,17 +132,17 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@school.edu"
-                  className="w-full bg-[#F3F4F6] border-none text-sm px-4 py-3 focus:ring-1 focus:ring-black outline-none transition-all placeholder:text-[#9CA3AF]"
+                  className="w-full bg-surface-subtle border-none text-sm px-4 py-3 focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-secondary/60"
                   required
                 />
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-[#4B5563]">
+                  <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-primary mb-2">
                     Security Token
                   </label>
-                  <a href="#" className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9CA3AF] hover:text-[#4B5563]">Recover?</a>
+                  <a href="#" className="text-[10px] font-bold uppercase tracking-[0.1em] text-primary/40 hover:text-primary">Recover?</a>
                 </div>
                 <input
                   type="password"
@@ -155,7 +155,7 @@ export default function LoginPage() {
               </div>
 
               <div className="flex items-center gap-2 pt-2">
-                <input type="checkbox" id="session" className="w-3.5 h-3.5 border-gray-300 rounded-sm text-black focus:ring-black" />
+                <input type="checkbox" id="session" className="w-3.5 h-3.5 border-gray-300 rounded-sm text-primary focus:ring-primary" />
                 <label htmlFor="session" className="text-xs text-[#6B7280]">
                   Maintain active session for 8 hours
                 </label>
@@ -170,7 +170,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#4B4B4B] hover:bg-[#333333] text-white text-[11px] font-bold uppercase tracking-[0.15em] py-4 px-4 transition-colors flex justify-center items-center gap-2"
+                className="w-full bg-primary hover:opacity-90 text-white text-[11px] font-bold uppercase tracking-[0.15em] py-4 px-4 transition-all flex justify-center items-center gap-2"
               >
                 {loading ? "INITIALIZING..." : activeTab === "ADMIN" ? "INITIALIZE ACCESS →" : "ACCESS PORTAL →"}
               </button>
@@ -185,7 +185,7 @@ export default function LoginPage() {
             </form>
 
             <div className="mt-8 pt-6 border-t border-[#F3F4F6]">
-              <p className="text-[10px] text-center text-[#9CA3AF] leading-relaxed max-w-[280px] mx-auto">
+              <p className="text-[10px] text-center text-primary/40 leading-relaxed max-w-[280px] mx-auto">
                 Authorized Personnel Only. All session activities are logged for auditing and security compliance within the Ruroxz Time Management framework.
               </p>
             </div>
@@ -193,14 +193,14 @@ export default function LoginPage() {
 
           {/* Support Links */}
           <div className="flex justify-between items-center px-4 w-full mb-12">
-            <button className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6B7280] flex items-center gap-2 hover:text-black transition-colors">
+            <button className="text-[10px] font-bold uppercase tracking-[0.1em] text-primary/60 flex items-center gap-2 hover:text-primary transition-colors">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
               SYSTEM SUPPORT
             </button>
             <div className="w-1 h-1 rounded-full bg-[#D1D5DB]"></div>
-            <button className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6B7280] flex items-center gap-2 hover:text-black transition-colors">
+            <button className="text-[10px] font-bold uppercase tracking-[0.1em] text-primary/60 flex items-center gap-2 hover:text-primary transition-colors">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>

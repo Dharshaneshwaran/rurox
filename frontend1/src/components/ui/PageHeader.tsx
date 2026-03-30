@@ -30,8 +30,8 @@ export default function PageHeader({
       className={cn(
         "relative flex flex-col gap-6 overflow-hidden rounded-[40px] border p-8 shadow-2xl transition-all duration-500 lg:flex-row lg:items-center lg:justify-between lg:p-10",
         isCommand
-          ? "border-zinc-800 bg-zinc-950 text-white shadow-black/40"
-          : "border-zinc-200 bg-white shadow-zinc-200/50"
+          ? "border-primary/20 bg-primary text-white shadow-primary/40"
+          : "border-border bg-surface shadow-card"
       )}
     >
       {/* Dynamic Background Image Implementation */}
@@ -59,7 +59,7 @@ export default function PageHeader({
           {isCommand && <div className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)] shadow-[0_0_8px_var(--color-brand)] animate-pulse" />}
           <p className={cn(
             "text-[10px] font-black uppercase tracking-[0.4em]",
-            isCommand ? "text-zinc-500" : "text-[var(--color-primary)]"
+            isCommand ? "text-secondary/60" : "text-primary/60"
           )}>
             {resolvedEyebrow}
           </p>
@@ -68,14 +68,14 @@ export default function PageHeader({
         <div className="space-y-3">
           <h1 className={cn(
             "font-display text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-5xl",
-            isCommand ? "text-white" : "text-zinc-900"
+            isCommand ? "text-white" : "text-primary"
           )}>
             {title}
           </h1>
           {description ? (
             <p className={cn(
               "text-[15px] font-medium leading-relaxed max-w-2xl",
-              isCommand ? "text-zinc-400" : "text-zinc-500"
+              isCommand ? "text-secondary/80" : "text-primary/70"
             )}>
               {description}
             </p>
