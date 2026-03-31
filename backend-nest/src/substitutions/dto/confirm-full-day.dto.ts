@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class PeriodAssignment {
@@ -6,7 +6,12 @@ class PeriodAssignment {
   replacementTeacherId: string;
 
   @IsNumber()
-  period: number;
+  @IsOptional()
+  period?: number;
+
+  @IsString()
+  @IsOptional()
+  specialClassId?: string;
 }
 
 export class ConfirmFullDayDto {

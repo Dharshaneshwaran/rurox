@@ -17,12 +17,12 @@ export class TimetablesService {
     const timetables = await this.prisma.timetable.findMany({
       where: {
         day: day as any,
-        subject: subject ? { contains: subject, mode: 'insensitive' } : undefined,
+        subject: subject ? { contains: subject } : undefined,
         className: className
-          ? { contains: className, mode: 'insensitive' }
+          ? { contains: className }
           : undefined,
         teacher: teacher
-          ? { name: { contains: teacher, mode: 'insensitive' } }
+          ? { name: { contains: teacher } }
           : undefined,
       },
       include: { teacher: true },

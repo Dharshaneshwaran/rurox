@@ -154,48 +154,60 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .admin-theme {
-  --primary: #346739;
-  --primary-strong: #2a522e;
-  --secondary: #9FCB98;
-  --secondary-soft: #f0f7f0;
-  --accent: #79AE6F;
-  --accent-soft: #ecf4eb;
-  --background: #F2EDC2;
-  --surface: #F2EDC2;
-  --surface-subtle: #ebf0cc;
-  --on-surface: #346739;
-  --text: #346739;
-  --text-muted: #5a7d5e;
-  --muted-foreground: #5a7d5e;
-  --foreground: #346739;
-  --border: #d4dbc1;
-  --stroke: #d4dbc1;
-  --brand: #79AE6F;
-  --brand-rgb: 121, 174, 111;
+  --primary: #064e3b;
+  --primary-strong: #04392b;
+  --secondary: #10b981;
+  --secondary-soft: #ecfdf5;
+  --accent: #14b8a6;
+  --accent-soft: #f0fdfa;
+  --background: #ffffff;
+  --surface: #ffffff;
+  --surface-subtle: #f8fafc;
+  --on-surface: #0f172a;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --muted-foreground: #64748b;
+  --foreground: #0f172a;
+  --border: #e2e8f0;
+  --stroke: #e2e8f0;
+  --brand: #10b981;
+  --brand-rgb: 16, 185, 129;
   
-  --shadow-card: 0 4px 6px -1px rgba(52, 103, 57, 0.08), 0 2px 4px -2px rgba(52, 103, 57, 0.08);
+  --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
 
   .hero-gradient {
-    background: linear-gradient(135deg, #F2EDC2 0%, #ebf0cc 100%);
+    background: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.05) 0px, transparent 50%),
+                #ffffff;
   }
 
   .spine-gradient {
-    background: linear-gradient(180deg, #346739 0%, #2a522e 100%);
+    background: linear-gradient(180deg, #064e3b 0%, #04392b 100%);
   }
 
   .milled-button {
-    background: linear-gradient(180deg, #346739 0%, #2a522e 100%);
-    color: #F2EDC2;
+    background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
   }
   
   /* Additional overrides for admin specific components */
   input, select, textarea {
-    background-color: #ffffff;
-    border-color: #d4dbc1;
-    color: #346739;
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
+    color: #0f172a;
+    border-radius: 0.75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   
+  input:focus {
+    background-color: #ffffff;
+    border-color: #10b981;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+  }
+
   input::placeholder {
-    color: #9FCB98;
+    color: #94a3b8;
   }
 }

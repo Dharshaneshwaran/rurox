@@ -59,7 +59,7 @@ export default function PageHeader({
           {isCommand && <div className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)] shadow-[0_0_8px_var(--color-brand)] animate-pulse" />}
           <p className={cn(
             "text-[10px] font-black uppercase tracking-[0.4em]",
-            isCommand ? "text-secondary/60" : "text-primary/60"
+            isCommand ? "text-secondary/90" : "text-primary/60"
           )}>
             {resolvedEyebrow}
           </p>
@@ -75,7 +75,7 @@ export default function PageHeader({
           {description ? (
             <p className={cn(
               "text-[15px] font-medium leading-relaxed max-w-2xl",
-              isCommand ? "text-secondary/80" : "text-primary/70"
+              isCommand ? "text-secondary font-semibold" : "text-primary/70"
             )}>
               {description}
             </p>

@@ -1,4 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import type { AuthUser } from '../auth/auth.types';
 import { CreateSpecialClassDto } from './dto/create-special-class.dto';
@@ -53,7 +54,7 @@ export class SpecialClassesService {
       }
     }
 
-    return await this.prisma.$transaction(async (prisma) => {
+    return await this.prisma.$transaction(async (prisma: Prisma.TransactionClient) => {
       const specialClass = await prisma.specialClass.create({
         data: {
           teacherId: payload.teacherId,

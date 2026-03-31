@@ -471,10 +471,11 @@ const seed = async () => {
   const teacherRecords: { id: string; name: string }[] = [];
 
   for (const t of TEACHERS) {
+    const subjectsString = t.subjects.join(', ');
     const existing = await prisma.teacher.findFirst({ where: { name: t.name } });
     const teacher = existing
-      ? await prisma.teacher.update({ where: { id: existing.id }, data: { subjects: t.subjects } })
-      : await prisma.teacher.create({ data: { name: t.name, subjects: t.subjects } });
+      ? await prisma.teacher.update({ where: { id: existing.id }, data: { subjects: subjectsString } })
+      : await prisma.teacher.create({ data: { name: t.name, subjects: subjectsString } });
 
     await prisma.user.upsert({
       where: { email: t.email },

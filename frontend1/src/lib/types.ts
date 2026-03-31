@@ -59,7 +59,8 @@ export type SuggestionCandidate = {
 };
 
 export type PeriodSuggestion = {
-  period: number;
+  period: number | null;
+  time?: string;
   subject: string;
   className: string;
   room: string | null;
@@ -69,6 +70,8 @@ export type PeriodSuggestion = {
     subjectMatch: boolean;
   } | null;
   allCandidates: SuggestionCandidate[];
+  isSpecial?: boolean;
+  specialClassId?: string;
 };
 
 export type FullDaySuggestionResponse = {
