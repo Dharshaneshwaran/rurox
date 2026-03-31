@@ -129,13 +129,13 @@ export default function AdminDashboardPage() {
           description="Monitor teacher capacity, search subjects, and orchestrate profile-level timetable deployment from the centralized hub."
           actions={
             <div className="flex flex-wrap items-center gap-3">
-              <Link href="/admin/users" className={cn(buttonClasses({ variant: "secondary" }), "bg-primary-strong/20 border-white/10 text-white hover:bg-primary-strong/40 transition-all")}>
+              <Link href="/admin/users" className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 text-sm font-medium text-white transition hover:bg-white/15 backdrop-blur-md">
                 Review approvals
               </Link>
-              <Link href="/admin/special-class" className={cn(buttonClasses({ variant: "secondary" }), "bg-primary-strong/20 border-white/10 text-white hover:bg-primary-strong/40 transition-all")}>
+              <Link href="/admin/special-class" className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 text-sm font-medium text-white transition hover:bg-white/15 backdrop-blur-md">
                 Special classes
               </Link>
-              <Link href="/admin/substitutions" className={buttonClasses({ variant: "accent" })}>
+              <Link href="/admin/substitutions" className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/20 px-5 text-sm font-medium text-white transition hover:bg-primary/30 backdrop-blur-md">
                 Manage absences
               </Link>
             </div>
@@ -144,11 +144,11 @@ export default function AdminDashboardPage() {
             <>
               <div className="flex items-center gap-2 rounded-full border border-white/10 bg-primary-strong/10 px-3 py-1.5 backdrop-blur-md">
                  <div className="h-1.5 w-1.5 rounded-full bg-accent" />
-                 <span className="text-[10px] font-black uppercase tracking-widest text-primary/80">{teachers.length} teachers</span>
+                 <span className="text-[10px] font-black uppercase tracking-widest text-secondary">{teachers.length} teachers</span>
               </div>
               <div className="flex items-center gap-2 rounded-full border border-white/10 bg-primary-strong/10 px-3 py-1.5 backdrop-blur-md">
                  <div className="h-1.5 w-1.5 rounded-full bg-secondary" />
-                 <span className="text-[10px] font-black uppercase tracking-widest text-primary/80">{subjectCount} subjects</span>
+                 <span className="text-[10px] font-black uppercase tracking-widest text-secondary">{subjectCount} subjects</span>
               </div>
             </>
           }

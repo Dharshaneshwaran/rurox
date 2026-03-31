@@ -99,7 +99,11 @@ function PeriodReviewCard({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge tone="brand">Period {suggestion.period}</Badge>
+            {suggestion.isSpecial ? (
+              <Badge tone="warning">Special Class ({suggestion.time})</Badge>
+            ) : (
+              <Badge tone="brand">Period {suggestion.period}</Badge>
+            )}
             <SuggestionStatus
               hasSubstitute={Boolean(assignment)}
               hasCandidates={suggestion.allCandidates.length > 0}
@@ -152,7 +156,7 @@ export default function SubstitutionManagementPage() {
     new Date().toISOString().slice(0, 10)
   );
   const [suggestions, setSuggestions] = useState<FullDaySuggestionResponse | null>(null);
-  const [assignments, setAssignments] = useState<Record<number, string>>({});
+  const [assignments, setAssignments] = useState<Record<string, string>>({});
   const [confirmedCount, setConfirmedCount] = useState(0);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [confirmingAll, setConfirmingAll] = useState(false);
@@ -218,10 +222,11 @@ export default function SubstitutionManagementPage() {
       );
 
       setSuggestions(result);
-      const initial: Record<number, string> = {};
+      const initial: Record<string, string> = {};
       result.suggestions.forEach((suggestion) => {
         if (suggestion.suggestedTeacher) {
-          initial[suggestion.period] = suggestion.suggestedTeacher.id;
+          const key = suggestion.isSpecial ? `special-${suggestion.specialClassId}` : `period-${suggestion.period}`;
+          initial[key] = suggestion.suggestedTeacher.id;
         }
       });
       setAssignments(initial);
@@ -244,10 +249,19 @@ export default function SubstitutionManagementPage() {
     try {
       const assignmentList = Object.entries(assignments)
         .filter(([, teacherId]) => teacherId)
-        .map(([period, teacherId]) => ({
-          period: Number(period),
-          replacementTeacherId: teacherId,
-        }));
+        .map(([key, teacherId]) => {
+          if (key.startsWith("period-")) {
+            return {
+              period: Number(key.replace("period-", "")),
+              replacementTeacherId: teacherId,
+            };
+          } else {
+            return {
+              specialClassId: key.replace("special-", ""),
+              replacementTeacherId: teacherId,
+            };
+          }
+        });
 
       if (assignmentList.length === 0) {
         setError("No assignments selected");
@@ -595,15 +609,19 @@ export default function SubstitutionManagementPage() {
                         <span className="text-center">Selection</span>
                       </div>
                       {suggestions.suggestions.map((suggestion) => {
-                        const assignment = assignments[suggestion.period];
+                        const key = suggestion.isSpecial ? `special-${suggestion.specialClassId}` : `period-${suggestion.period}`;
+                        const assignment = assignments[key];
 
                         return (
                           <div
-                            key={suggestion.period}
+                            key={key}
                             className="grid grid-cols-[84px_1fr_1fr_1fr_1.35fr_140px] items-center border-b border-[var(--color-stroke)] px-5 py-4 last:border-b-0"
                           >
-                            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--color-brand-soft)] text-sm font-semibold text-[var(--color-brand)]">
-                              {suggestion.period}
+                            <span className={cn(
+                              "inline-flex h-10 w-10 items-center justify-center rounded-2xl text-sm font-semibold",
+                              suggestion.isSpecial ? "bg-amber-100 text-amber-700" : "bg-[var(--color-brand-soft)] text-[var(--color-brand)]"
+                            )}>
+                              {suggestion.isSpecial ? "S" : suggestion.period}
                             </span>
                             <span className="pr-4 text-sm font-semibold text-[var(--color-text)]">
                               {suggestion.className}
@@ -612,7 +630,7 @@ export default function SubstitutionManagementPage() {
                               {suggestion.subject}
                             </span>
                             <span className="pr-4 text-sm text-[var(--color-text-muted)]">
-                              {suggestion.room || "—"}
+                              {suggestion.isSpecial ? (suggestion.time || "—") : (suggestion.room || "—")}
                             </span>
                             <div className="pr-4">
                               {suggestion.allCandidates.length > 0 ? (
@@ -622,11 +640,11 @@ export default function SubstitutionManagementPage() {
                                   onChange={(event) =>
                                     setAssignments((current) => ({
                                       ...current,
-                                      [suggestion.period]: event.target.value,
+                                      [key]: event.target.value,
                                     }))
                                   }
                                 >
-                                  <option value="">Skip this period</option>
+                                  <option value="">Skip this {suggestion.isSpecial ? "class" : "period"}</option>
                                   {suggestion.allCandidates.map((candidate) => (
                                     <option key={candidate.id} value={candidate.id}>
                                       {candidate.name}
@@ -651,19 +669,22 @@ export default function SubstitutionManagementPage() {
                     </div>
 
                     <div className="grid gap-4 lg:hidden">
-                      {suggestions.suggestions.map((suggestion) => (
-                        <PeriodReviewCard
-                          key={suggestion.period}
-                          suggestion={suggestion}
-                          assignment={assignments[suggestion.period]}
-                          onChange={(teacherId) =>
-                            setAssignments((current) => ({
-                              ...current,
-                              [suggestion.period]: teacherId,
-                            }))
-                          }
-                        />
-                      ))}
+                      {suggestions.suggestions.map((suggestion) => {
+                        const key = suggestion.isSpecial ? `special-${suggestion.specialClassId}` : `period-${suggestion.period}`;
+                        return (
+                          <PeriodReviewCard
+                            key={key}
+                            suggestion={suggestion}
+                            assignment={assignments[key]}
+                            onChange={(teacherId) =>
+                              setAssignments((current) => ({
+                                ...current,
+                                [key]: teacherId,
+                              }))
+                            }
+                          />
+                        );
+                      })}
                     </div>
 
                     <SurfaceCard className="bg-[var(--color-panel-muted)] px-5 py-5">

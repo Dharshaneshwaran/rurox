@@ -10,16 +10,21 @@ export class TeachersService {
 
   async findAll(query: { name?: string; subject?: string; className?: string }) {
     const { name, subject, className } = query;
-    return this.prisma.teacher.findMany({
+    const teachers = await this.prisma.teacher.findMany({
       where: {
-        name: name ? { contains: name, mode: 'insensitive' } : undefined,
-        subjects: subject ? { has: subject } : undefined,
+        name: name ? { contains: name } : undefined,
+        subjects: subject ? { contains: subject } : undefined,
         timetables: className
-          ? { some: { className: { contains: className, mode: 'insensitive' } } }
+          ? { some: { className: { contains: className } } }
           : undefined,
       },
       include: { timetables: true },
     });
+
+    return teachers.map((teacher) => ({
+      ...teacher,
+      subjects: teacher.subjects ? teacher.subjects.split(', ') : [],
+    }));
   }
 
   async create(payload: CreateTeacherDto) {
@@ -33,7 +38,7 @@ export class TeachersService {
     const teacher = await this.prisma.teacher.create({
       data: {
         name: payload.name,
-        subjects: payload.subjects ?? [],
+        subjects: payload.subjects?.join(', ') ?? '',
       },
     });
 
@@ -48,16 +53,31 @@ export class TeachersService {
       },
     });
 
-    return { teacher, user };
+    return {
+      teacher: {
+        ...teacher,
+        subjects: teacher.subjects ? teacher.subjects.split(', ') : [],
+      },
+      user,
+    };
   }
 
   async update(id: string, payload: UpdateTeacherDto) {
+    const { subjects, ...rest } = payload;
     const teacher = await this.prisma.teacher.update({
       where: { id },
-      data: payload,
+      data: {
+        ...rest,
+        subjects: subjects?.join(', '),
+      },
     });
 
-    return { teacher };
+    return {
+      teacher: {
+        ...teacher,
+        subjects: teacher.subjects ? teacher.subjects.split(', ') : [],
+      },
+    };
   }
 
   async remove(id: string) {

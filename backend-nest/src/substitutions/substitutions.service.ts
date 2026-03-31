@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import type { AuthUser } from '../auth/auth.types';
 import { BaseSubstitutionDto } from './dto/base-substitution.dto';
@@ -38,12 +39,7 @@ export class SubstitutionsService {
     subject?: string;
     date: Date;
   }) {
-    const teachers: Array<{
-      id: string;
-      name: string;
-      subjects: string[];
-      workload: number;
-    }> = await this.prisma.teacher.findMany({
+    const teachers = await this.prisma.teacher.findMany({
       where: {
         id: { not: params.absentTeacherId },
         timetables: { none: { day: params.day, period: params.period } },
@@ -73,9 +69,10 @@ export class SubstitutionsService {
     );
 
     const scored = candidates
-      .map((teacher: { id: string; subjects: string[]; workload: number }) => {
+      .map((teacher: { id: string; subjects: string; workload: number }) => {
+        const subjectsArray = teacher.subjects.split(', ');
         const subjectMatch = params.subject
-          ? teacher.subjects.includes(params.subject)
+          ? subjectsArray.includes(params.subject)
           : false;
         const score = (subjectMatch ? 100 : 0) - teacher.workload;
         return { teacher, score };
@@ -93,12 +90,7 @@ export class SubstitutionsService {
     date: Date;
     excludeIds?: Set<string>;
   }) {
-    const teachers: Array<{
-      id: string;
-      name: string;
-      subjects: string[];
-      workload: number;
-    }> = await this.prisma.teacher.findMany({
+    const teachers = await this.prisma.teacher.findMany({
       where: {
         id: { not: params.absentTeacherId },
         timetables: { none: { day: params.day, period: params.period } },
@@ -147,17 +139,17 @@ export class SubstitutionsService {
 
     const scored = candidates
       .map((teacher) => {
+        const subjectsArray = teacher.subjects.split(', ');
         const subjectMatch = params.subject
-          ? teacher.subjects.includes(params.subject)
+          ? subjectsArray.includes(params.subject)
           : false;
-        const score = (subjectMatch ? 100 : 0) - teacher.workload;
         return {
           id: teacher.id,
           name: teacher.name,
-          subjects: teacher.subjects,
+          subjects: subjectsArray,
           workload: teacher.workload,
           subjectMatch,
-          score,
+          score: (subjectMatch ? 100 : 0) - teacher.workload,
         };
       })
       .sort((a, b) => b.score - a.score);
@@ -299,12 +291,24 @@ export class SubstitutionsService {
     }
 
     // Get all timetable slots for this teacher on this day
-    const slots = await this.prisma.timetable.findMany({
+    const timetableSlots = await this.prisma.timetable.findMany({
       where: { teacherId: absentTeacherId, day },
       orderBy: { period: 'asc' },
     });
 
-    if (slots.length === 0) {
+    // Get all special class slots for this teacher on this date
+    const specialClassSlots = await this.prisma.specialClass.findMany({
+      where: {
+        teacherId: absentTeacherId,
+        date: {
+          gte: new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate(), 0, 0, 0),
+          lte: new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate(), 23, 59, 59)
+        }
+      },
+      orderBy: { fromTime: 'asc' }
+    });
+
+    if (timetableSlots.length === 0 && specialClassSlots.length === 0) {
       return {
         absentTeacher: { id: absentTeacher.id, name: absentTeacher.name },
         day,
@@ -316,10 +320,13 @@ export class SubstitutionsService {
 
     // For each period, find candidates. Track who we've already picked as "best"
     // to avoid double-booking the same substitute across periods.
+    // For each period/slot, find candidates. Track who we've already picked as "best"
+    // to avoid double-booking the same substitute across periods.
     const usedIds = new Set<string>();
     const suggestions = [];
 
-    for (const slot of slots) {
+    // Process regular timetable slots
+    for (const slot of timetableSlots) {
       const allCandidates = await this.findAllCandidates({
         absentTeacherId,
         day,
@@ -349,6 +356,49 @@ export class SubstitutionsService {
           subjectMatch: c.subjectMatch,
           workload: c.workload,
         })),
+        isSpecial: false,
+      });
+    }
+
+    // Process special classes
+    for (const sc of specialClassSlots) {
+      // For special classes, we don't have a specific "period", 
+      // but we can still suggest based on free teachers during that day.
+      // For simplicity, we'll suggest from all teachers who don't have a timetable clash
+      // at the *approximate* time, but wait, we'll just suggest from all candidates free that day.
+      // Actually, we'll just use period 0 as a placeholder or similar.
+      const allCandidates = await this.findAllCandidates({
+        absentTeacherId,
+        day,
+        period: 0, // Placeholder
+        subject: sc.subject,
+        date: dateValue,
+        excludeIds: usedIds,
+      });
+
+      const suggested = allCandidates.length > 0 ? allCandidates[0] : null;
+      if (suggested) {
+        usedIds.add(suggested.id);
+      }
+
+      suggestions.push({
+        period: null,
+        time: `${sc.fromTime} - ${sc.toTime}`,
+        subject: sc.subject,
+        className: sc.className,
+        room: null,
+        suggestedTeacher: suggested
+          ? { id: suggested.id, name: suggested.name, subjectMatch: suggested.subjectMatch }
+          : null,
+        allCandidates: allCandidates.map((c) => ({
+          id: c.id,
+          name: c.name,
+          subjects: c.subjects,
+          subjectMatch: c.subjectMatch,
+          workload: c.workload,
+        })),
+        isSpecial: true,
+        specialClassId: sc.id,
       });
     }
 
@@ -377,28 +427,32 @@ export class SubstitutionsService {
     await this.cleanupCascadingAssignments(absentTeacherId, [1, 2, 3, 4, 5, 6, 7, 8], dateValue);
 
     for (const assignment of assignments) {
-      // Check for clash
-      const clash = await this.prisma.timetable.findFirst({
-        where: { teacherId: assignment.replacementTeacherId, day, period: assignment.period },
-      });
-      if (clash) {
-        throw new ConflictException(
-          `Teacher is not free for period ${assignment.period}`,
-        );
+      if (assignment.period !== undefined && assignment.period !== null) {
+        // Check for clash
+        const clash = await this.prisma.timetable.findFirst({
+          where: { teacherId: assignment.replacementTeacherId, day, period: assignment.period },
+        });
+        if (clash) {
+          throw new ConflictException(
+            `Teacher is not free for period ${assignment.period}`,
+          );
+        }
       }
 
-      const alreadyAssigned = await this.prisma.substitution.findFirst({
-        where: {
-          replacementTeacherId: assignment.replacementTeacherId,
-          day,
-          period: assignment.period,
-          date: dateValue,
-        },
-      });
-      if (alreadyAssigned) {
-        throw new ConflictException(
-          `Period ${assignment.period} already has a substitution assigned`,
-        );
+      if (assignment.period !== undefined && assignment.period !== null) {
+        const alreadyAssigned = await this.prisma.substitution.findFirst({
+          where: {
+            replacementTeacherId: assignment.replacementTeacherId,
+            day,
+            period: assignment.period,
+            date: dateValue,
+          },
+        });
+        if (alreadyAssigned) {
+          throw new ConflictException(
+            `Period ${assignment.period} already has a substitution assigned`,
+          );
+        }
       }
 
       const substitution = await this.prisma.substitution.create({
@@ -407,6 +461,7 @@ export class SubstitutionsService {
           replacementTeacherId: assignment.replacementTeacherId,
           day,
           period: assignment.period,
+          specialClassId: assignment.specialClassId,
           date: dateValue,
           autoAssigned: true,
         },
@@ -496,7 +551,7 @@ export class SubstitutionsService {
        }
     });
 
-    const excludedIds = new Set(rejectedSubs.map(s => s.replacementTeacherId).filter(Boolean) as string[]);
+    const excludedIds = new Set(rejectedSubs.map((s: any) => s.replacementTeacherId).filter(Boolean) as string[]);
     
     if (substitution.specialClassId) {
         throw new ConflictException('Auto-reassigning special classes is not fully implemented yet.');
@@ -584,7 +639,7 @@ export class SubstitutionsService {
   }
 
   async cleanupOldSubstitutions() {
-    const result = await this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const deleted = await tx.substitution.deleteMany({});
 
       if (deleted.count > 0) {

@@ -91,7 +91,7 @@ function NavItems({
               <p
                 className={cn(
                   "mt-1.5 truncate text-[10px] uppercase font-bold tracking-[0.15em] transition-colors",
-                  isActive ? "text-white/70" : "text-secondary/50 group-hover:text-secondary/80"
+                  isActive ? "text-white/90" : "text-secondary/70 group-hover:text-secondary/90"
                 )}
               >
                 {item.description}
@@ -153,7 +153,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <AppMark hideText inverse className="shrink-0 scale-105" />
             <div className="flex flex-col">
               <span className="text-[15px] font-black tracking-tight text-secondary leading-none">ruroxz</span>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-accent font-black mt-2">Command Hub</span>
+              <span className="text-[10px] uppercase tracking-[0.3em] text-secondary font-black mt-2 opacity-80">Command Hub</span>
             </div>
           </div>
 
@@ -168,11 +168,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               }}
             />
             <div className="relative z-10">
-              <h3 className="text-[9px] font-black uppercase tracking-[0.35em] text-secondary/50 mb-2.5 flex items-center gap-2">
+              <h3 className="text-[9px] font-black uppercase tracking-[0.35em] text-secondary/80 mb-2.5 flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
                 Network Live
               </h3>
-              <p className="text-[12px] font-bold leading-relaxed text-secondary/70">
+              <p className="text-[12px] font-bold leading-relaxed text-secondary/90">
                 Orchestrating school resources and deployment in real-time.
               </p>
             </div>
@@ -181,7 +181,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
         <div className="flex-1 px-1">
           <div className="space-y-4">
-            <p className="px-3 text-[10px] font-black uppercase tracking-[0.3em] text-secondary/40">
+            <p className="px-3 text-[10px] font-black uppercase tracking-[0.3em] text-secondary/70">
               Navigation
             </p>
             <NavItems pathname={pathname} />
