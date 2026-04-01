@@ -18,14 +18,10 @@ type MetricCardProps = {
 };
 
 const toneStyles: Record<MetricTone, string> = {
-  neutral:
-    "border-border bg-surface text-primary",
-  brand:
-    "border-[color:rgba(var(--color-brand-rgb),0.1)] bg-[var(--color-brand-soft)] text-primary",
-  accent:
-    "border-[color:rgba(193,132,37,0.1)] bg-[var(--color-accent-soft)] text-primary",
-  success:
-    "border-[color:rgba(45,123,102,0.1)] bg-[var(--color-success-soft)] text-primary",
+  neutral: "border-slate-100 bg-white",
+  brand: "border-slate-200 bg-slate-50/50",
+  accent: "border-slate-200 bg-slate-50/50",
+  success: "border-slate-200 bg-slate-50/50",
 };
 
 export default function MetricCard({
@@ -44,45 +40,42 @@ export default function MetricCard({
   return (
     <article
       className={cn(
-        "relative group overflow-hidden rounded-[32px] border p-7 shadow-sm transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px]",
-        toneStyles[tone]
+        "card-reveal p-10 group relative transition-all duration-500 overflow-hidden",
+        tone === "brand" ? "bg-primary/10 border-primary/20" : ""
       )}
     >
-      {/* Subtle Integrated Imagery */}
-      {backgroundImage && (
-        <div 
-          className="absolute inset-0 opacity-[0.12] grayscale pointer-events-none transition-opacity duration-700 group-hover:opacity-[0.20]"
-          style={{ 
-            backgroundImage: `url('${backgroundImage}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-        />
-      )}
+      {/* Dynamic Scan Line Effect */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.01] to-transparent h-[200%] -top-full group-hover:top-full transition-all duration-1000 pointer-events-none" />
 
-      <div className="relative z-10 flex flex-col justify-between h-full gap-10">
+      <div className="relative z-10 flex flex-col justify-between h-full gap-12">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-3">
-            <p className="font-mono-display text-[10px] font-black uppercase tracking-[0.35em] text-primary/60 group-hover:text-accent transition-colors">
-              {label}
-            </p>
+             <div className="space-y-1.5 focus-ring transition-transform group-hover:translate-x-1 duration-300">
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-500">
+                  {label}
+                </p>
+                <div className="h-1 w-6 rounded-full bg-slate-800" />
+             </div>
             {badge ? <Badge tone={badgeTone}>{badge}</Badge> : null}
           </div>
           {icon ? (
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-subtle text-primary border border-border/10 transition-all group-hover:border-accent group-hover:text-accent">
+            <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-white/[0.03] border border-white/5 text-slate-500 transition-all duration-700 group-hover:text-primary group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]">
               {icon}
             </div>
           ) : null}
         </div>
         
-        <div>
-          <p className="font-display text-5xl font-black tracking-tighter text-primary leading-none">
+        <div className="space-y-2">
+          <p className="text-5xl font-black tracking-tighter text-white leading-none italic">
             {value}
           </p>
           {supportingText ? (
-            <p className="mt-3 text-[13px] font-bold leading-relaxed text-primary/70 max-w-[200px]">
-              {supportingText}
-            </p>
+            <div className="flex items-center gap-2">
+               <div className="h-1 w-1 rounded-full bg-accent" />
+               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
+                 {supportingText}
+               </p>
+            </div>
           ) : null}
         </div>
       </div>

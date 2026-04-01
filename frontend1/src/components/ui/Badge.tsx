@@ -5,11 +5,11 @@ type BadgeVariant = "neutral" | "accent" | "success" | "warning" | "danger";
 type BadgeTone = "default" | "brand" | "accent" | "success" | "warning" | "danger";
 
 const variantClasses: Record<BadgeVariant, string> = {
-  neutral: "border-border bg-background text-muted-foreground",
-  accent: "border-primary/20 bg-primary-soft text-primary-strong",
-  success: "border-success bg-success-soft text-success",
-  warning: "border-warning bg-warning-soft text-warning",
-  danger: "border-danger bg-danger-soft text-danger",
+  neutral: "border-white/10 bg-white/5 text-slate-400",
+  accent: "border-primary/20 bg-primary/10 text-primary shadow-[0_0_10px_rgba(59,130,246,0.2)]",
+  success: "border-accent/20 bg-accent/10 text-accent shadow-[0_0_10px_rgba(16,185,129,0.2)]",
+  warning: "border-amber-500/20 bg-amber-500/10 text-amber-500",
+  danger: "border-red-500/20 bg-red-500/10 text-red-500",
 };
 
 export function badgeClasses({

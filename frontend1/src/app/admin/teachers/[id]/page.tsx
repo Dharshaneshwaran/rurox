@@ -150,24 +150,26 @@ export default function TeacherDetailsPage() {
     <AdminLayout>
       <div className="px-4 py-6 sm:px-8 lg:px-10 xl:px-12">
         <PageHeader
-          eyebrow="Teacher profile"
-          title={teacher?.name ?? "Teacher"}
-          description="Review workload, assigned subjects, and weekly timetable structure. Add classes directly into free slots when the weekly plan changes."
+          variant="command"
+          backgroundImage="/teacher.png"
+          eyebrow="Identity clearance // Deployment"
+          title={teacher?.name ?? "Teacher Agent"}
+          description="Analyze personnel workload, subjects, and synchronized timetable nodes. Modify sector slots directly when the institutional plan evolves."
           actions={
-            <>
+            <div className="flex items-center gap-4">
               <Link href="/admin/substitutions">
-                <Button variant="secondary">Mark absent</Button>
+                <Button variant="secondary" className="px-6 font-black uppercase tracking-widest text-[11px]">Initiate Absence</Button>
               </Link>
-              <Button variant="danger" onClick={handleDeleteTeacher}>
-                Delete teacher
+              <Button variant="danger" onClick={handleDeleteTeacher} className="px-6 font-black uppercase tracking-widest text-[11px]">
+                Purge Profile
               </Button>
-            </>
+            </div>
           }
           meta={
             <>
-              <Badge variant="neutral">ID {teacher?.id.slice(-6)}</Badge>
+              <Badge variant="neutral">NODE ID: {teacher?.id.slice(-6).toUpperCase()}</Badge>
               <Badge variant="accent">
-                {teacher?.workload ?? 0} substitution assignments
+                {teacher?.workload ?? 0} ACTIVE ASSIGNMENTS
               </Badge>
             </>
           }

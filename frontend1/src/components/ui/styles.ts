@@ -1,4 +1,4 @@
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "accent";
 export type ButtonSize = "sm" | "md" | "lg";
 
 export function cn(...classes: Array<string | false | null | undefined>) {
@@ -6,22 +6,22 @@ export function cn(...classes: Array<string | false | null | undefined>) {
 }
 
 export const panelClassName =
-  "rounded-[28px] border border-border/80 bg-panel/90 shadow-[0_30px_90px_-48px_rgba(41,37,36,0.42)] backdrop-blur-sm";
+  "rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] transition-all";
 
 export const subtlePanelClassName =
-  "rounded-[24px] border border-border/70 bg-surface/90 shadow-[0_24px_70px_-44px_rgba(41,37,36,0.35)]";
+  "rounded-md border border-[var(--color-border)] bg-[var(--color-surface-subtle)]";
 
 export const badgeClassName =
-  "inline-flex items-center gap-2 rounded-full border border-border/80 bg-surface px-3 py-1 text-xs font-semibold text-foreground";
+  "inline-flex items-center gap-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-[var(--color-text-soft)]";
 
 export const inputClassName =
-  "w-full rounded-2xl border border-border bg-panel px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition focus:border-accent focus:outline-none focus:ring-4 focus:ring-accent/10";
+  "w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3.5 text-[14px] font-black tracking-tight text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all";
 
 export const selectClassName =
-  "w-full rounded-2xl border border-border bg-panel px-4 py-3 text-sm text-foreground transition focus:border-accent focus:outline-none focus:ring-4 focus:ring-accent/10";
+  "w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3.5 text-[14px] font-black tracking-tight text-[var(--color-text)] focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all appearance-none";
 
 export const textareaClassName =
-  "w-full rounded-2xl border border-border bg-panel px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition focus:border-accent focus:outline-none focus:ring-4 focus:ring-accent/10";
+  "w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3.5 text-[14px] font-black tracking-tight text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all";
 
 export function getButtonClassName({
   variant = "primary",
@@ -34,22 +34,24 @@ export function getButtonClassName({
 }) {
   const sizeClassName =
     size === "sm"
-      ? "h-10 px-4 text-sm"
+      ? "h-9 px-4 text-[11px]"
       : size === "lg"
-        ? "h-14 px-6 text-base"
-        : "h-12 px-5 text-sm";
+        ? "h-12 px-8 text-sm"
+        : "h-11 px-6 text-[13px]";
 
   const variantClassName =
     variant === "secondary"
-      ? "border border-border bg-surface text-foreground hover:border-accent/40 hover:bg-accent-soft"
+      ? "border border-white/10 bg-white/5 text-white hover:bg-white/10"
       : variant === "ghost"
-        ? "border border-transparent bg-transparent text-foreground hover:bg-surface"
+        ? "text-[var(--color-text-soft)] hover:bg-white/5 hover:text-white"
         : variant === "danger"
-          ? "border border-danger/15 bg-danger text-white hover:bg-danger/90"
-          : "border border-accent bg-accent text-white hover:bg-accent/92";
+          ? "bg-red-600 text-white hover:bg-red-700 shadow-[0_4px_12px_rgba(220,38,38,0.3)]"
+          : variant === "accent"
+            ? "bg-accent text-white hover:bg-accent-strong shadow-[0_4px_12px_rgba(16,185,129,0.3)]"
+            : "bg-primary text-white hover:bg-primary-strong shadow-[0_4px_12px_rgba(59,130,246,0.3)]";
 
   return cn(
-    "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition disabled:cursor-not-allowed disabled:opacity-60",
+    "inline-flex items-center justify-center gap-2 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-30 active:scale-95",
     sizeClassName,
     variantClassName,
     fullWidth && "w-full"

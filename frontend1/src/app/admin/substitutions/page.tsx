@@ -48,21 +48,22 @@ function StepPill({
   return (
     <div
       className={cn(
-        "flex flex-1 items-center gap-3 rounded-2xl border px-4 py-3 text-[11px] font-black uppercase tracking-widest transition-all duration-300",
+        "flex flex-1 items-center gap-3 border px-6 py-4 transition-all duration-500 relative overflow-hidden",
         active
-          ? "border-[var(--color-brand)] bg-[var(--color-brand)] text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]"
+          ? "border-primary/30 bg-primary/10 text-white"
           : complete
-            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-            : "border-zinc-200 bg-zinc-50 text-zinc-400"
+            ? "border-white/10 bg-white/5 text-slate-300"
+            : "border-white/5 bg-transparent text-slate-600"
       )}
     >
+      {active && <div className="absolute top-0 left-0 w-full h-[2px] bg-primary shadow-[0_0_10px_#3b82f6]" />}
       <span className={cn(
-        "flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-black",
-        active ? "bg-white text-[var(--color-brand)]" : "bg-zinc-200 text-zinc-500"
+        "flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-black transition-colors",
+        active ? "bg-primary text-white" : "bg-white/5 text-slate-500"
       )}>
         {step}
       </span>
-      <span>{label}</span>
+      <span className="text-[11px] font-black uppercase tracking-[0.2em]">{label}</span>
     </div>
   );
 }
@@ -95,48 +96,51 @@ function PeriodReviewCard({
   onChange: (teacherId: string) => void;
 }) {
   return (
-    <div className="rounded-[24px] border border-[var(--color-stroke)] bg-white px-5 py-5">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
+    <div className="card-reveal group p-8 relative overflow-hidden">
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
             {suggestion.isSpecial ? (
-              <Badge tone="warning">Special Class ({suggestion.time})</Badge>
+              <Badge variant="warning" className="scale-90 origin-left">Special: {suggestion.time}</Badge>
             ) : (
-              <Badge tone="brand">Period {suggestion.period}</Badge>
+              <Badge variant="accent" className="scale-90 origin-left italic">Period {suggestion.period}</Badge>
             )}
             <SuggestionStatus
               hasSubstitute={Boolean(assignment)}
               hasCandidates={suggestion.allCandidates.length > 0}
             />
           </div>
-          <h3 className="text-lg font-semibold text-[var(--color-text)]">
-            {suggestion.className}
-          </h3>
-          <p className="text-sm leading-6 text-[var(--color-text-muted)]">
-            {suggestion.subject}
-            {suggestion.room ? ` • ${suggestion.room}` : ""}
-          </p>
+          <div>
+            <h3 className="text-[20px] font-black tracking-tighter text-white italic">
+               {suggestion.className}
+            </h3>
+            <p className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-500 mt-1">
+               {suggestion.subject}
+               {suggestion.room ? ` // ${suggestion.room}` : ""}
+            </p>
+          </div>
         </div>
 
         {suggestion.allCandidates.length > 0 ? (
           <select
-            className="w-full rounded-[20px] border border-[var(--color-stroke)] bg-[var(--color-panel)] px-4 py-3 text-sm text-[var(--color-text)] outline-none transition focus:border-[var(--color-brand)] focus:ring-4 focus:ring-[color:color-mix(in_oklab,var(--color-brand)_12%,white)] lg:max-w-sm"
+            className="w-full lg:w-72 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-[13px] font-black text-slate-300 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
             value={assignment || ""}
             onChange={(event) => onChange(event.target.value)}
           >
-            <option value="">Skip this period</option>
+            <option value="" className="bg-[#020617]">SKIP SECTOR COVER</option>
             {suggestion.allCandidates.map((candidate) => (
-              <option key={candidate.id} value={candidate.id}>
-                {candidate.name}
-                {candidate.subjectMatch ? " • subject match" : ""}
-                {` • load ${candidate.workload}`}
+              <option key={candidate.id} value={candidate.id} className="bg-[#020617]">
+                {candidate.name.toUpperCase()}
+                {candidate.subjectMatch ? " // MATCH" : ""}
+                {` // LOAD: ${candidate.workload}`}
               </option>
             ))}
           </select>
         ) : (
-          <p className="text-sm font-medium text-[var(--color-danger)]">
-            No available teachers
-          </p>
+          <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-red-500 bg-red-500/5 px-4 py-3 rounded-2xl border border-red-500/10">
+            <AlertIcon className="h-4 w-4" />
+            No candidates registered
+          </div>
         )}
       </div>
     </div>
@@ -466,13 +470,13 @@ export default function SubstitutionManagementPage() {
         </div>
 
         {error ? (
-          <SurfaceCard className="border border-[color:color-mix(in_oklab,var(--color-danger)_18%,white)] bg-[color:color-mix(in_oklab,var(--color-danger)_9%,white)] px-5 py-4 text-sm text-[var(--color-danger)]">
-            {error}
+          <SurfaceCard className="border border-danger/30 bg-danger/5 px-6 py-4 text-[13px] font-black uppercase tracking-widest text-danger">
+            SYSTEM ALERT: {error}
           </SurfaceCard>
         ) : null}
 
-        <SurfaceCard className="px-5 py-5 sm:px-6 sm:py-6">
-          <div className="space-y-6">
+        <div className="card-reveal px-8 py-8 sm:px-10 sm:py-10">
+          <div className="space-y-8">
             <div className="flex flex-wrap items-center gap-3">
               <StepPill step="1" label="Select absence" active={step === "select"} complete={step !== "select"} />
               <StepPill step="2" label="Review coverage" active={step === "review"} complete={step === "confirmed"} />
@@ -482,7 +486,7 @@ export default function SubstitutionManagementPage() {
             {step === "select" ? (
               <div className="grid gap-6 lg:grid-cols-12">
                 <div className="lg:col-span-8">
-                  <SurfaceCard className="bg-[var(--color-panel-muted)]/50 border-dashed border-[var(--color-stroke)] p-6">
+                  <SurfaceCard className="bg-white/5 border-dashed border-white/10 p-10">
                     <div className="grid gap-6 sm:grid-cols-2">
                       <SelectField
                         label="Absent teacher"
@@ -510,26 +514,17 @@ export default function SubstitutionManagementPage() {
                 <div className="lg:col-span-4 translate-y-[-1px]">
                   <div className="relative group overflow-hidden h-full rounded-[32px] bg-zinc-950 p-8 text-white shadow-2xl ring-1 ring-white/10">
                     {/* Integrated Imagery */}
-                    <div 
-                      className="absolute inset-0 opacity-20 mix-blend-overlay grayscale group-hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-100 pointer-events-none"
-                      style={{ 
-                        backgroundImage: "url('/substitution.png')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                      }}
-                    />
-                    
                     <div className="relative z-10 flex flex-col h-full justify-between gap-8">
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         <div className="flex items-center gap-2">
-                           <div className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)] shadow-[0_0_8px_var(--color-brand)] animate-pulse" />
-                           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Automation Engine</span>
+                           <div className="h-1 w-1 rounded-full bg-slate-900" />
+                           <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">System Ready</span>
                         </div>
-                        <h2 className="text-2xl font-black leading-tight tracking-tight">
-                          Orchestrate Coverage
+                        <h2 className="text-xl font-semibold tracking-tight text-slate-900">
+                          Coverage Protocol
                         </h2>
-                        <p className="text-[14px] font-medium leading-relaxed text-zinc-400">
-                          Select the absent teacher and date to generate optimized matchings based on workload and subject expertise.
+                        <p className="text-[13px] font-medium leading-relaxed text-slate-500">
+                          Select the absent teacher and date to initiate the matching algorithm based on real-time availability.
                         </p>
                       </div>
                       
@@ -599,14 +594,14 @@ export default function SubstitutionManagementPage() {
                   />
                 ) : (
                   <>
-                    <div className="hidden overflow-hidden rounded-[28px] border border-[var(--color-stroke)] bg-white lg:block shadow-sm">
-                      <div className="grid grid-cols-[84px_1fr_1fr_1fr_1.35fr_140px] items-center border-b border-[var(--color-stroke)] bg-zinc-50 px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
+                    <div className="hidden overflow-hidden rounded-[32px] border border-white/5 bg-white/[0.02] lg:block relative backdrop-blur-3xl">
+                      <div className="grid grid-cols-[100px_1fr_1fr_1fr_1.5fr_140px] items-center border-b border-white/5 bg-white/5 px-8 py-6 text-[9px] font-black uppercase tracking-[0.4em] text-slate-500">
                         <span>Period</span>
-                        <span>Classroom</span>
-                        <span>Subject</span>
-                        <span>Location</span>
-                        <span>Substitute Selection</span>
-                        <span className="text-center">Selection</span>
+                        <span>Sector</span>
+                        <span>Topic</span>
+                        <span>Node</span>
+                        <span>Deployment</span>
+                        <span className="text-center">Status</span>
                       </div>
                       {suggestions.suggestions.map((suggestion) => {
                         const key = suggestion.isSpecial ? `special-${suggestion.specialClassId}` : `period-${suggestion.period}`;
@@ -615,27 +610,27 @@ export default function SubstitutionManagementPage() {
                         return (
                           <div
                             key={key}
-                            className="grid grid-cols-[84px_1fr_1fr_1fr_1.35fr_140px] items-center border-b border-[var(--color-stroke)] px-5 py-4 last:border-b-0"
+                            className="grid grid-cols-[100px_1fr_1fr_1fr_1.5fr_140px] items-center border-b border-white/5 px-8 py-6 last:border-b-0 hover:bg-white/[0.01] transition-colors"
                           >
                             <span className={cn(
-                              "inline-flex h-10 w-10 items-center justify-center rounded-2xl text-sm font-semibold",
-                              suggestion.isSpecial ? "bg-amber-100 text-amber-700" : "bg-[var(--color-brand-soft)] text-[var(--color-brand)]"
+                              "inline-flex h-12 w-12 items-center justify-center rounded-2xl text-[18px] font-black italic",
+                              suggestion.isSpecial ? "bg-amber-500/10 text-amber-500" : "bg-primary/10 text-primary"
                             )}>
                               {suggestion.isSpecial ? "S" : suggestion.period}
                             </span>
-                            <span className="pr-4 text-sm font-semibold text-[var(--color-text)]">
+                            <span className="pr-4 text-[16px] font-black tracking-tighter text-white italic">
                               {suggestion.className}
                             </span>
-                            <span className="pr-4 text-sm text-[var(--color-text-muted)]">
+                            <span className="pr-4 text-[13px] font-bold text-slate-400">
                               {suggestion.subject}
                             </span>
-                            <span className="pr-4 text-sm text-[var(--color-text-muted)]">
+                            <span className="pr-4 text-[11px] font-black uppercase tracking-[0.1em] text-slate-600">
                               {suggestion.isSpecial ? (suggestion.time || "—") : (suggestion.room || "—")}
                             </span>
                             <div className="pr-4">
                               {suggestion.allCandidates.length > 0 ? (
                                 <select
-                                  className="w-full rounded-[18px] border border-[var(--color-stroke)] bg-[var(--color-panel)] px-3 py-2.5 text-sm text-[var(--color-text)] outline-none transition focus:border-[var(--color-brand)] focus:ring-4 focus:ring-[color:color-mix(in_oklab,var(--color-brand)_12%,white)]"
+                                  className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-[13px] font-black text-slate-300 focus:border-primary transition-all outline-none"
                                   value={assignment || ""}
                                   onChange={(event) =>
                                     setAssignments((current) => ({
@@ -644,25 +639,27 @@ export default function SubstitutionManagementPage() {
                                     }))
                                   }
                                 >
-                                  <option value="">Skip this {suggestion.isSpecial ? "class" : "period"}</option>
+                                  <option value="" className="bg-[#020617]">SKIP SECTOR COVER</option>
                                   {suggestion.allCandidates.map((candidate) => (
-                                    <option key={candidate.id} value={candidate.id}>
-                                      {candidate.name}
-                                      {candidate.subjectMatch ? " • subject match" : ""}
-                                      {` • load ${candidate.workload}`}
+                                    <option key={candidate.id} value={candidate.id} className="bg-[#020617]">
+                                      {candidate.name.toUpperCase()}
+                                      {candidate.subjectMatch ? " // MATCH" : ""}
+                                      {` // LOAD: ${candidate.workload}`}
                                     </option>
                                   ))}
                                 </select>
                               ) : (
-                                <span className="text-sm text-[var(--color-danger)]">
-                                  No teachers available
+                                <span className="text-[11px] font-black uppercase text-red-500/60">
+                                  No availability
                                 </span>
                               )}
                             </div>
-                            <SuggestionStatus
-                              hasSubstitute={Boolean(assignment)}
-                              hasCandidates={suggestion.allCandidates.length > 0}
-                            />
+                            <div className="flex justify-center">
+                                <SuggestionStatus
+                                  hasSubstitute={Boolean(assignment)}
+                                  hasCandidates={suggestion.allCandidates.length > 0}
+                                />
+                            </div>
                           </div>
                         );
                       })}
@@ -687,70 +684,63 @@ export default function SubstitutionManagementPage() {
                       })}
                     </div>
 
-                    <SurfaceCard className="bg-[var(--color-panel-muted)] px-5 py-5">
-                      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                        <div className="flex flex-wrap gap-3">
-                          <Badge tone="brand">
-                            {suggestions.suggestions.length} periods to cover
+                    <div className="flex flex-col gap-6 lg:items-center py-6">
+                        <div className="flex flex-wrap gap-4">
+                          <Badge variant="accent" className="px-5 transition-transform hover:scale-110">
+                            {suggestions.suggestions.length} SECTORS DETECTED
                           </Badge>
-                          <Badge tone="success">{assignedCount} assigned</Badge>
-                          <Badge tone="warning">
-                            {suggestions.suggestions.length - assignedCount} skipped
+                          <Badge variant="success" className="px-5 transition-transform hover:scale-110 italic">{assignedCount} NODES DEPLOYED</Badge>
+                          <Badge variant="warning" className="px-5 transition-transform hover:scale-110">
+                            {suggestions.suggestions.length - assignedCount} VOID SECTORS
                           </Badge>
                         </div>
                         <Button
                           size="lg"
+                          variant="accent"
                           disabled={confirmingAll || assignedCount === 0}
                           onClick={handleConfirmAll}
+                          className="px-16 font-black uppercase tracking-[0.2em] shadow-[0_10px_40px_rgba(59,130,246,0.3)] transition-all hover:scale-[1.02] active:scale-95"
                         >
                           {confirmingAll
-                            ? "Confirming..."
-                            : `Confirm ${assignedCount} assignment${assignedCount === 1 ? "" : "s"}`}
+                            ? "INSCRIBING DATA..."
+                            : `DEPLOY ${assignedCount} COVER PROTOCO${assignedCount === 1 ? "L" : "LS"}`}
                         </Button>
-                      </div>
-                    </SurfaceCard>
+                    </div>
                   </>
                 )}
               </div>
             ) : null}
 
             {step === "confirmed" ? (
-              <div className="relative mx-auto max-w-2xl py-20 px-6 overflow-hidden rounded-[48px] bg-zinc-50 border border-zinc-200 shadow-2xl">
-                {/* Decorative Success Background */}
-                <div 
-                  className="absolute inset-0 opacity-[0.03] grayscale pointer-events-none"
-                  style={{ 
-                    backgroundImage: "url('/substitution.png')",
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
-                  }}
-                />
-                
-                <div className="relative z-10 flex flex-col items-center gap-8 text-center">
-                  <div className="flex h-24 w-24 items-center justify-center rounded-[32px] bg-zinc-950 text-white shadow-2xl ring-1 ring-white/10 animate-in zoom-in duration-500">
-                    <CheckCircleIcon className="h-12 w-12 text-emerald-400" />
+              <div className="card-reveal mx-auto max-w-2xl py-24 px-12 border border-primary/20 relative overflow-hidden group">
+                 {/* Success Ring Decoration */}
+                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 bg-primary/5 rounded-full blur-3xl animate-pulse" />
+                 
+                <div className="relative z-10 flex flex-col items-center gap-10 text-center">
+                  <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-primary text-white shadow-[0_0_40px_rgba(59,130,246,0.5)] rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                    <CheckCircleIcon className="h-12 w-12 text-white" />
                   </div>
                   <div className="space-y-4 max-w-md">
-                    <h2 className="text-4xl font-black tracking-tight text-zinc-950">
-                      Coverage Orchestrated
+                    <h2 className="text-4xl font-black tracking-tighter text-white italic">
+                      ORCHESTRATION COMPLETE
                     </h2>
-                    <p className="text-[16px] font-bold leading-relaxed text-zinc-500">
+                    <p className="text-[13px] font-black uppercase tracking-[0.3em] leading-relaxed text-slate-500">
                       Successfully assigned {confirmedCount} substitution{confirmedCount === 1 ? "" : "s"} for{" "}
-                      <span className="text-[var(--color-brand)] font-black">
-                        {selectedTeacher?.name || "the selected teacher"}
+                      <span className="text-primary font-black italic">
+                        {selectedTeacher?.name || "the designated agent"}
                       </span>.
                     </p>
                   </div>
-                  <div className="flex flex-col gap-3 sm:flex-row pt-8">
-                    <Button size="lg" onClick={handleReset} className="min-w-[240px] shadow-2xl">
-                      Start new session
+                   <div className="flex flex-col gap-3 sm:flex-row pt-6">
+                    <Button size="lg" onClick={handleReset} className="min-w-[280px] shadow-2xl font-black uppercase tracking-widest text-[11px]">
+                      Initiate New Sequence
                     </Button>
                   </div>
                 </div>
               </div>
             ) : null}
           </div>
-        </SurfaceCard>
+        </div>
 
         <SurfaceCard className="px-5 py-5 sm:px-6 sm:py-6">
           <div className="space-y-5">

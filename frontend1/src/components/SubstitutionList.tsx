@@ -1,12 +1,10 @@
 import type { Substitution } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { badgeClasses } from "@/components/ui/Badge";
-
 import Button from "@/components/ui/Button";
 
 type SubstitutionListProps = {
   substitutions: Substitution[];
-  variant?: "light" | "dark";
   onAccept?: (id: string) => Promise<void>;
   onReject?: (id: string) => Promise<void>;
   onApproveRejection?: (id: string) => Promise<void>;
@@ -18,7 +16,6 @@ type SubstitutionListProps = {
 
 export default function SubstitutionList({
   substitutions,
-  variant = "light",
   onAccept,
   onReject,
   onApproveRejection,
@@ -28,65 +25,54 @@ export default function SubstitutionList({
   onDelete,
 }: SubstitutionListProps) {
   if (!substitutions.length) {
-    return <p className="text-sm text-muted-foreground">No substitutions scheduled.</p>;
+    return (
+      <div className="flex flex-col items-center justify-center p-12 bg-white/5 border border-dashed border-white/10 rounded-3xl">
+        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 italic">No Active Deployments Tracked</p>
+      </div>
+    );
   }
 
-  const dark = variant === "dark";
-
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {substitutions.map((item) => (
         <article
           key={item.id}
-          className={cn(
-            "border px-4 py-4",
-            dark
-              ? "border-white/15 bg-white/5"
-              : "border-border bg-white"
-          )}
+          className="card-reveal group p-6 relative overflow-hidden"
         >
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <p
-                  className={cn(
-                    "font-black tracking-tight",
-                    dark ? "text-white" : "text-zinc-900"
-                  )}
-                >
-                  {item.day} / Period {item.period}
-                </p>
-                <span
-                  className={cn(
-                    "text-[11px] uppercase tracking-[0.14em] font-bold",
-                    dark ? "text-zinc-400" : "text-zinc-500"
-                  )}
-                >
-                  {new Date(item.date).toLocaleDateString(undefined, {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </span>
-              </div>
-              <p
-                className={cn(
-                  "mt-4 text-[13px] font-bold",
-                  dark ? "text-zinc-400" : "text-zinc-600"
-                )}
-              >
-                Absent: <span className={cn("font-black", dark ? "text-white" : "text-zinc-900")}>{item.absentTeacher?.name ?? "Unknown"}</span>
-              </p>
-              <p
-                className={cn(
-                  "mt-1 text-[13px] font-bold",
-                  dark ? "text-zinc-400" : "text-zinc-600"
-                )}
-              >
-                Cover: <span className={cn("font-black", dark ? "text-zinc-100" : "text-zinc-800")}>{item.replacementTeacher?.name ?? "Searching..."}</span>
-              </p>
+          <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-8">
+               <div className="flex flex-col items-center justify-center h-14 w-14 bg-white/5 border border-white/5 rounded-2xl group-hover:border-primary/30 transition-colors">
+                  <span className="text-[10px] font-black text-slate-500 uppercase leading-none">{item.day}</span>
+                  <span className="text-[18px] font-black text-white italic mt-1">{item.period}</span>
+               </div>
+               
+               <div className="space-y-1">
+                  <div className="flex items-center gap-3">
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
+                      {new Date(item.date).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </p>
+                    <div className="h-1 w-1 rounded-full bg-slate-800" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Node assigned</span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 mt-4">
+                    <div className="space-y-0.5">
+                       <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Absent Resource</p>
+                       <p className="text-[15px] font-black text-white tracking-tighter italic">{item.absentTeacher?.name ?? "NULL"}</p>
+                    </div>
+                    <div className="h-4 w-px bg-slate-800 hidden sm:block" />
+                    <div className="space-y-0.5">
+                       <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Replacement Agent</p>
+                       <p className="text-[15px] font-black text-primary tracking-tighter italic">{item.replacementTeacher?.name ?? "SCANNING..."}</p>
+                    </div>
+                  </div>
+               </div>
             </div>
-            <div className="flex flex-col items-end gap-2">
+
+            <div className="flex flex-col items-end gap-4 min-w-[140px]">
               <span
                 className={badgeClasses({
                   variant: 
@@ -96,52 +82,55 @@ export default function SubstitutionList({
                     "success",
                 })}
               >
-                {item.status || (item.autoAssigned ? "Auto" : "Manual")}
+                {item.status || "AUTO-SYNC"}
               </span>
               
-              {onAccept && onReject && item.status === "PENDING" && item.replacementTeacherId === currentTeacherId && (
-                <div className="flex gap-2 mt-2">
+              <div className="flex flex-wrap items-center justify-end gap-3">
+                {onAccept && onReject && item.status === "PENDING" && item.replacementTeacherId === currentTeacherId && (
+                  <>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => onReject(item.id)}
+                      disabled={loadingId === item.id}
+                      className="text-[10px] uppercase font-black tracking-widest"
+                    >
+                      Refuse
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => onAccept(item.id)}
+                      disabled={loadingId === item.id}
+                      className="text-[10px] uppercase font-black tracking-widest"
+                    >
+                      Authorize
+                    </Button>
+                  </>
+                )}
+                
+                {isAdmin && onApproveRejection && item.status === "REJECTED" && (
                   <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => onReject(item.id)}
-                    disabled={loadingId === item.id}
-                  >
-                    Reject
-                  </Button>
-                  <Button
-                    variant="accent"
-                    size="sm"
-                    onClick={() => onAccept(item.id)}
-                    disabled={loadingId === item.id}
-                  >
-                    Accept
-                  </Button>
-                </div>
-              )}
-              
-              {isAdmin && onApproveRejection && item.status === "REJECTED" && (
-                <div className="flex gap-2 mt-2">
-                  <Button
-                    variant="accent"
+                    variant="primary"
                     size="sm"
                     onClick={() => onApproveRejection(item.id)}
                     disabled={loadingId === item.id}
+                    className="text-[10px] uppercase font-black tracking-widest"
                   >
-                    Reassign cover
+                    Re-Orchestrate Node
                   </Button>
-                </div>
-              )}
+                )}
 
-              {isAdmin && onDelete && (
-                <button
-                  onClick={() => onDelete(item.id)}
-                  disabled={loadingId === item.id}
-                  className="mt-2 text-[10px] font-bold uppercase tracking-widest text-red-500/60 hover:text-red-500 transition-colors"
-                >
-                  Delete Record
-                </button>
-              )}
+                {isAdmin && onDelete && (
+                  <button
+                    onClick={() => onDelete(item.id)}
+                    disabled={loadingId === item.id}
+                    className="text-[9px] font-black uppercase tracking-[0.25em] text-red-500/30 hover:text-red-500 transition-colors"
+                  >
+                    Purge Record
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </article>

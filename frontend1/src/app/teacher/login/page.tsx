@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { apiFetch } from "@/lib/api";
 import { setStoredAuth } from "@/hooks/useAuth";
+import { cn } from "@/lib/cn";
 import type { User } from "@/lib/types";
 
 export default function TeacherLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -43,155 +46,185 @@ export default function TeacherLoginPage() {
   };
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen flex overflow-hidden">
-      {/* Asymmetric Background Split */}
-      <div className="hidden lg:flex lg:w-1/2 spine-gradient items-center justify-center p-12 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="grid grid-cols-12 h-full w-full">
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className="border-r border-stone-500/20 h-full"></div>
-            ))}
+    <div className="admin-theme flex min-h-screen w-full bg-[#020617] font-body selection:bg-primary/30 selection:text-white">
+      {/* Left Panel - Hero Branding */}
+      <div className="hidden lg:flex flex-col justify-center w-[45%] bg-[#020617] p-16 xl:p-24 relative overflow-hidden">
+        {/* Dynamic Glows */}
+        <div className="absolute -top-[10%] -left-[10%] h-[60%] w-[60%] bg-primary/20 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute -bottom-[10%] -right-[10%] h-[60%] w-[60%] bg-accent/20 blur-[120px] rounded-full" />
+
+        <div className="max-w-xl z-20 relative">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-md">
+            <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Teacher Portal Active</span>
           </div>
-        </div>
-        <div className="z-10 max-w-md">
-          <div className="mb-8">
-            <h1 className="font-headline text-5xl font-extrabold text-white tracking-tighter mb-4">Timeassignment@ruroxz</h1>
-            <div className="h-1 w-12 bg-white/20 mb-6"></div>
-            <p className="font-body text-stone-400 text-lg leading-relaxed">
-              Smart timetable management—automated assignments, instant substitutions, zero confusion.
-            </p>
-          </div>
-          <div className="flex flex-col gap-6">
-            <div className="flex items-start gap-4 p-4 rounded bg-white/5 border border-white/10">
-              <span className="material-symbols-outlined text-stone-400">speed</span>
-              <div>
-                <p className="text-white font-semibold text-sm">Real-time Allocation</p>
-                <p className="text-stone-500 text-xs mt-1">.....</p>
+
+          <h1 className="text-6xl xl:text-7xl font-bold mb-8 tracking-tighter text-white leading-[0.95]">
+            ruroxz <span className="text-primary italic">Teacher</span> Access
+          </h1>
+
+          <p className="text-xl text-slate-400 mb-14 leading-relaxed max-w-lg">
+            Manage your teaching schedule and Substitution status with 
+            <span className="text-white"> real-time updates</span> and 
+            <span className="text-white"> instant classroom</span> coordination.
+          </p>
+
+          <div className="space-y-6">
+            <div className="group relative overflow-hidden p-8 rounded-[32px] border border-white/5 bg-white/[0.03] backdrop-blur-xl transition-all hover:bg-white/[0.05] hover:border-white/10">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-lg">Smart Schedule</h3>
+                  <p className="text-sm text-slate-500 mt-1">Intelligent timetable synchronization across all your assigned slots.</p>
+                </div>
               </div>
             </div>
-            <div className="flex items-start gap-4 p-4 rounded bg-white/5 border border-white/10">
-              <span className="material-symbols-outlined text-stone-400">verified_user</span>
-              <div>
-                <p className="text-white font-semibold text-sm">Enterprise Security</p>
-                <p className="text-stone-500 text-xs mt-1">.....</p>
+
+            <div className="group relative overflow-hidden p-8 rounded-[32px] border border-white/5 bg-white/[0.03] backdrop-blur-xl transition-all hover:bg-white/[0.05] hover:border-white/10">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent/10 text-accent shadow-[0_0_15px_rgba(139,92,246,0.2)]">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-lg">Instant Alerts</h3>
+                  <p className="text-sm text-slate-500 mt-1">Receive immediate push notifications for coverage requests and period changes.</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="absolute bottom-8 left-12">
-          <p className="font-label text-[10px] uppercase tracking-[0.2em] text-stone-600">© 2026 Ruroxz Timetable Assignment Systems. All rights reserved.</p>
+
+        <div className="absolute bottom-12 left-16 xl:left-24 flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
+          <span>Ruroxz Systems</span>
+          <div className="h-1 w-1 rounded-full bg-slate-800" />
+          <span>Institutional Node beta</span>
         </div>
       </div>
 
-      {/* Main Workspace Page */}
-      <main className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-12 hero-gradient">
-        <div className="w-full max-w-[400px] flex flex-col">
-          {/* Branding Mobile Only */}
-          <div className="lg:hidden mb-12 text-center">
-            <h1 className="font-headline text-3xl font-extrabold text-inverse-surface tracking-tighter">Timeassignment@ruroxz</h1>
-            <p className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Resource Management Portal</p>
+      {/* Right Panel - Interactive Login */}
+      <div className="flex-1 flex flex-col bg-[#020617] relative lg:border-l lg:border-white/5 shadow-[-40px_0_80px_rgba(0,0,0,0.5)]">
+        <div className="absolute inset-0 bg-hero-gradient opacity-10 pointer-events-none" />
+
+        <div className="flex-1 flex flex-col px-8 sm:px-24 pt-20 pb-12 max-w-[800px] w-full mx-auto justify-center z-10">
+          
+          <div className="mb-12">
+            <h2 className="text-4xl font-bold text-white tracking-tight leading-none mb-4">Secure Teacher Login</h2>
+            <p className="text-slate-400 text-lg">Access your academic hub to manage period deployments.</p>
           </div>
 
-          {/* Role Selection (Asymmetric Tabs) */}
-          <div className="flex items-center gap-4 mb-10 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="grid grid-cols-2 p-1.5 bg-white/5 rounded-2xl border border-white/10 mb-12">
             <button
-              type="button"
-              onClick={() => router.push('/admin/login')}
-              className="flex-shrink-0 group flex flex-col items-start opacity-40 hover:opacity-100 transition-opacity"
+              onClick={() => router.push('/')}
+              className="py-3.5 rounded-xl text-sm font-bold uppercase tracking-widest transition-all text-slate-500 hover:text-white"
             >
-              <span className="font-label text-[11px] uppercase tracking-wider text-on-surface-variant">Administrator Login</span>
-              <span className="h-[2px] w-full bg-outline-variant mt-1 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+              Administrator
             </button>
-            <button className="flex-shrink-0 group flex flex-col items-start" type="button">
-              <span className="font-label text-[11px] uppercase tracking-wider text-primary font-bold">Teacher Portal</span>
-              <span className="h-[2px] w-full bg-primary mt-1 scale-x-100 transition-transform origin-left"></span>
+            <button
+              className="py-3.5 rounded-xl text-sm font-bold uppercase tracking-widest transition-all bg-white text-slate-900 shadow-xl"
+            >
+              Teacher Entry
             </button>
-            <div className="flex-grow h-[1px] bg-outline-variant/20 mb-[2px]"></div>
           </div>
 
-          {/* Focus Container */}
-          <div className="bg-surface-container-lowest p-8 rounded shadow-sm border border-surface-container-high relative">
-            <div className="mb-8">
-              <h2 className="font-headline text-2xl font-bold tracking-tight text-on-background">Sign In</h2>
-              <p className="font-body text-xs text-on-surface-variant mt-1">Enter your credentials to access the ledger.</p>
-            </div>
+          <div className="p-1 w-full rounded-[40px] bg-gradient-to-br from-white/10 via-transparent to-white/5 shadow-2xl">
+            <div className="bg-[#0f172a]/40 backdrop-blur-3xl rounded-[39px] p-10 sm:p-14 border border-white/5">
+              
+              <form onSubmit={onSubmit} className="space-y-8">
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <label className="block text-[11px] font-black uppercase tracking-[0.25em] text-slate-500">
+                      Staff ID / Email
+                    </label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="teacher@ruroxz.edu"
+                      className="w-full bg-white/5 border border-white/10 text-white placeholder:text-slate-600 focus:border-primary focus:ring-4 focus:ring-primary/10 px-6 py-4 rounded-2xl transition-all"
+                      required
+                    />
+                  </div>
 
-            <form className="space-y-6" onSubmit={onSubmit}>
-              {/* Email Field */}
-              <div className="space-y-1.5">
-                <label className="font-label text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold" htmlFor="email" >Institutional Email</label>
-                <div className="relative group">
-                  <input
-                    className="w-full h-9 bg-surface-container-low border-0 focus:ring-1 focus:ring-primary text-sm font-body px-3 transition-all placeholder:text-outline-variant"
-                    id="email"
-                    name="email"
-                    placeholder="name@school.edu"
-                    required
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-primary group-focus-within:w-full transition-all duration-300"></div>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <label className="block text-[11px] font-black uppercase tracking-[0.25em] text-slate-500">
+                        Security Token
+                      </label>
+                      <button type="button" className="text-[10px] font-bold text-primary hover:underline transition-all">FORGOT?</button>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••••••"
+                        className="w-full bg-white/5 border border-white/10 text-white placeholder:text-slate-600 focus:border-primary focus:ring-4 focus:ring-primary/10 px-6 py-4 rounded-2xl transition-all"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                      >
+                        {showPassword ? (
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              {/* Password Field */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <label className="font-label text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold" htmlFor="password">Security Token</label>
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" id="session" className="h-5 w-5 bg-white/5 border-white/20 rounded-lg text-primary focus:ring-primary/20 accent-primary" />
+                  <label htmlFor="session" className="text-sm text-slate-500 font-medium cursor-pointer">
+                    Remember station credentials
+                  </label>
                 </div>
-                <div className="relative group">
-                  <input
-                    className="w-full h-9 bg-surface-container-low border-0 focus:ring-1 focus:ring-primary text-sm font-body px-3 transition-all placeholder:text-outline-variant"
-                    id="password"
-                    name="password"
-                    placeholder="••••••••"
-                    required
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-primary group-focus-within:w-full transition-all duration-300"></div>
+
+                {error && (
+                  <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold text-center">
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-primary hover:bg-primary-strong text-white text-[13px] font-black uppercase tracking-[0.2em] py-5 px-6 rounded-2xl transition-all shadow-xl shadow-primary/20 active:scale-[0.98] disabled:opacity-50"
+                >
+                  {loading ? "INITIALIZING NODE..." : "ESTABLISH ACCESS →"}
+                </button>
+
+                <div className="text-center">
+                   <p className="text-slate-600 text-xs font-bold uppercase tracking-widest">
+                     New Hire? <Link href="/teacher/signup" className="text-primary hover:text-white transition-colors">Request Account</Link>
+                   </p>
                 </div>
+              </form>
+
+              <div className="mt-12 pt-8 border-t border-white/5 text-center">
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-700 leading-relaxed max-w-[320px] mx-auto">
+                  Encrypted Session Monitor Active. 
+                  Unauthorized access is strictly audited.
+                </p>
               </div>
-
-              {error ? <p className="text-sm text-red-600">{error}</p> : null}
-
-              {/* Options */}
-              <div className="flex items-center gap-2 py-2">
-                <input className="w-3 h-3 rounded-none border-outline-variant text-primary focus:ring-0 focus:ring-offset-0" id="remember" type="checkbox" />
-                <label className="font-body text-[11px] text-on-surface-variant select-none" htmlFor="remember">Maintain active session for 8 hours</label>
-              </div>
-
-              {/* Primary CTA */}
-              <button
-                className="w-full h-9 milled-button text-on-primary font-label text-[11px] uppercase tracking-[0.15em] font-bold rounded shadow-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60"
-                type="submit"
-                disabled={loading}
-              >
-                {loading ? "INITIALIZING..." : "INITIALIZE ACCESS"}
-                <span className="material-symbols-outlined text-sm">login</span>
-              </button>
-            </form>
-
-            {/* Footer Text */}
-            <div className="mt-8 pt-6 border-t border-surface-container-high text-center">
-              <p className="font-body text-[10px] text-on-surface-variant leading-relaxed">
-                Authorized Personnel Only. All session activities are logged for auditing and security compliance within the Timeassignment@ruroxz framework.
-              </p>
             </div>
           </div>
         </div>
-
-        {/* Decorative Floating Image - Editorial Quality */}
-        <div className="mt-20 w-full max-w-2xl hidden md:block opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
-          <div className="grid grid-cols-3 gap-1 h-24 overflow-hidden rounded-sm">
-            <img alt="Clean modern office architecture" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANNgODKlhCLrnvGrLOpu6L-Al5UndlfJZKhe-MVeP_-p9zA34bpaESfeejvVBKJ2ZFXK1PM4bsxl6R-ucJMAsVQPiOkBowzSsDLdCPxC75aYqcayeFzrORNnXpo3xENdgPbfqHUWhkSOq68xoIhGuZN93RT_yUuuM-vfIh5nrEpwgUSwAzRxAkR4Tkqe7nYqO8jO0gntv9nYdjwtuULlJmDhas3taSN2s1I-gdlA49EpRbhJCfirwQOIZ9WUNxPwrI-vcwU7LSgFo" />
-            <img alt="Structured library" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8kdtqmiKVxmERklbu55t4uCoXebe8x0Edfx1qM0mvoBmI4-WYIrFKLEI8lCwawu6LGZEL6mpyEsOL8VNJlsiRe8g1lsA9x1umuPJTDKckiAsL0LnOhdycfcZBMRJQCaTTYduLV6xZttJlilHJMngG2Bax8YK6o-3gg9Bqanh3CqHrZOk8RfUwZ8aLejP3xBWi1N2RnYDbGlUNQNUN4gpPCGmtn8lqbb_ySa5-QCFLjGBSYTpPvmUMFBzNJxiO7HmXOxGLfgI5tfM" />
-            <img alt="Professional planner" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDENQCdnwbwaaX7pw1QI_w4KWw90oIIx6cOPLWyYgL8q6NzvXZSIoY57KyQ04Gne_zJM4cko2tW6rkNk3XCr7W-60-gcvp_NEwtLhZiahT8MQexQT8staSgsWK9l-n7ZiJ5a_7RzmBA4V2EKExwjM7K0Sp9l5-E5nDujMrzsXDW184FTFUn5d0UfY6rgkY9--58OqT3kgGozDP8tzvGGbpiXbIKUJZf9ri64INfyjwrlvrPIeo1ssTD6_J5AVJGR1tanyf8r3ggoZQ" />
-          </div>
-        </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -95,7 +95,7 @@ export default function SpecialClassAssignmentPage() {
           <div className="mb-10 text-left">
             <h1 className="font-headline text-5xl font-extrabold text-white tracking-tighter mb-4">Special Class Assignment</h1>
             <div className="h-1 w-12 bg-white/20 mb-6"></div>
-            <p className="font-body text-stone-400 text-lg leading-relaxed mb-8">
+            <p className="font-body text-secondary/85 text-lg leading-relaxed mb-8">
               Schedule specialized out-of-band classes, extra revisions, and targeted educational sessions instantly. Ensure optimal resource allocation with the architectural ledger.
             </p>
           </div>
@@ -134,14 +134,14 @@ export default function SpecialClassAssignmentPage() {
         </div>
 
         <div className="absolute top-8 left-12 cursor-pointer z-50">
-          <button onClick={() => router.push('/admin/dashboard')} className="flex items-center gap-2 text-stone-400 hover:text-white transition-colors">
+          <button onClick={() => router.push('/admin/dashboard')} className="flex items-center gap-2 text-secondary/70 hover:text-white transition-colors">
             <span className="material-symbols-outlined text-sm">arrow_back</span>
             <span className="font-label text-xs uppercase tracking-widest">Back to Dashboard</span>
           </button>
         </div>
 
         <div className="absolute bottom-8 left-12">
-          <p className="font-label text-[10px] uppercase tracking-[0.2em] text-stone-600">© 2026 Ruroxz Timetable Assignment Systems. All rights reserved.</p>
+          <p className="font-label text-[10px] uppercase tracking-[0.2em] text-secondary/30">© 2026 Ruroxz Timetable Assignment Systems. All rights reserved.</p>
         </div>
       </div>
 
