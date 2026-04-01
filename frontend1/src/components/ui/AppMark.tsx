@@ -31,7 +31,7 @@ export default function AppMark({
         <span
           className={cn(
             "block font-display text-sm font-extrabold uppercase tracking-[0.28em]",
-            inverse ? "text-orange-200" : "text-accent"
+            inverse ? "text-secondary" : "text-accent"
           )}
         >
           Smart Teacher

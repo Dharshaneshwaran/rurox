@@ -49,7 +49,7 @@ function NavItems({
   onNavigate?: () => void;
 }) {
   return (
-    <nav className="flex flex-col gap-1">
+    <nav className="flex flex-col gap-1.5">
       {navItems.map((item) => {
         const isActive = pathname.startsWith(item.href);
         const Icon = item.icon;
@@ -60,43 +60,22 @@ function NavItems({
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              "group relative flex items-center gap-3.5 rounded-xl px-3.5 py-3 transition-all duration-300",
+              "group flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-300",
               isActive
-                ? "bg-white/10 text-white shadow-sm"
-                : "text-secondary/70 hover:bg-white/5 hover:text-white"
+                ? "bg-primary text-white shadow-[0_8px_16px_rgba(59,130,246,0.3)]"
+                : "text-slate-400 hover:bg-white/5 hover:text-white"
             )}
           >
-            {isActive && (
-              <div className="absolute left-0 h-6 w-1 rounded-r-full bg-[var(--color-brand)] shadow-[0_0_10px_var(--color-brand)]" />
-            )}
-            <div
-              className={cn(
-                "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all duration-300",
-                isActive
-                  ? "bg-accent text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]"
-                  : "bg-primary-strong/40 text-secondary/50 group-hover:bg-primary-strong/60 group-hover:text-secondary/90"
-              )}
-            >
-              <Icon className="h-4.5 w-4.5" />
-            </div>
-            <div className="min-w-0 flex-1 py-0.5">
-              <p 
-                className={cn(
-                  "text-[14px] font-black leading-none tracking-tight transition-colors",
-                  isActive ? "text-white" : "text-secondary group-hover:text-white"
-                )}
-              >
-                {item.label}
-              </p>
-              <p
-                className={cn(
-                  "mt-1.5 truncate text-[10px] uppercase font-bold tracking-[0.15em] transition-colors",
-                  isActive ? "text-white/90" : "text-secondary/70 group-hover:text-secondary/90"
-                )}
-              >
-                {item.description}
-              </p>
-            </div>
+            <Icon className={cn(
+              "h-5 w-5 shrink-0 transition-colors",
+              isActive ? "text-white" : "text-slate-500 group-hover:text-slate-300"
+            )} />
+            <span className={cn(
+              "text-[14px] font-semibold tracking-tight",
+              isActive ? "text-white" : "text-slate-300 group-hover:text-white"
+            )}>
+              {item.label}
+            </span>
           </Link>
         );
       })}
@@ -114,9 +93,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   if (loading || !user) {
     return (
-      <div className="page-shell min-h-screen">
-        <div className="mx-auto flex min-h-screen w-full max-w-[1600px] items-center justify-center px-6 py-12 text-sm text-[var(--color-text-muted)]">
-          Loading workspace...
+      <div className="admin-theme bg-background min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/5 border-t-primary" />
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Securing Session</p>
         </div>
       </div>
     );
@@ -136,131 +116,124 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="admin-theme page-shell min-h-screen lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
-      <aside className="hidden border-r border-primary/20 bg-primary px-3 py-6 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-8 overflow-hidden group/sidebar">
-        {/* Background Texture */}
-        <div 
-          className="absolute inset-0 opacity-[0.25] mix-blend-overlay grayscale transition-opacity duration-700 group-hover/sidebar:opacity-[0.40] pointer-events-none"
-          style={{ 
-            backgroundImage: 'url(/substitution.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'contrast(1.2) brightness(0.8)'
-          }}
-        />
-        <div className="px-3 space-y-6">
-          <div className="flex items-center gap-4 px-2 translate-x-[-2px]">
-            <AppMark hideText inverse className="shrink-0 scale-105" />
-            <div className="flex flex-col">
-              <span className="text-[15px] font-black tracking-tight text-secondary leading-none">ruroxz</span>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-secondary font-black mt-2 opacity-80">Command Hub</span>
-            </div>
+    <div className="admin-theme min-h-screen lg:grid lg:grid-cols-[300px_1fr] bg-[#020617] page-shell selection:bg-primary/30 selection:text-white">
+      <aside className="hidden border-r border-white/5 bg-[#020617] px-6 py-10 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-12 relative overflow-hidden">
+        {/* Architectural Sidebar Lines */}
+        <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-white/5 to-transparent" />
+        
+        <div className="relative z-10 flex items-center gap-4 px-2 hover:translate-x-1 transition-transform duration-500">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary shadow-[0_12px_24px_rgba(59,130,246,0.35)] relative group cursor-pointer overflow-hidden">
+             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+             <AppMark hideText inverse className="scale-75 relative z-10" />
           </div>
-
-          <div className="relative group overflow-hidden rounded-2xl border border-white/5 bg-primary-strong/60 p-5 shadow-2xl transition-all hover:bg-primary-strong/90">
-            {/* Professional Texture Integration */}
-            <div
-              className="absolute inset-0 opacity-[0.25] mix-blend-screen pointer-events-none grayscale group-hover:opacity-40 transition-all duration-700 scale-[1.3] group-hover:scale-100"
-              style={{
-                backgroundImage: "url('/substitution.png')",
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }}
-            />
-            <div className="relative z-10">
-              <h3 className="text-[9px] font-black uppercase tracking-[0.35em] text-secondary/80 mb-2.5 flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
-                Network Live
-              </h3>
-              <p className="text-[12px] font-bold leading-relaxed text-secondary/90">
-                Orchestrating school resources and deployment in real-time.
-              </p>
+          <div className="flex flex-col">
+            <span className="text-[22px] font-black tracking-tighter text-white leading-none italic">ruroxz</span>
+            <div className="flex items-center gap-2 mt-1">
+               <div className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse shadow-[0_0_8px_#10b981]" />
+               <span className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-500">Node active</span>
             </div>
           </div>
         </div>
 
-        <div className="flex-1 px-1">
-          <div className="space-y-4">
-            <p className="px-3 text-[10px] font-black uppercase tracking-[0.3em] text-secondary/70">
-              Navigation
-            </p>
-            <NavItems pathname={pathname} />
+        <div className="flex-1 px-1 relative z-10">
+          <div className="space-y-10">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 px-3">
+                 <div className="h-px w-6 bg-slate-800" />
+                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
+                   Orchestrator
+                 </p>
+              </div>
+              <NavItems pathname={pathname} />
+            </div>
           </div>
         </div>
 
-        <div className="px-3 py-4 mt-auto">
-          <div className="rounded-2xl bg-primary-strong/40 border border-white/5 p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-xs font-black text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]">
-              {initials}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-[13px] font-black text-white">
-                {user.name || "Administrator"}
-              </p>
-              <p className="truncate text-[10px] text-secondary/60 font-bold tracking-tight">
-                {user.email}
-              </p>
+        <div className="mt-auto border-t border-white/5 pt-8 px-2 relative z-10">
+          <div className="group relative p-1 rounded-[30px] bg-gradient-to-br from-white/10 to-transparent transition-all hover:bg-white/5">
+            <div className="flex items-center gap-4 p-4 rounded-[29px] bg-[#0f172a]/50 backdrop-blur-3xl border border-white/5">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 text-sm font-bold text-white shadow-2xl border border-white/10 group-hover:border-primary/50 transition-colors">
+                {initials}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[15px] font-black text-white tracking-tight">
+                  {user.name?.split(' ')[0] || "Admin"}
+                </p>
+                <p className="truncate text-[9px] text-slate-500 font-black uppercase tracking-[0.2em] mt-0.5">
+                  Lead Admin
+                </p>
+              </div>
             </div>
           </div>
           <button
             onClick={handleSignOut}
-            className="mt-4 flex w-full items-center gap-3 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-secondary/50 transition-all hover:bg-red-500/15 hover:text-red-400 ring-1 ring-white/5"
+            className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl px-4 py-4 text-[11px] font-black uppercase tracking-[0.25em] text-slate-600 hover:text-white hover:bg-white/5 hover:border-white/10 border border-transparent transition-all duration-300"
           >
-            <LogOutIcon className="h-4 w-4 opacity-70" />
-            Sign out
+            <LogOutIcon className="h-4 w-4" />
+            De-authenticate
           </button>
         </div>
       </aside>
 
-      <div className="flex min-h-screen flex-col">
-        <header className="sticky top-0 z-30 border-b border-primary/10 bg-surface/80 px-4 py-3 backdrop-blur-xl lg:hidden">
-          <div className="flex items-center justify-between gap-3">
-            <AppMark className="min-w-0" />
+      <div className="flex flex-col min-h-screen bg-background">
+        <header className="sticky top-0 z-30 border-b border-white/5 bg-background/80 px-4 py-4 lg:hidden backdrop-blur-xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                <AppMark hideText inverse className="scale-50" />
+              </div>
+              <span className="text-[16px] font-bold text-white">ruroxz</span>
+            </div>
             <button
-              type="button"
-              onClick={() => setMobileOpen((current) => !current)}
-              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--color-stroke)] bg-white text-[var(--color-text)]"
-              aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="p-2 rounded-xl border border-white/10 text-white bg-white/5"
             >
-              {mobileOpen ? (
-                <XIcon className="h-5 w-5" />
-              ) : (
-                <MenuIcon className="h-5 w-5" />
-              )}
+              {mobileOpen ? <XIcon className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
             </button>
           </div>
-          {mobileOpen ? (
-            <div className="pt-4">
-              <Panel tone="muted" className="space-y-4 px-4 py-4">
-                <div className="flex items-center gap-3 rounded-[24px] border border-[var(--color-stroke)] bg-white px-4 py-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-brand)] text-sm font-bold text-white">
-                    {initials}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-[var(--color-text)]">
-                      {user.name || "Administrator"}
-                    </p>
-                    <p className="truncate text-xs text-[var(--color-text-soft)]">
-                      {user.email}
-                    </p>
-                  </div>
-                </div>
+          {mobileOpen && (
+            <div className="mt-4 py-6 border-t border-white/5 h-screen bg-background">
+              <div className="space-y-8">
                 <NavItems pathname={pathname} onNavigate={() => setMobileOpen(false)} />
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                  icon={<LogOutIcon className="h-4 w-4" />}
-                  onClick={handleSignOut}
-                >
+                <button onClick={handleSignOut} className="flex items-center gap-2 px-4 text-red-400 text-[14px] font-bold">
+                  <LogOutIcon className="h-5 w-5" />
                   Sign out
-                </Button>
-              </Panel>
+                </button>
+              </div>
             </div>
-          ) : null}
+          )}
         </header>
-
-        <main className="flex-1 overflow-y-auto bg-surface transition-colors duration-500">
-          {children}
+ 
+        <main className="flex-1 bg-background relative overflow-hidden group/main">
+          {/* Digital Blueprint Visualization */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+             {/* Dynamic Mesh Grid */}
+             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-100%,rgba(59,130,246,0.3),transparent_60%)]" />
+             <div className="absolute inset-0 page-shell opacity-[0.8]" />
+             
+             {/* Animated Node Circles */}
+             <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-primary/5 blur-[120px] animate-pulse" />
+             <div className="absolute -bottom-48 -right-48 h-[600px] w-[600px] rounded-full bg-accent/5 blur-[160px] animate-pulse [animation-delay:1s]" />
+             
+             {/* Architectural Technical Lines */}
+             <div className="absolute top-0 left-1/4 w-px h-full bg-white/[0.03] shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
+             <div className="absolute top-0 left-2/4 w-px h-full bg-white/[0.03] shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
+             <div className="absolute top-0 left-3/4 w-px h-full bg-white/[0.03] shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
+             
+             <div className="absolute top-1/4 left-0 w-full h-px bg-white/[0.02]" />
+             <div className="absolute top-2/4 left-0 w-full h-px bg-white/[0.02]" />
+             <div className="absolute top-3/4 left-0 w-full h-px bg-white/[0.02]" />
+             
+             {/* Technical Callout */}
+             <div className="absolute bottom-12 right-12 flex flex-col items-end gap-2 opacity-10">
+                <div className="h-0.5 w-24 bg-white" />
+                <p className="text-[10px] font-black uppercase tracking-[0.6em] text-white italic">Institutional Core // v4.2.0</p>
+             </div>
+          </div>
+          
+          <div className="mx-auto max-w-[1400px] relative z-10 px-4 sm:px-6 lg:px-8">
+            {children}
+          </div>
         </main>
       </div>
     </div>

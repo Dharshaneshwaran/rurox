@@ -12,12 +12,6 @@ type StatCardProps = {
   backgroundImage?: string;
 };
 
-const toneClasses: Record<NonNullable<StatCardProps["tone"]>, string> = {
-  default: "border-foreground/10",
-  accent: "border-primary/30 bg-primary-soft/55",
-  success: "border-success bg-success-soft/65",
-};
-
 export default function StatCard({
   label,
   value,
@@ -33,41 +27,48 @@ export default function StatCard({
   return (
     <section
       className={cn(
-        "relative group overflow-hidden rounded-[32px] border border-border bg-surface p-7 shadow-sm transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px]",
-        toneClasses[tone],
+        "card-reveal p-10 group relative transition-all duration-500",
+        tone === "accent" ? "bg-primary/10 border-primary/20" : "",
         className
       )}
     >
-      {/* Subtle Background Texture Implementation */}
-      {backgroundImage && (
-        <div 
-          className="absolute inset-0 opacity-[0.10] grayscale pointer-events-none transition-opacity duration-700 group-hover:opacity-[0.22] scale-110 group-hover:scale-100"
-          style={{ 
-            backgroundImage: `url('${backgroundImage}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-        />
-      )}
+      {/* Precision Grid Background */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')]" />
 
-      <div className="relative z-10 flex flex-col items-start justify-between gap-6 h-full">
-        <div className="flex w-full items-center justify-between">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/50">
-             {label}
-           </p>
+      <div className="relative z-10 flex flex-col items-start justify-between gap-12 h-full">
+        <div className="flex w-full items-start justify-between">
+            <div className="space-y-1.5 focus-ring transition-transform group-hover:translate-x-1 duration-300">
+               <p className={cn(
+                 "text-[9px] font-black uppercase tracking-[0.4em]",
+                 tone === "accent" ? "text-primary" : "text-slate-500"
+               )}>
+                 {label}
+               </p>
+               <div className={cn("h-1 w-6 rounded-full", tone === "accent" ? "bg-primary" : "bg-slate-800")} />
+            </div>
+
            {icon ? (
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border/10 bg-surface-subtle text-primary transition-colors group-hover:border-accent group-hover:text-accent">
+              <div className={cn(
+                "flex h-14 w-14 items-center justify-center rounded-[20px] transition-all duration-700 bg-white/[0.03] border border-white/5",
+                tone === "accent" ? "text-primary shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "text-slate-500 group-hover:text-white group-hover:bg-primary/5"
+              )}>
                 {icon}
               </div>
            ) : null}
         </div>
         
-        <div>
-          <p className="font-display text-5xl font-extrabold tracking-tighter text-primary">
+        <div className="space-y-2">
+          <p className={cn(
+            "text-5xl font-black tracking-tighter leading-none italic",
+            tone === "accent" ? "text-primary" : "text-white"
+          )}>
             {value}
           </p>
           {supportingText ? (
-            <p className="mt-3 text-[13px] font-semibold leading-relaxed text-primary/70 max-w-[200px]">{supportingText}</p>
+            <div className="flex items-center gap-2">
+               <div className="h-1 w-1 rounded-full bg-accent" />
+               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">{supportingText}</p>
+            </div>
           ) : null}
         </div>
       </div>

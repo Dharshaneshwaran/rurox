@@ -21,33 +21,47 @@ export default function SectionCard({
   backgroundImage,
 }: SectionCardProps) {
   return (
-    <section className={cn("relative overflow-hidden rounded-[40px] border border-border bg-surface shadow-sm transition-all duration-500 hover:shadow-md", className)}>
-      {/* Subtle Integrated Imagery */}
+    <section
+      className={cn(
+        "card-reveal flex flex-col gap-10 p-12 relative overflow-hidden",
+        className
+      )}
+    >
+      {/* Decorative High-End Background */}
       {backgroundImage && (
         <div 
-          className="absolute inset-0 opacity-[0.08] grayscale pointer-events-none transition-opacity duration-700 hover:opacity-[0.18] scale-105 hover:scale-100"
-          style={{ 
-            backgroundImage: `url('${backgroundImage}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
+          className="absolute inset-0 opacity-[0.03] scale-110 blur-sm pointer-events-none bg-cover bg-center"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
         />
       )}
 
-      <div className="relative z-10 flex flex-wrap items-start justify-between gap-6 border-b border-border/10 bg-surface-subtle/80 px-8 py-7 backdrop-blur-sm sm:px-10">
-        <div className="space-y-1.5">
-          <h2 className="font-display text-2xl font-black tracking-tight text-primary">
-            {title}
-          </h2>
+      {/* Precision Lines */}
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+      <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-primary/20 to-transparent" />
+
+      <header className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 transition-transform hover:translate-x-1 duration-300">
+             <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+             <h2 className="text-2xl font-black tracking-tighter text-white uppercase italic">
+               {title}
+             </h2>
+          </div>
           {subtitle ? (
-            <p className="max-w-xl text-[13.5px] font-semibold leading-relaxed text-primary/70">
+            <p className="text-[13px] text-slate-500 max-w-xl leading-relaxed font-bold tracking-widest uppercase">
               {subtitle}
             </p>
           ) : null}
         </div>
-        {actions}
-      </div>
-      <div className={cn("relative z-10 px-8 py-8 sm:px-10", contentClassName)}>
+        
+        {actions ? (
+          <div className="flex flex-wrap items-center gap-4 lg:shrink-0 relative z-20">
+            {actions}
+          </div>
+        ) : null}
+      </header>
+
+      <div className={cn("relative z-10 flex-1", contentClassName)}>
         {children}
       </div>
     </section>

@@ -119,17 +119,8 @@ export default function WorkspaceShell({
   return (
     <div className="min-h-screen bg-zinc-50/60">
       <div className="flex min-h-screen w-full">
-        <aside className="hidden w-72 flex-col border-r border-zinc-900 bg-zinc-950 lg:flex sticky top-0 h-screen overflow-hidden group/sidebar">
-          {/* Background Texture */}
-          <div 
-            className="absolute inset-0 opacity-[0.25] mix-blend-overlay grayscale transition-opacity duration-700 group-hover/sidebar:opacity-[0.40] pointer-events-none"
-            style={{ 
-              backgroundImage: 'url(/substitution.png)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              filter: 'contrast(1.2) brightness(0.8)'
-            }}
-          />
+        <aside className="hidden w-72 flex-col border-r border-zinc-900 bg-zinc-950 spine-gradient lg:flex sticky top-0 h-screen overflow-hidden group/sidebar">
+
           <div className="relative z-10 flex flex-col h-full gap-8 p-6">
             <Link href="/" className="inline-flex items-center gap-3.5 px-1.5 group">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md transition-transform group-hover:scale-105">

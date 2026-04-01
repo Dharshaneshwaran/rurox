@@ -128,27 +128,27 @@ export default function AdminDashboardPage() {
           title="Staffing Overview"
           description="Monitor teacher capacity, search subjects, and orchestrate profile-level timetable deployment from the centralized hub."
           actions={
-            <div className="flex flex-wrap items-center gap-3">
-              <Link href="/admin/users" className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 text-sm font-medium text-white transition hover:bg-white/15 backdrop-blur-md">
+            <div className="flex flex-wrap items-center gap-2">
+              <Link href="/admin/users" className={cn(buttonClasses({ variant: "secondary", size: "sm" }), "px-4")}>
                 Review approvals
               </Link>
-              <Link href="/admin/special-class" className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 text-sm font-medium text-white transition hover:bg-white/15 backdrop-blur-md">
+              <Link href="/admin/special-class" className={cn(buttonClasses({ variant: "secondary", size: "sm" }), "px-4")}>
                 Special classes
               </Link>
-              <Link href="/admin/substitutions" className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/20 px-5 text-sm font-medium text-white transition hover:bg-primary/30 backdrop-blur-md">
+              <Link href="/admin/substitutions" className={cn(buttonClasses({ variant: "primary", size: "sm" }), "px-4 shadow-sm")}>
                 Manage absences
               </Link>
             </div>
           }
           meta={
             <>
-              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-primary-strong/10 px-3 py-1.5 backdrop-blur-md">
-                 <div className="h-1.5 w-1.5 rounded-full bg-accent" />
-                 <span className="text-[10px] font-black uppercase tracking-widest text-secondary">{teachers.length} teachers</span>
+              <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+                 <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_#3b82f6]" />
+                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">{teachers.length} ARCHIVES</span>
               </div>
-              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-primary-strong/10 px-3 py-1.5 backdrop-blur-md">
-                 <div className="h-1.5 w-1.5 rounded-full bg-secondary" />
-                 <span className="text-[10px] font-black uppercase tracking-widest text-secondary">{subjectCount} subjects</span>
+              <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+                 <div className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_8px_#10b981]" />
+                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">{subjectCount} SECTORS</span>
               </div>
             </>
           }
@@ -194,91 +194,92 @@ export default function AdminDashboardPage() {
         <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_360px]">
           <SectionCard
             backgroundImage="/teacher_2.png"
-            title={
-              directoryLoading
-                ? "Teacher Directory"
-                : `Teacher Directory (${filteredTeachers.length})`
-            }
+            title="Registry // Synchronization"
             subtitle="Search by teacher name or subject, then open the full profile to update deployment slots."
             actions={
-              <div className="relative w-full sm:w-80">
-                <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <div className="relative w-full sm:w-80 group">
+                <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" />
                 <input
                   type="text"
-                  placeholder="Search teachers or subjects"
+                  placeholder="EXFILTRATE PERSONNEL..."
                   value={searchTerm}
                   onChange={(event) => setSearchTerm(event.target.value)}
                   disabled={directoryLoading}
-                  className="h-11 w-full border border-border bg-surface pl-10 pr-4 text-sm text-primary placeholder:text-primary/40 focus:border-accent focus:outline-none"
+                  className="h-12 w-full rounded-2xl border border-white/5 bg-white/5 pl-12 pr-4 text-[14px] font-black tracking-tight text-white placeholder:text-slate-600 focus:border-primary/50 focus:outline-none transition-all backdrop-blur-xl"
                 />
               </div>
             }
           >
             {directoryLoading ? (
-              <div className="grid gap-4 lg:grid-cols-2">
+              <div className="grid gap-6 lg:grid-cols-2">
                 {Array.from({ length: 4 }).map((_, index) => (
                   <div
                     key={index}
-                    className="border border-border bg-background/45 p-5"
+                    className="rounded-3xl border border-white/5 bg-white/5 p-6"
                   >
                     <div className="animate-pulse">
                       <div className="flex items-start justify-between gap-4">
-                        <div className="h-12 w-12 border border-border bg-white/70" />
-                        <div className="h-7 w-24 rounded-full border border-border bg-white/70" />
+                        <div className="h-12 w-12 rounded-xl bg-white/10" />
+                        <div className="h-7 w-24 rounded-full bg-white/10" />
                       </div>
 
-                      <div className="mt-5 h-8 w-2/3 rounded bg-white/70" />
+                      <div className="mt-5 h-8 w-2/3 rounded-lg bg-white/10" />
 
                       <div className="mt-4 flex flex-wrap gap-2">
-                        <div className="h-7 w-20 rounded-full border border-border bg-white/70" />
-                        <div className="h-7 w-24 rounded-full border border-border bg-white/70" />
+                        <div className="h-7 w-20 rounded-full bg-white/10" />
+                        <div className="h-7 w-24 rounded-full bg-white/10" />
                       </div>
 
-                      <div className="mt-6 border-t border-border pt-4">
-                        <div className="h-5 w-3/4 rounded bg-white/70" />
+                      <div className="mt-6 border-t border-white/5 pt-4">
+                        <div className="h-5 w-3/4 rounded-md bg-white/10" />
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : filteredTeachers.length ? (
-              <div className="grid gap-4 lg:grid-cols-2">
-                {filteredTeachers.map((teacher) => (
+              <div className="grid gap-6 lg:grid-cols-2">
+                  {filteredTeachers.map((teacher) => (
                   <Link
                     href={`/admin/teachers/${teacher.id}`}
                     key={teacher.id}
-                    className="group border border-border bg-surface-subtle/10 p-5 transition hover:bg-surface-subtle hover:border-primary/20"
+                    className="card-reveal group relative flex flex-col justify-between p-8 transition-all duration-500"
                   >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center border border-border/10 bg-surface-subtle font-display text-xl text-primary font-bold">
+                    <div className="relative z-10 flex items-start justify-between gap-4">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary font-black shadow-[0_0_20px_rgba(59,130,246,0.15)] ring-1 ring-primary/20">
                         {teacher.name.charAt(0)}
                       </div>
-                      <Badge variant={teacher.workload ? "accent" : "neutral"}>
-                        {teacher.workload} covers
-                      </Badge>
+                      <div className="flex flex-col items-end gap-1">
+                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">Utilization</p>
+                        <Badge variant={teacher.workload ? "accent" : "neutral"} className="scale-90 origin-right">
+                          {teacher.workload} periods
+                        </Badge>
+                      </div>
                     </div>
 
-                    <h3 className="mt-5 font-display text-2xl tracking-[-0.04em] text-foreground">
-                      {teacher.name}
-                    </h3>
+                    <div className="mt-8">
+                       <h3 className="relative z-10 text-[18px] font-black tracking-tighter text-white group-hover:text-primary transition-colors italic">
+                        {teacher.name}
+                      </h3>
+                    </div>
 
-                    <div className="mt-4 flex flex-wrap gap-2">
+                    <div className="relative z-10 mt-6 flex flex-wrap gap-2">
                       {teacher.subjects.length ? (
                         teacher.subjects.map((subject) => (
-                          <Badge key={subject} variant="neutral">
+                          <div key={subject} className="px-3 py-1 rounded-lg bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-[0.1em] text-slate-400">
                             {subject}
-                          </Badge>
+                          </div>
                         ))
                       ) : (
-                        <span className="text-sm text-muted-foreground">
-                          No subjects assigned
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-700 italic">
+                          Null Sector Access
                         </span>
                       )}
                     </div>
 
-                    <div className="mt-6 flex items-center justify-between border-t border-border pt-4 text-sm font-medium text-foreground">
-                      <span>Open profile and weekly timetable</span>
-                      <ArrowRightIcon className="h-4 w-4 transition group-hover:translate-x-1" />
+                    <div className="relative z-10 mt-8 flex items-center justify-between border-t border-white/5 pt-5">
+                      <span className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 group-hover:text-slate-200 transition-colors">ACCESS PROFILE</span>
+                      <ArrowRightIcon className="h-4 w-4 text-slate-600 transition-all duration-300 group-hover:translate-x-1 group-hover:text-primary" />
                     </div>
                   </Link>
                 ))}
@@ -371,6 +372,21 @@ export default function AdminDashboardPage() {
               </Button>
             </div>
           </SectionCard>
+        </div>
+
+        {/* Neural Network Footer Visualization */}
+        <div className="mt-12 mb-20 p-12 card-reveal border-dashed border-white/5 flex flex-col items-center justify-center text-center gap-6 group">
+           <div className="flex -space-x-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="h-12 w-12 rounded-2xl border-4 border-[#020617] bg-slate-800 flex items-center justify-center text-[10px] font-black uppercase text-white shadow-2xl group-hover:translate-y-1 transition-transform" style={{ transitionDelay: `${i * 100}ms` }}>
+                  {String.fromCharCode(65 + i)}
+                </div>
+              ))}
+           </div>
+           <div className="space-y-2">
+              <h3 className="text-[12px] font-black uppercase tracking-[0.5em] text-white">Institutional Node Synchronizer</h3>
+              <p className="text-[10px] font-bold text-slate-600 max-w-md uppercase leading-relaxed">System is Monitoring {teachers.length} Active Profiles. All coverage sectors are operational and secured under primary school protocols.</p>
+           </div>
         </div>
       </div>
     </AdminLayout>

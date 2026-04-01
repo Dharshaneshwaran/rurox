@@ -7,13 +7,13 @@ import type {
 import { cn } from "@/lib/cn";
 
 export const inputClassName =
-  "mt-3 h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm text-foreground placeholder:text-muted-foreground transition focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10";
+  "mt-3 h-12 w-full rounded-2xl border border-white/5 bg-white/5 px-4 text-sm font-semibold text-white placeholder:text-slate-500 transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 backdrop-blur-3xl";
 
 export const textareaClassName =
-  "mt-3 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10";
+  "mt-3 w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm font-semibold text-white placeholder:text-slate-500 transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 backdrop-blur-3xl";
 
 export const selectClassName =
-  "mt-3 h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm text-foreground transition focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10";
+  "mt-3 h-12 w-full rounded-2xl border border-white/5 bg-white/5 px-4 text-sm font-semibold text-white transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 backdrop-blur-3xl appearance-none";
 
 type FieldProps = {
   label: string;
@@ -37,7 +37,7 @@ export default function Field({
       <div className="flex items-end justify-between gap-3">
         <label
           htmlFor={htmlFor}
-          className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground"
+          className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 group-hover:text-primary transition-colors"
         >
           {label}
         </label>

@@ -6,11 +6,11 @@ type ButtonVariant = "primary" | "secondary" | "accent" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "border-foreground bg-foreground text-white hover:bg-foreground/92",
-  secondary: "border-border bg-white text-foreground hover:bg-background",
-  accent: "border-primary bg-primary text-white hover:bg-primary-strong",
-  ghost: "border-transparent bg-transparent text-muted-foreground hover:bg-white",
-  danger: "border-danger bg-danger-soft text-danger hover:bg-red-100",
+  primary: "border-primary/20 bg-primary/10 text-primary hover:bg-primary hover:text-white shadow-[0_0_20px_rgba(59,130,246,0.15)]",
+  secondary: "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white",
+  accent: "bg-primary text-white hover:bg-primary-strong shadow-[0_10px_30px_rgba(59,130,246,0.3)]",
+  ghost: "border-transparent bg-transparent text-slate-500 hover:text-white hover:bg-white/5",
+  danger: "border-red-500/20 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
