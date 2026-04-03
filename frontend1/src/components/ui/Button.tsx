@@ -6,17 +6,17 @@ type ButtonVariant = "primary" | "secondary" | "accent" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "border-primary/20 bg-primary/10 text-primary hover:bg-primary hover:text-white shadow-[0_0_20px_rgba(59,130,246,0.15)]",
-  secondary: "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white",
-  accent: "bg-primary text-white hover:bg-primary-strong shadow-[0_10px_30px_rgba(59,130,246,0.3)]",
-  ghost: "border-transparent bg-transparent text-slate-500 hover:text-white hover:bg-white/5",
-  danger: "border-red-500/20 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white",
+  primary: "bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-200",
+  secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200",
+  accent: "bg-emerald-600 text-white hover:bg-emerald-700",
+  ghost: "bg-transparent text-slate-600 hover:bg-slate-100",
+  danger: "bg-red-600 text-white hover:bg-red-700",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "h-10 px-4 text-sm",
-  md: "h-11 px-5 text-sm",
-  lg: "h-12 px-6 text-base",
+  sm: "h-9 px-4 text-sm",
+  md: "h-10 px-5 text-sm",
+  lg: "h-11 px-6 text-base",
 };
 
 export function buttonClasses({
@@ -29,7 +29,7 @@ export function buttonClasses({
   className?: string;
 }) {
   return cn(
-    "inline-flex items-center justify-center gap-2 rounded-full border font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50",
+    "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed",
     variantClasses[variant],
     sizeClasses[size],
     className

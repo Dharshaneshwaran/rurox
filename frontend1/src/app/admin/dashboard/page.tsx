@@ -3,15 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import AdminLayout from "@/components/AdminLayout";
-import SectionCard from "@/components/SectionCard";
-import { ArrowRightIcon, BookIcon, SearchIcon, SwapIcon, UsersIcon } from "@/components/icons";
 import { cn } from "@/lib/cn";
-import Badge from "@/components/ui/Badge";
-import Button, { buttonClasses } from "@/components/ui/Button";
-import EmptyState from "@/components/ui/EmptyState";
-import Field, { inputClassName } from "@/components/ui/Field";
-import PageHeader from "@/components/ui/PageHeader";
-import StatCard from "@/components/ui/StatCard";
 import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/api";
 import type { Teacher } from "@/lib/types";
@@ -111,8 +103,11 @@ export default function AdminDashboardPage() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="px-4 py-10 text-sm text-muted-foreground sm:px-8 lg:px-10">
-          Loading teacher directory...
+        <div className="flex items-center justify-center py-12">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-8 w-8 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin" />
+            <p className="text-sm font-medium text-slate-700 font-bold">Loading...</p>
+          </div>
         </div>
       </AdminLayout>
     );
@@ -120,273 +115,158 @@ export default function AdminDashboardPage() {
 
   return (
     <AdminLayout>
-      <div className="px-4 py-6 sm:px-8 lg:px-10 xl:px-12">
-        <PageHeader
-          variant="command"
-          backgroundImage="/teacher.png"
-          eyebrow="Teacher Roster & Deployment"
-          title="Staffing Overview"
-          description="Monitor teacher capacity, search subjects, and orchestrate profile-level timetable deployment from the centralized hub."
-          actions={
-            <div className="flex flex-wrap items-center gap-2">
-              <Link href="/admin/users" className={cn(buttonClasses({ variant: "secondary", size: "sm" }), "px-4")}>
-                Review approvals
-              </Link>
-              <Link href="/admin/special-class" className={cn(buttonClasses({ variant: "secondary", size: "sm" }), "px-4")}>
-                Special classes
-              </Link>
-              <Link href="/admin/substitutions" className={cn(buttonClasses({ variant: "primary", size: "sm" }), "px-4 shadow-sm")}>
-                Manage absences
-              </Link>
-            </div>
-          }
-          meta={
-            <>
-              <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-                 <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_#3b82f6]" />
-                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">{teachers.length} ARCHIVES</span>
-              </div>
-              <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-                 <div className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_8px_#10b981]" />
-                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">{subjectCount} SECTORS</span>
-              </div>
-            </>
-          }
-        />
-
-        {error ? (
-          <div className="mt-6 border border-danger bg-danger-soft px-4 py-3 text-sm text-danger">
-            {error}
+      <div className="space-y-8">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-black text-slate-900">Dashboard</h1>
+            <p className="text-slate-700 mt-1 font-black text-sm">Manage teachers, schedules, and substitutions</p>
           </div>
-        ) : null}
-
-        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          <StatCard
-            backgroundImage="/teacher.png"
-            label="Unified Roster"
-            value={String(teachers.length)}
-            detail="Active teacher profiles synchronized."
-            icon={<UsersIcon className="h-5 w-5" />}
-          />
-          <StatCard
-            backgroundImage="/teacher_2.png"
-            label="Curriculum"
-            value={String(subjectCount)}
-            detail="Distinct subjects represented."
-            icon={<BookIcon className="h-5 w-5" />}
-          />
-          <StatCard
-            backgroundImage="/substitution.png"
-            label="Current Load"
-            value={String(totalWorkload)}
-            detail="Total substitutions orchestrated."
-            icon={<SwapIcon className="h-5 w-5" />}
-          />
-          <StatCard
-            label="Filter Match"
-            value={String(filteredTeachers.length)}
-            detail="Profiles matching current filters."
-            tone={searchTerm ? "accent" : "default"}
-            icon={<SearchIcon className="h-5 w-5" />}
-          />
+          <div className="flex gap-3">
+            <Link 
+              href="/admin/users"
+              className="px-4 py-2 rounded-lg bg-slate-100 text-slate-900 font-black text-sm hover:bg-slate-200 transition-colors"
+            >
+              Approvals
+            </Link>
+            <Link 
+              href="/admin/substitutions"
+              className="px-4 py-2 rounded-lg bg-blue-600 text-white font-black text-sm hover:bg-blue-700 transition-colors"
+            >
+              Substitutions
+            </Link>
+          </div>
         </div>
 
-        <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_360px]">
-          <SectionCard
-            backgroundImage="/teacher_2.png"
-            title="Registry // Synchronization"
-            subtitle="Search by teacher name or subject, then open the full profile to update deployment slots."
-            actions={
-              <div className="relative w-full sm:w-80 group">
-                <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" />
-                <input
-                  type="text"
-                  placeholder="EXFILTRATE PERSONNEL..."
-                  value={searchTerm}
-                  onChange={(event) => setSearchTerm(event.target.value)}
-                  disabled={directoryLoading}
-                  className="h-12 w-full rounded-2xl border border-white/5 bg-white/5 pl-12 pr-4 text-[14px] font-black tracking-tight text-white placeholder:text-slate-600 focus:border-primary/50 focus:outline-none transition-all backdrop-blur-xl"
-                />
-              </div>
-            }
-          >
-            {directoryLoading ? (
-              <div className="grid gap-6 lg:grid-cols-2">
-                {Array.from({ length: 4 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="rounded-3xl border border-white/5 bg-white/5 p-6"
-                  >
-                    <div className="animate-pulse">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="h-12 w-12 rounded-xl bg-white/10" />
-                        <div className="h-7 w-24 rounded-full bg-white/10" />
-                      </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white rounded-lg p-6 border border-slate-200">
+            <p className="text-sm font-bold text-slate-800 mb-1">Teachers</p>
+            <p className="text-3xl font-black text-slate-900">{teachers.length}</p>
+          </div>
+          <div className="bg-white rounded-lg p-6 border border-slate-200">
+            <p className="text-sm font-bold text-slate-800 mb-1">Subjects</p>
+            <p className="text-3xl font-black text-slate-900">{subjectCount}</p>
+          </div>
+          <div className="bg-white rounded-lg p-6 border border-slate-200">
+            <p className="text-sm font-bold text-slate-800 mb-1">Active Substitutions</p>
+            <p className="text-3xl font-black text-slate-900">{totalWorkload}</p>
+          </div>
+        </div>
 
-                      <div className="mt-5 h-8 w-2/3 rounded-lg bg-white/10" />
-
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <div className="h-7 w-20 rounded-full bg-white/10" />
-                        <div className="h-7 w-24 rounded-full bg-white/10" />
-                      </div>
-
-                      <div className="mt-6 border-t border-white/5 pt-4">
-                        <div className="h-5 w-3/4 rounded-md bg-white/10" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : filteredTeachers.length ? (
-              <div className="grid gap-6 lg:grid-cols-2">
-                  {filteredTeachers.map((teacher) => (
-                  <Link
-                    href={`/admin/teachers/${teacher.id}`}
-                    key={teacher.id}
-                    className="card-reveal group relative flex flex-col justify-between p-8 transition-all duration-500"
-                  >
-                    <div className="relative z-10 flex items-start justify-between gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary font-black shadow-[0_0_20px_rgba(59,130,246,0.15)] ring-1 ring-primary/20">
-                        {teacher.name.charAt(0)}
-                      </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">Utilization</p>
-                        <Badge variant={teacher.workload ? "accent" : "neutral"} className="scale-90 origin-right">
-                          {teacher.workload} periods
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="mt-8">
-                       <h3 className="relative z-10 text-[18px] font-black tracking-tighter text-white group-hover:text-primary transition-colors italic">
-                        {teacher.name}
-                      </h3>
-                    </div>
-
-                    <div className="relative z-10 mt-6 flex flex-wrap gap-2">
-                      {teacher.subjects.length ? (
-                        teacher.subjects.map((subject) => (
-                          <div key={subject} className="px-3 py-1 rounded-lg bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-[0.1em] text-slate-400">
-                            {subject}
-                          </div>
-                        ))
-                      ) : (
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-700 italic">
-                          Null Sector Access
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="relative z-10 mt-8 flex items-center justify-between border-t border-white/5 pt-5">
-                      <span className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 group-hover:text-slate-200 transition-colors">ACCESS PROFILE</span>
-                      <ArrowRightIcon className="h-4 w-4 text-slate-600 transition-all duration-300 group-hover:translate-x-1 group-hover:text-primary" />
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <EmptyState
-                title="No teachers match this search"
-                description="Adjust the teacher or subject filter, or create a new profile from the side panel."
-              />
-            )}
-          </SectionCard>
-
-          <SectionCard
-            title="Add Teacher"
-            subtitle="Create a teacher profile and assign initial teaching subjects."
-          >
-            <div className="space-y-4">
-              <Field label="Full name" htmlFor="teacherName">
-                <input
-                  id="teacherName"
-                  value={newTeacher.name}
-                  onChange={(event) =>
-                    setNewTeacher((previous) => ({
-                      ...previous,
-                      name: event.target.value,
-                    }))
-                  }
-                  className={inputClassName}
-                  placeholder="Amina Rahman"
-                />
-              </Field>
-
-              <Field label="Email" htmlFor="teacherEmail">
-                <input
-                  id="teacherEmail"
-                  value={newTeacher.email}
-                  onChange={(event) =>
-                    setNewTeacher((previous) => ({
-                      ...previous,
-                      email: event.target.value,
-                    }))
-                  }
-                  className={inputClassName}
-                  placeholder="teacher@school.edu"
-                />
-              </Field>
-
-              <Field label="Temporary password" htmlFor="teacherPassword">
-                <input
-                  id="teacherPassword"
-                  type="password"
-                  value={newTeacher.password}
-                  onChange={(event) =>
-                    setNewTeacher((previous) => ({
-                      ...previous,
-                      password: event.target.value,
-                    }))
-                  }
-                  className={inputClassName}
-                  placeholder="Minimum 6 characters"
-                />
-              </Field>
-
-              <Field
-                label="Subjects"
-                htmlFor="teacherSubjects"
-                hint="Comma separated"
-              >
-                <input
-                  id="teacherSubjects"
-                  value={newTeacher.subjects}
-                  onChange={(event) =>
-                    setNewTeacher((previous) => ({
-                      ...previous,
-                      subjects: event.target.value,
-                    }))
-                  }
-                  className={inputClassName}
-                  placeholder="Math, Physics, Chemistry"
-                />
-              </Field>
-
-              <Button
-                onClick={handleCreateTeacher}
-                variant="accent"
-                className="mt-2 w-full"
-                disabled={creatingTeacher}
-              >
-                {creatingTeacher ? "Creating profile..." : "Create teacher profile"}
-              </Button>
+        {/* Create Teacher Section */}
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+          <h2 className="font-bold text-lg text-slate-900 mb-4">Add New Teacher</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+            <input
+              type="text"
+              placeholder="Name"
+              value={newTeacher.name}
+              onChange={(e) => setNewTeacher({ ...newTeacher, name: e.target.value })}
+              className="px-4 py-2 rounded-lg border border-slate-200 text-slate-900 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={newTeacher.email}
+              onChange={(e) => setNewTeacher({ ...newTeacher, email: e.target.value })}
+              className="px-4 py-2 rounded-lg border border-slate-200 text-slate-900 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={newTeacher.password}
+              onChange={(e) => setNewTeacher({ ...newTeacher, password: e.target.value })}
+              className="px-4 py-2 rounded-lg border border-slate-200 text-slate-900 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="text"
+              placeholder="Subjects (comma-separated)"
+              value={newTeacher.subjects}
+              onChange={(e) => setNewTeacher({ ...newTeacher, subjects: e.target.value })}
+              className="px-4 py-2 rounded-lg border border-slate-200 text-slate-900 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              onClick={handleCreateTeacher}
+              disabled={creatingTeacher}
+              className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+            >
+              {creatingTeacher ? "Adding..." : "Add"}
+            </button>
+          </div>
+          {error && (
+            <div className="mt-3 p-3 rounded-lg bg-red-100 text-red-700 text-base font-black">
+              {error}
             </div>
-          </SectionCard>
+          )}
         </div>
 
-        {/* Neural Network Footer Visualization */}
-        <div className="mt-12 mb-20 p-12 card-reveal border-dashed border-white/5 flex flex-col items-center justify-center text-center gap-6 group">
-           <div className="flex -space-x-4">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-12 w-12 rounded-2xl border-4 border-[#020617] bg-slate-800 flex items-center justify-center text-[10px] font-black uppercase text-white shadow-2xl group-hover:translate-y-1 transition-transform" style={{ transitionDelay: `${i * 100}ms` }}>
-                  {String.fromCharCode(65 + i)}
-                </div>
-              ))}
-           </div>
-           <div className="space-y-2">
-              <h3 className="text-[12px] font-black uppercase tracking-[0.5em] text-white">Institutional Node Synchronizer</h3>
-              <p className="text-[10px] font-bold text-slate-600 max-w-md uppercase leading-relaxed">System is Monitoring {teachers.length} Active Profiles. All coverage sectors are operational and secured under primary school protocols.</p>
-           </div>
+        {/* Search Bar */}
+        <div className="flex gap-3">
+          <div className="flex-1 relative">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search by name or subject..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-3 pl-10 rounded-lg border border-slate-200 text-slate-900 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        {/* Teachers List */}
+        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+          {directoryLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="h-8 w-8 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin mx-auto mb-3" />
+                <p className="text-base text-slate-700 font-black">Loading teachers...</p>
+              </div>
+            </div>
+          ) : filteredTeachers.length === 0 ? (
+            <div className="flex items-center justify-center py-12">
+              <p className="text-base text-slate-700 font-black">No teachers found</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="border-b border-slate-200 bg-slate-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-base font-black text-slate-900">Name</th>
+                    <th className="px-6 py-3 text-left text-base font-black text-slate-900">Subjects</th>
+                    <th className="px-6 py-3 text-left text-base font-black text-slate-900">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredTeachers.map((teacher) => (
+                    <tr key={teacher.id} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 text-base font-black text-slate-900">{teacher.name}</td>
+                      <td className="px-6 py-4 text-sm">
+                        <div className="flex gap-1 flex-wrap">
+                          {teacher.subjects.map((subject) => (
+                            <span key={subject} className="px-2 py-1 bg-blue-100 text-blue-900 rounded text-sm font-black">
+                              {subject}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm">
+                        <Link
+                          href={`/admin/teachers/${teacher.id}`}
+                          className="text-blue-600 hover:text-blue-700 font-black transition-colors text-base"
+                        >
+                          Edit
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </AdminLayout>

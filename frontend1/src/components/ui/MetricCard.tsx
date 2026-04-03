@@ -51,7 +51,7 @@ export default function MetricCard({
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-3">
              <div className="space-y-1.5 focus-ring transition-transform group-hover:translate-x-1 duration-300">
-                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-500">
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-300">
                   {label}
                 </p>
                 <div className="h-1 w-6 rounded-full bg-slate-800" />
@@ -59,20 +59,20 @@ export default function MetricCard({
             {badge ? <Badge tone={badgeTone}>{badge}</Badge> : null}
           </div>
           {icon ? (
-            <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-white/[0.03] border border-white/5 text-slate-500 transition-all duration-700 group-hover:text-primary group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+            <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-white/[0.03] border border-white/5 text-slate-300 transition-all duration-700 group-hover:text-primary group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]">
               {icon}
             </div>
           ) : null}
         </div>
         
         <div className="space-y-2">
-          <p className="text-5xl font-black tracking-tighter text-white leading-none italic">
+          <p className="text-5xl font-black tracking-tighter text-slate-900 leading-none italic">
             {value}
           </p>
           {supportingText ? (
             <div className="flex items-center gap-2">
                <div className="h-1 w-1 rounded-full bg-accent" />
-               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
+               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300">
                  {supportingText}
                </p>
             </div>

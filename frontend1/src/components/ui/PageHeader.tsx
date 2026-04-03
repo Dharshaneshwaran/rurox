@@ -29,7 +29,7 @@ export default function PageHeader({
     <header
       className={cn(
         "relative flex flex-col gap-8 px-10 py-12 lg:flex-row lg:items-end lg:justify-between overflow-hidden",
-        isCommand && "bg-[#111] border-b border-primary/20 shadow-[0_10px_40px_rgba(37,99,235,0.15)]"
+        isCommand && "bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200 shadow-[0_4px_20px_rgba(59,130,246,0.1)]"
       )}
     >
       {/* Decorative High-Tech Grid Overlay */}
@@ -44,11 +44,11 @@ export default function PageHeader({
         </div>
         
         <div className="space-y-2">
-          <h1 className="text-4xl xl:text-5xl font-bold tracking-tighter text-white leading-none">
+          <h1 className="text-4xl xl:text-5xl font-bold tracking-tighter text-slate-900 leading-none">
             {title}
           </h1>
           {description ? (
-            <p className="text-[14px] text-slate-400 max-w-2xl leading-relaxed font-medium">
+            <p className="text-[14px] text-slate-600 max-w-2xl leading-relaxed font-medium">
               {description}
             </p>
           ) : null}

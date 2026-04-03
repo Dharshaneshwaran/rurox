@@ -48,7 +48,7 @@ export default function SectionCard({
              </h2>
           </div>
           {subtitle ? (
-            <p className="text-[13px] text-slate-500 max-w-xl leading-relaxed font-bold tracking-widest uppercase">
+            <p className="text-[13px] text-slate-700 max-w-xl leading-relaxed font-bold tracking-widest uppercase">
               {subtitle}
             </p>
           ) : null}

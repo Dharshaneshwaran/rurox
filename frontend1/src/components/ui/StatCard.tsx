@@ -40,7 +40,7 @@ export default function StatCard({
             <div className="space-y-1.5 focus-ring transition-transform group-hover:translate-x-1 duration-300">
                <p className={cn(
                  "text-[9px] font-black uppercase tracking-[0.4em]",
-                 tone === "accent" ? "text-primary" : "text-slate-500"
+                 tone === "accent" ? "text-primary" : "text-slate-300"
                )}>
                  {label}
                </p>
@@ -50,7 +50,7 @@ export default function StatCard({
            {icon ? (
               <div className={cn(
                 "flex h-14 w-14 items-center justify-center rounded-[20px] transition-all duration-700 bg-white/[0.03] border border-white/5",
-                tone === "accent" ? "text-primary shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "text-slate-500 group-hover:text-white group-hover:bg-primary/5"
+                tone === "accent" ? "text-primary shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "text-slate-300 group-hover:text-white group-hover:bg-primary/5"
               )}>
                 {icon}
               </div>
@@ -60,14 +60,14 @@ export default function StatCard({
         <div className="space-y-2">
           <p className={cn(
             "text-5xl font-black tracking-tighter leading-none italic",
-            tone === "accent" ? "text-primary" : "text-white"
+            tone === "accent" ? "text-primary" : "text-slate-900"
           )}>
             {value}
           </p>
           {supportingText ? (
             <div className="flex items-center gap-2">
                <div className="h-1 w-1 rounded-full bg-accent" />
-               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">{supportingText}</p>
+               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300">{supportingText}</p>
             </div>
           ) : null}
         </div>

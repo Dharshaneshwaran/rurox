@@ -7,13 +7,13 @@ import type {
 import { cn } from "@/lib/cn";
 
 export const inputClassName =
-  "mt-3 h-12 w-full rounded-2xl border border-white/5 bg-white/5 px-4 text-sm font-semibold text-white placeholder:text-slate-500 transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 backdrop-blur-3xl";
+  "mt-2 h-10 w-full rounded-lg border border-slate-200 px-4 text-sm text-slate-900 placeholder:text-slate-600 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent";
 
 export const textareaClassName =
-  "mt-3 w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm font-semibold text-white placeholder:text-slate-500 transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 backdrop-blur-3xl";
+  "mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-600 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent";
 
 export const selectClassName =
-  "mt-3 h-12 w-full rounded-2xl border border-white/5 bg-white/5 px-4 text-sm font-semibold text-white transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 backdrop-blur-3xl appearance-none";
+  "mt-2 h-10 w-full rounded-lg border border-slate-200 px-4 text-sm text-slate-900 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white";
 
 type FieldProps = {
   label: string;
@@ -37,14 +37,14 @@ export default function Field({
       <div className="flex items-end justify-between gap-3">
         <label
           htmlFor={htmlFor}
-          className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 group-hover:text-primary transition-colors"
+          className="text-sm font-semibold text-slate-900"
         >
           {label}
         </label>
-        {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
+        {hint ? <p className="text-xs text-slate-600 font-medium">{hint}</p> : null}
       </div>
       {children}
-      {error ? <p className="mt-2 text-sm text-danger">{error}</p> : null}
+      {error ? <p className="mt-1 text-sm text-red-600">{error}</p> : null}
     </div>
   );
 }

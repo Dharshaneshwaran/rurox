@@ -1,18 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import { setStoredAuth } from "@/hooks/useAuth";
 import type { User } from "@/lib/types";
-import { LockIcon, MailIcon, ShieldIcon } from "@/components/icons";
-import Button from "@/components/ui/Button";
-import AppMark from "@/components/ui/AppMark";
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +30,7 @@ export default function AdminLoginPage() {
       );
 
       if (data.user.role !== "ADMIN") {
-        setError("CLEARANCE LEVEL INSUFFICIENT.");
+        setError("This account does not have admin access.");
         setLoading(false);
         return;
       }
@@ -39,98 +38,118 @@ export default function AdminLoginPage() {
       setStoredAuth(data.token, data.user);
       router.push("/admin/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "ACCESS DENIED: NODE SYNCHRONIZATION FAILED.");
+      setError(err instanceof Error ? err.message : "Login failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="admin-theme bg-[#020617] h-screen w-screen overflow-hidden relative flex flex-col items-center justify-center p-6 selection:bg-primary/20">
-      {/* Institutional Blueprint Background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
-         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.2),transparent_70%)]" />
-         <div className="absolute inset-0 page-shell opacity-40" />
-         <div className="absolute top-1/2 left-0 w-full h-px bg-white/[0.03]" />
-         <div className="absolute left-1/2 top-0 w-px h-full bg-white/[0.03]" />
-      </div>
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-white to-slate-100 font-body flex items-center justify-center p-4 sm:p-8">
+      {/* Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f3f4f6_1px,transparent_1px),linear-gradient(to_bottom,#f3f4f6_1px,transparent_1px)] bg-[size:40px_40px] opacity-40 pointer-events-none" />
 
-      {/* Entry Module */}
-      <main className="relative z-10 w-full max-w-[480px]">
-        <div className="card-reveal p-12 border border-white/5 backdrop-blur-3xl shadow-[0_40px_100px_rgba(0,0,0,0.6)]">
-          
-          <div className="flex flex-col items-center text-center mb-12">
-             <div className="h-20 w-20 rounded-3xl bg-primary flex items-center justify-center shadow-[0_0_40px_rgba(59,130,246,0.4)] mb-8">
-                <AppMark hideText inverse className="scale-75" />
-             </div>
-             <h1 className="text-3xl font-black tracking-tighter text-white italic uppercase leading-none">Ruroxz Core</h1>
-             <p className="mt-3 text-[10px] font-black uppercase tracking-[0.6em] text-slate-500">Security Deployment Node</p>
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo & Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-50 via-blue-50 to-indigo-50 border border-blue-200 mb-6">
+            <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-br from-blue-600 to-indigo-600">R</div>
           </div>
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-2">Admin Portal</h1>
+          <p className="text-slate-600 font-medium">Manage the system</p>
+        </div>
 
-          {error && (
-            <div className="mb-8 p-6 rounded-2xl bg-danger/5 border border-danger/10 text-[10px] font-black uppercase tracking-widest text-danger italic text-center animate-shake">
-               ERR: {error}
-            </div>
-          )}
-
-          <form onSubmit={onSubmit} className="space-y-8">
+        {/* Login Form Card */}
+        <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-8 sm:p-10 border border-slate-100">
+          <form onSubmit={onSubmit} className="space-y-6">
+            {/* Email Input */}
             <div className="space-y-2">
-              <label className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-500 px-1">Clearance Identity</label>
-              <div className="relative group">
-                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-primary transition-colors">
-                  <MailIcon className="h-4 w-4" />
-                </div>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 pl-14 pr-6 text-[14px] font-black tracking-tight text-white placeholder:text-slate-700 focus:border-primary/50 focus:outline-none transition-all"
-                  placeholder="admin@institutional.hub"
-                  required
-                />
-              </div>
+              <label className="block text-sm font-bold text-slate-900">Email Address</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@school.edu"
+                className="w-full px-4 py-3 rounded-lg border border-slate-200 text-slate-900 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              />
             </div>
 
+            {/* Password Input */}
             <div className="space-y-2">
-              <label className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-500 px-1">Security Token</label>
-              <div className="relative group">
-                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-primary transition-colors">
-                  <LockIcon className="h-4 w-4" />
-                </div>
+              <label className="block text-sm font-bold text-slate-900">Password</label>
+              <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 pl-14 pr-6 text-[14px] font-black tracking-tight text-white placeholder:text-slate-700 focus:border-primary/50 focus:outline-none transition-all"
-                  placeholder="••••••••••••"
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-slate-900 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-800 transition-colors"
+                >
+                  {showPassword ? (
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
               </div>
             </div>
 
-            <Button
+            {/* Remember Me */}
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input 
+                type="checkbox" 
+                className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 focus:ring-2 accent-blue-600"
+              />
+              <span className="text-sm font-medium text-slate-700">Keep me signed in</span>
+            </label>
+
+            {/* Error Message */}
+            {error && (
+              <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
+                {error}
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
               type="submit"
               disabled={loading}
-              variant="accent"
-              className="h-16 w-full shadow-[0_10px_40px_rgba(16,185,129,0.3)] transition-all active:scale-95"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all shadow-md shadow-blue-200 hover:shadow-lg hover:shadow-blue-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <div className="flex items-center justify-center gap-3">
-                <ShieldIcon className="h-5 w-5" />
-                <span className="font-black uppercase tracking-widest text-[12px]">{loading ? "Synchronizing..." : "Infiltrate System"}</span>
-              </div>
-            </Button>
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
           </form>
 
-          <div className="mt-12 flex items-center justify-between border-t border-white/5 pt-8">
-             <button type="button" onClick={() => router.push('/teacher/login')} className="text-[9px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors">Personnel Portal</button>
-             <span className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-800 italic">SYSTEM STATUS: ACTIVE</span>
+          {/* Footer Links */}
+          <div className="mt-6 pt-6 border-t border-slate-200 flex items-center justify-between">
+            <Link href="/" className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+              Back to login
+            </Link>
+            <Link href="/teacher/login" className="text-sm font-semibold text-slate-600 hover:text-slate-700 transition-colors">
+              Teacher login
+            </Link>
           </div>
         </div>
 
-        <p className="mt-12 text-center text-[9px] font-black uppercase tracking-[0.4em] text-slate-600">
-          © 2026 Ruroxz Systems. All Session Nodes Logged.
-        </p>
-      </main>
+        {/* Footer */}
+        <div className="text-center mt-8">
+          <p className="text-xs text-slate-700 font-medium">
+            © 2026 Ruroxz Systems. All rights reserved.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

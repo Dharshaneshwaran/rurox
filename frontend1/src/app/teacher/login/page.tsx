@@ -46,9 +46,9 @@ export default function TeacherLoginPage() {
   };
 
   return (
-    <div className="admin-theme flex min-h-screen w-full bg-[#020617] font-body selection:bg-primary/30 selection:text-white">
+    <div className="admin-theme flex min-h-screen w-full bg-slate-50 font-body selection:bg-primary/30 selection:text-primary">
       {/* Left Panel - Hero Branding */}
-      <div className="hidden lg:flex flex-col justify-center w-[45%] bg-[#020617] p-16 xl:p-24 relative overflow-hidden">
+      <div className="hidden lg:flex flex-col justify-center w-[45%] bg-gradient-to-br from-blue-500 to-indigo-600 p-16 xl:p-24 relative overflow-hidden">
         {/* Dynamic Glows */}
         <div className="absolute -top-[10%] -left-[10%] h-[60%] w-[60%] bg-primary/20 blur-[120px] rounded-full animate-pulse" />
         <div className="absolute -bottom-[10%] -right-[10%] h-[60%] w-[60%] bg-accent/20 blur-[120px] rounded-full" />
@@ -56,14 +56,14 @@ export default function TeacherLoginPage() {
         <div className="max-w-xl z-20 relative">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-md">
             <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Teacher Portal Active</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">Teacher Portal Active</span>
           </div>
 
           <h1 className="text-6xl xl:text-7xl font-bold mb-8 tracking-tighter text-white leading-[0.95]">
             ruroxz <span className="text-primary italic">Teacher</span> Access
           </h1>
 
-          <p className="text-xl text-slate-400 mb-14 leading-relaxed max-w-lg">
+          <p className="text-xl text-slate-100 mb-14 leading-relaxed max-w-lg">
             Manage your teaching schedule and Substitution status with 
             <span className="text-white"> real-time updates</span> and 
             <span className="text-white"> instant classroom</span> coordination.
@@ -72,35 +72,35 @@ export default function TeacherLoginPage() {
           <div className="space-y-6">
             <div className="group relative overflow-hidden p-8 rounded-[32px] border border-white/5 bg-white/[0.03] backdrop-blur-xl transition-all hover:bg-white/[0.05] hover:border-white/10">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-white shadow-[0_0_15px_rgba(255,255,255,0.2)]">
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div>
                   <h3 className="font-bold text-white text-lg">Smart Schedule</h3>
-                  <p className="text-sm text-slate-500 mt-1">Intelligent timetable synchronization across all your assigned slots.</p>
+                  <p className="text-base text-slate-200 mt-1 font-bold">Intelligent timetable synchronization across all your assigned slots.</p>
                 </div>
               </div>
             </div>
 
             <div className="group relative overflow-hidden p-8 rounded-[32px] border border-white/5 bg-white/[0.03] backdrop-blur-xl transition-all hover:bg-white/[0.05] hover:border-white/10">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent/10 text-accent shadow-[0_0_15px_rgba(139,92,246,0.2)]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-white shadow-[0_0_15px_rgba(255,255,255,0.2)]">
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                   </svg>
                 </div>
                 <div>
                   <h3 className="font-bold text-white text-lg">Instant Alerts</h3>
-                  <p className="text-sm text-slate-500 mt-1">Receive immediate push notifications for coverage requests and period changes.</p>
+                  <p className="text-base text-slate-200 mt-1 font-bold">Receive immediate push notifications for coverage requests and period changes.</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="absolute bottom-12 left-16 xl:left-24 flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
+        <div className="absolute bottom-12 left-16 xl:left-24 flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">
           <span>Ruroxz Systems</span>
           <div className="h-1 w-1 rounded-full bg-slate-800" />
           <span>Institutional Node beta</span>
@@ -108,37 +108,37 @@ export default function TeacherLoginPage() {
       </div>
 
       {/* Right Panel - Interactive Login */}
-      <div className="flex-1 flex flex-col bg-[#020617] relative lg:border-l lg:border-white/5 shadow-[-40px_0_80px_rgba(0,0,0,0.5)]">
+      <div className="flex-1 flex flex-col bg-slate-50 relative lg:border-l lg:border-slate-200 shadow-[-40px_0_80px_rgba(0,0,0,0.05)]">
         <div className="absolute inset-0 bg-hero-gradient opacity-10 pointer-events-none" />
 
         <div className="flex-1 flex flex-col px-8 sm:px-24 pt-20 pb-12 max-w-[800px] w-full mx-auto justify-center z-10">
           
           <div className="mb-12">
             <h2 className="text-4xl font-bold text-white tracking-tight leading-none mb-4">Secure Teacher Login</h2>
-            <p className="text-slate-400 text-lg">Access your academic hub to manage period deployments.</p>
+            <p className="text-slate-100 text-lg">Access your academic hub to manage period deployments.</p>
           </div>
 
           <div className="grid grid-cols-2 p-1.5 bg-white/5 rounded-2xl border border-white/10 mb-12">
             <button
               onClick={() => router.push('/')}
-              className="py-3.5 rounded-xl text-sm font-bold uppercase tracking-widest transition-all text-slate-500 hover:text-white"
+            <span className="py-3.5 rounded-xl text-sm font-bold uppercase tracking-widest transition-all text-slate-100 hover:text-white">
             >
               Administrator
             </button>
             <button
-              className="py-3.5 rounded-xl text-sm font-bold uppercase tracking-widest transition-all bg-white text-slate-900 shadow-xl"
+              className="py-3.5 rounded-xl text-sm font-bold uppercase tracking-widest transition-all bg-primary text-white shadow-xl hover:shadow-lg"
             >
               Teacher Entry
             </button>
           </div>
 
-          <div className="p-1 w-full rounded-[40px] bg-gradient-to-br from-white/10 via-transparent to-white/5 shadow-2xl">
-            <div className="bg-[#0f172a]/40 backdrop-blur-3xl rounded-[39px] p-10 sm:p-14 border border-white/5">
+          <div className="p-1 w-full rounded-[40px] bg-gradient-to-br from-slate-200 via-slate-100 to-slate-50 shadow-lg">
+            <div className="bg-white rounded-[39px] p-10 sm:p-14 border border-slate-200">
               
               <form onSubmit={onSubmit} className="space-y-8">
                 <div className="space-y-6">
                   <div className="space-y-4">
-                    <label className="block text-[11px] font-black uppercase tracking-[0.25em] text-slate-500">
+                    <label className="block text-[11px] font-black uppercase tracking-[0.25em] text-slate-700">
                       Staff ID / Email
                     </label>
                     <input
@@ -146,14 +146,14 @@ export default function TeacherLoginPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="teacher@ruroxz.edu"
-                      className="w-full bg-white/5 border border-white/10 text-white placeholder:text-slate-600 focus:border-primary focus:ring-4 focus:ring-primary/10 px-6 py-4 rounded-2xl transition-all"
+                      className="w-full bg-slate-50 border border-slate-300 text-slate-900 placeholder:text-slate-500 focus:border-primary focus:ring-4 focus:ring-primary/10 px-6 py-4 rounded-2xl transition-all"
                       required
                     />
                   </div>
 
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <label className="block text-[11px] font-black uppercase tracking-[0.25em] text-slate-500">
+                      <label className="block text-[11px] font-black uppercase tracking-[0.25em] text-slate-700">
                         Security Token
                       </label>
                       <button type="button" className="text-[10px] font-bold text-primary hover:underline transition-all">FORGOT?</button>
@@ -164,13 +164,13 @@ export default function TeacherLoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••••••"
-                        className="w-full bg-white/5 border border-white/10 text-white placeholder:text-slate-600 focus:border-primary focus:ring-4 focus:ring-primary/10 px-6 py-4 rounded-2xl transition-all"
+                        className="w-full bg-slate-50 border border-slate-300 text-slate-900 placeholder:text-slate-500 focus:border-primary focus:ring-4 focus:ring-primary/10 px-6 py-4 rounded-2xl transition-all"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                        className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-900 transition-colors"
                       >
                         {showPassword ? (
                           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -188,14 +188,14 @@ export default function TeacherLoginPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <input type="checkbox" id="session" className="h-5 w-5 bg-white/5 border-white/20 rounded-lg text-primary focus:ring-primary/20 accent-primary" />
-                  <label htmlFor="session" className="text-sm text-slate-500 font-medium cursor-pointer">
+                  <input type="checkbox" id="session" className="h-5 w-5 bg-slate-50 border-slate-300 rounded-lg text-primary focus:ring-primary/20 accent-primary" />
+                  <label htmlFor="session" className="text-base text-slate-700 font-bold cursor-pointer">
                     Remember station credentials
                   </label>
                 </div>
 
                 {error && (
-                  <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold text-center">
+                  <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-base font-black text-center">
                     {error}
                   </div>
                 )}
@@ -209,14 +209,14 @@ export default function TeacherLoginPage() {
                 </button>
 
                 <div className="text-center">
-                   <p className="text-slate-600 text-xs font-bold uppercase tracking-widest">
+                   <p className="text-slate-200 text-sm font-black uppercase tracking-widest">
                      New Hire? <Link href="/teacher/signup" className="text-primary hover:text-white transition-colors">Request Account</Link>
                    </p>
                 </div>
               </form>
 
-              <div className="mt-12 pt-8 border-t border-white/5 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-700 leading-relaxed max-w-[320px] mx-auto">
+              <div className="mt-12 pt-8 border-t border-slate-200 text-center">
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-600 leading-relaxed max-w-[320px] mx-auto">
                   Encrypted Session Monitor Active. 
                   Unauthorized access is strictly audited.
                 </p>

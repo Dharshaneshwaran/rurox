@@ -1,34 +1,37 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: var(--background, #f8fafc);
-  --color-foreground: var(--foreground, #020817);
+  --color-background: var(--background, #fafbfc);
+  --color-foreground: var(--foreground, #0f1419);
   
-  --color-primary: var(--primary, #000000);
-  --color-primary-strong: var(--primary-strong, #1a1a1a);
+  --color-primary: var(--primary, #3b82f6);
+  --color-primary-strong: var(--primary-strong, #1e40af);
   
   --color-secondary: var(--secondary, #ffffff);
-  --color-secondary-soft: var(--secondary-soft, #f1f5f9);
+  --color-secondary-soft: var(--secondary-soft, #f3f4f6);
 
-  --color-border: var(--border, #e2e8f0);
+  --color-border: var(--border, #e5e7eb);
   
   --color-surface: var(--surface, #ffffff);
-  --color-surface-subtle: var(--surface-subtle, #f1f5f9);
-  --color-on-surface: var(--on-surface, #020817);
+  --color-surface-subtle: var(--surface-subtle, #f9fafb);
+  --color-on-surface: var(--on-surface, #0f1419);
 
-  --color-text: var(--text, #020817);
-  --color-text-muted: var(--text-muted, #64748b);
-  --color-text-soft: var(--text-soft, #64748b);
-  --color-muted-foreground: var(--muted-foreground, #64748b);
+  --color-text: var(--text, #0f1419);
+  --color-text-muted: var(--text-muted, #6b7280);
+  --color-text-soft: var(--text-soft, #9ca3af);
+  --color-muted-foreground: var(--muted-foreground, #9ca3af);
 
-  --color-accent: var(--accent, #000000);
-  --color-accent-soft: var(--accent-soft, #f1f5f9);
+  --color-accent: var(--accent, #3b82f6);
+  --color-accent-soft: var(--accent-soft, #eff6ff);
   
   --color-danger: var(--danger, #ef4444);
   --color-danger-soft: var(--danger-soft, #fef2f2);
   
-  --color-success: var(--success, #22c55e);
+  --color-success: var(--success, #10b981);
   --color-success-soft: var(--success-soft, #f0fdf4);
+  
+  --color-warning: var(--warning, #f59e0b);
+  --color-warning-soft: var(--warning-soft, #fffbeb);
 
   --font-headline: var(--font-headline);
   --font-display: var(--font-headline);
@@ -36,17 +39,26 @@
   --font-label: var(--font-body);
   --font-mono: Consolas, monospace;
 
-  --radius-DEFAULT: 0.125rem;
-  --radius-lg: 0.25rem;
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg: 0.375rem;
   --radius-xl: 0.5rem;
-  --radius-full: 0.75rem;
+  --radius-full: 9999px;
 
-  --shadow-card: var(--shadow-card, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1));
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 html,
 body {
   height: 100%;
+  background-color: #fafbfc;
+}
+
+* {
+  @apply transition-colors duration-200;
 }
 
 html {

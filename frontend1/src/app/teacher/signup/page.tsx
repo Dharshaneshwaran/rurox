@@ -61,7 +61,7 @@ export default function TeacherSignupPage() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-[560px] text-center z-10 relative mb-8">
         <h1 className="text-3xl font-display font-bold tracking-tight text-[#111827]">Ruroxz Time Management</h1>
-        <p className="mt-2 text-sm text-[#6B7280]">Teacher Registration Portal</p>
+        <p className="mt-2 text-base text-slate-700 font-bold">Teacher Registration Portal</p>
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-[560px] z-10 relative">
@@ -94,8 +94,8 @@ export default function TeacherSignupPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                 </div>
-                <h3 className="mt-4 text-lg font-medium text-gray-900">Registration Submitted</h3>
-                <p className="mt-2 text-sm text-gray-500">Your account request has been sent to the superintendent. Redirecting to login...</p>
+                <h3 className="mt-4 text-xl font-black text-slate-900">Registration Submitted</h3>
+                <p className="mt-2 text-base text-slate-700 font-black">Your account request has been sent to the superintendent. Redirecting to login...</p>
               </div>
             ) : (
               <form onSubmit={onSubmit} className="space-y-6">
@@ -212,7 +212,7 @@ export default function TeacherSignupPage() {
                 </div>
 
                 {error && (
-                  <div className="text-xs text-red-500 bg-red-50 p-3 rounded-sm">
+                  <div className="text-base text-red-700 bg-red-50 p-3 rounded-sm font-black">
                     {error}
                   </div>
                 )}

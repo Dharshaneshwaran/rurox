@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Inter, Manrope } from "next/font/google";
+import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-const headlineFont = Manrope({
+const headlineFont = Instrument_Serif({
   variable: "--font-headline",
   subsets: ["latin"],
+  weight: "400",
 });
 
 const bodyFont = Inter({

@@ -173,7 +173,7 @@ export default function AdminUsersPage() {
               onClick={() => setActiveTab("pending")}
               className={cn(
                 "group relative py-4 text-[11px] font-black uppercase tracking-[0.3em] transition-all",
-                activeTab === "pending" ? "text-primary" : "text-slate-500 hover:text-slate-300"
+                activeTab === "pending" ? "text-primary" : "text-slate-600 hover:text-slate-900"
               )}
             >
               Pending Approvals ({pendingUsers.length})
@@ -184,7 +184,7 @@ export default function AdminUsersPage() {
               onClick={() => setActiveTab("all")}
               className={cn(
                 "group relative py-4 text-[11px] font-black uppercase tracking-[0.3em] transition-all",
-                activeTab === "all" ? "text-primary" : "text-slate-500 hover:text-slate-300"
+                activeTab === "all" ? "text-primary" : "text-slate-600 hover:text-slate-900"
               )}
             >
               Personnel Registry ({allUsers.length})
@@ -208,22 +208,22 @@ export default function AdminUsersPage() {
                       <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
                         <div className="space-y-4">
                           <div className="flex flex-wrap items-center gap-5">
-                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-[18px] font-black text-white italic">
+                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-200 border border-slate-300 text-[18px] font-black text-slate-900 italic">
                                 {user.name?.charAt(0) || user.email.charAt(0)}
                              </div>
                              <div>
-                                <p className="text-[20px] font-black tracking-tighter text-white italic leading-none">
+                                <p className="text-[20px] font-black tracking-tighter text-slate-900 italic leading-none">
                                   {user.name || "UNIDENTIFIED ID"}
                                 </p>
-                                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{user.email}</p>
+                                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-700 mt-2">{user.email}</p>
                              </div>
                              <div className="flex items-center gap-2">
                                 <Badge variant="warning">Awaiting clearance</Badge>
                              </div>
                           </div>
                           <div className="flex items-center gap-3">
-                             <div className="h-px w-6 bg-slate-800" />
-                             <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-600">
+                             <div className="h-px w-6 bg-slate-300" />
+                             <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-700">
                                Requested {new Date(user.createdAt).toLocaleDateString()}
                              </p>
                           </div>
@@ -272,14 +272,14 @@ export default function AdminUsersPage() {
                     >
                       <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
                          <div className="flex flex-wrap items-center gap-5">
-                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-[18px] font-black text-white italic">
+                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-200 border border-slate-300 text-[18px] font-black text-slate-900 italic">
                                 {user.name?.charAt(0) || user.email.charAt(0)}
                              </div>
                              <div>
-                                <p className="text-[20px] font-black tracking-tighter text-white italic leading-none">
+                                <p className="text-[20px] font-black tracking-tighter text-slate-900 italic leading-none">
                                   {user.name || "System Admin"}
                                 </p>
-                                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{user.email}</p>
+                                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-700 mt-2">{user.email}</p>
                              </div>
                             <div className="flex items-center gap-2">
                                <Badge variant="neutral">{user.role}</Badge>

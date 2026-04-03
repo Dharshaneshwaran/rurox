@@ -1,63 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import AddSubjectModal from "@/components/AddSubjectModal";
-import AddSpecialClassModal from "@/components/AddSpecialClassModal";
-import SectionCard from "@/components/SectionCard";
-import SpecialClassesList from "@/components/SpecialClassesList";
-import SubstitutionList from "@/components/SubstitutionList";
 import TeacherLayout from "@/components/TeacherLayout";
-import TimetableGrid from "@/components/TimetableGrid";
-import { BookIcon, CalendarIcon, ClockIcon, SwapIcon } from "@/components/icons";
-import Badge from "@/components/ui/Badge";
-import Button from "@/components/ui/Button";
-import PageHeader from "@/components/ui/PageHeader";
-import StatCard from "@/components/ui/StatCard";
 import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/api";
 import type { SpecialClass, Substitution, TimetableEntry, Teacher } from "@/lib/types";
-
-const SKELETON_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
-function TimetableSkeleton() {
-  return (
-    <div className="overflow-hidden rounded-[26px] border border-border/70 bg-surface">
-      <div className="grid grid-cols-[94px_repeat(5,minmax(0,1fr))] border-b border-border/70 bg-surface-subtle">
-        <div className="border-r border-border/70 px-4 py-4">
-          <div className="h-3 w-12 animate-pulse rounded-full bg-border/70" />
-        </div>
-        {SKELETON_DAYS.map((day) => (
-          <div key={day} className="border-r border-border/70 px-4 py-4 last:border-r-0">
-            <div className="h-3 w-16 animate-pulse rounded-full bg-border/70" />
-          </div>
-        ))}
-      </div>
-
-      {Array.from({ length: 4 }).map((_, rowIndex) => (
-        <div
-          key={rowIndex}
-          className="grid grid-cols-[94px_repeat(5,minmax(0,1fr))] border-b border-border/60 last:border-b-0"
-        >
-          <div className="border-r border-border/60 px-4 py-6">
-            <div className="mx-auto h-5 w-5 animate-pulse rounded-full bg-border/70" />
-          </div>
-          {SKELETON_DAYS.map((day) => (
-            <div
-              key={`${day}-${rowIndex}`}
-              className="border-r border-border/60 p-3 last:border-r-0"
-            >
-              <div className="h-[102px] animate-pulse rounded-[22px] border border-border/60 bg-surface-subtle/70 p-4">
-                <div className="h-5 w-20 rounded-full bg-border/70" />
-                <div className="mt-3 h-4 w-12 rounded-full bg-border/60" />
-                <div className="mt-5 h-3 w-24 rounded-full bg-border/60" />
-              </div>
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export default function TeacherDashboardPage() {
   const { token, user, loading } = useAuth({
@@ -68,15 +15,10 @@ export default function TeacherDashboardPage() {
   const [substitutions, setSubstitutions] = useState<Substitution[]>([]);
   const [specialClasses, setSpecialClasses] = useState<SpecialClass[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState<string>("");
   const [selectedPeriod, setSelectedPeriod] = useState<number>(0);
-  const [addingSubject, setAddingSubject] = useState(false);
   const [dashboardLoading, setDashboardLoading] = useState(true);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [specialModalOpen, setSpecialModalOpen] = useState(false);
-  const [addingSpecialClass, setAddingSpecialClass] = useState(false);
-  const [subLoadingId, setSubLoadingId] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     if (!token) return;
@@ -120,43 +62,169 @@ export default function TeacherDashboardPage() {
     }
   }, [loading, loadData]);
 
-  const handleAddSubject = (day: string, period: number) => {
-    setSelectedDay(day);
-    setSelectedPeriod(period);
-    setModalOpen(true);
-  };
+  if (loading || dashboardLoading) {
+    return (
+      <TeacherLayout>
+        <div className="flex items-center justify-center py-12">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-8 w-8 rounded-full border-4 border-emerald-200 border-t-emerald-600 animate-spin" />
+            <p className="text-sm font-bold text-slate-700">Loading...</p>
+          </div>
+        </div>
+      </TeacherLayout>
+    );
+  }
 
-  const handleConfirmAddSubject = async (
-    subject: string,
-    className: string,
-    room: string
-  ) => {
-    if (!token || !user?.teacherId) return;
-    setAddingSubject(true);
-    try {
-      await apiFetch(
-        "/api/timetables",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            teacherId: user.teacherId,
-            day: selectedDay,
-            period: selectedPeriod,
-            subject,
-            className,
-            room: room || null,
-          }),
-        },
-        token
-      );
-      setModalOpen(false);
-      await loadData();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to add subject");
-    } finally {
-      setAddingSubject(false);
-    }
-  };
+  return (
+    <TeacherLayout>
+      <div className="space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-black text-slate-900">My Timetable</h1>
+          <p className="text-slate-700 mt-1 font-black text-sm">View your schedule and manage substitutions</p>
+        </div>
+
+        {error && (
+          <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-base font-black">
+            {error}
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white rounded-lg p-6 border border-slate-200">
+            <p className="text-sm font-bold text-slate-800 mb-1">Classes Today</p>
+            <p className="text-3xl font-black text-slate-900">
+              {timetables.filter((t) => {
+                const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
+                return t.day === today;
+              }).length}
+            </p>
+          </div>
+          <div className="bg-white rounded-lg p-6 border border-slate-200">
+            <p className="text-sm font-bold text-slate-800 mb-1">Total Classes</p>
+            <p className="text-3xl font-black text-slate-900">{timetables.length}</p>
+          </div>
+          <div className="bg-white rounded-lg p-6 border border-slate-200">
+            <p className="text-sm font-bold text-slate-800 mb-1">Substitutions</p>
+            <p className="text-3xl font-black text-slate-900">{substitutions.length}</p>
+          </div>
+        </div>
+
+        {/* Timetable */}
+        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+          <div className="p-6 border-b border-slate-200">
+            <h2 className="font-bold text-lg text-slate-900">My Schedule</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="border-b border-slate-200 bg-slate-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Day</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Period</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Subject</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Class</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Room</th>
+                </tr>
+              </thead>
+              <tbody>
+                {timetables.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-slate-700 font-semibold">
+                      No classes scheduled
+                    </td>
+                  </tr>
+                ) : (
+                  timetables.map((entry, idx) => (
+                    <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 text-sm font-semibold text-slate-900">{entry.day}</td>
+                      <td className="px-6 py-4 text-sm text-slate-600">{entry.period}</td>
+                      <td className="px-6 py-4 text-sm text-slate-600">{entry.subject}</td>
+                      <td className="px-6 py-4 text-sm text-slate-600">{entry.className}</td>
+                      <td className="px-6 py-4 text-sm text-slate-600">{entry.room || "—"}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Substitutions */}
+        {substitutions.length > 0 && (
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <div className="p-6 border-b border-slate-200">
+              <h2 className="font-bold text-lg text-slate-900">Substitutions</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="border-b border-slate-200 bg-slate-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Date</th>
+                    <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Period</th>
+                    <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Subject</th>
+                    <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {substitutions.map((sub, idx) => (
+                    <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 text-sm font-semibold text-slate-900">
+                        {typeof sub.date === "string" ? sub.date : new Date(sub.date).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-600">{sub.period}</td>
+                      <td className="px-6 py-4 text-sm text-slate-600">{sub.subject}</td>
+                      <td className="px-6 py-4 text-sm">
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          sub.status === "APPROVED" ? "bg-emerald-100 text-emerald-700" :
+                          sub.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
+                          "bg-slate-100 text-slate-700"
+                        }`}>
+                          {sub.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Special Classes */}
+        {specialClasses.length > 0 && (
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <div className="p-6 border-b border-slate-200">
+              <h2 className="font-bold text-lg text-slate-900">Special Classes</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="border-b border-slate-200 bg-slate-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Name</th>
+                    <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Day</th>
+                    <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Time</th>
+                    <th className="px-6 py-3 text-left text-sm font-bold text-slate-900">Location</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {specialClasses.map((sc, idx) => (
+                    <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 text-sm font-semibold text-slate-900">{sc.name}</td>
+                      <td className="px-6 py-4 text-sm text-slate-600">{sc.day}</td>
+                      <td className="px-6 py-4 text-sm text-slate-600">{sc.startTime} - {sc.endTime}</td>
+                      <td className="px-6 py-4 text-sm text-slate-600">{sc.location}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+    </TeacherLayout>
+  );
+}
 
   const handleAddSpecialClass = async (data: any) => {
     if (!token || !user?.teacherId) return;
@@ -238,8 +306,8 @@ export default function TeacherDashboardPage() {
           description="Review your week, monitor special sessions, and keep open timetable slots filled without losing sight of assigned cover work."
           meta={
             <>
-              <Badge variant="accent" className="bg-white/10 text-white border-white/20">Live timetable</Badge>
-              <Badge variant="neutral" className="bg-white/5 text-zinc-300 border-white/10">{openSlots} open slots this week</Badge>
+              <Badge variant="accent" className="bg-blue-100 text-blue-900 border-blue-300">Live timetable</Badge>
+              <Badge variant="neutral" className="bg-slate-100 text-slate-700 border-slate-300">{openSlots} open slots this week</Badge>
             </>
           }
         />

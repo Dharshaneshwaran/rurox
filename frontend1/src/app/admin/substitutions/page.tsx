@@ -52,14 +52,14 @@ function StepPill({
         active
           ? "border-primary/30 bg-primary/10 text-white"
           : complete
-            ? "border-white/10 bg-white/5 text-slate-300"
-            : "border-white/5 bg-transparent text-slate-600"
+            ? "border-slate-300 bg-slate-100 text-slate-900"
+            : "border-slate-200 bg-white text-slate-700"
       )}
     >
       {active && <div className="absolute top-0 left-0 w-full h-[2px] bg-primary shadow-[0_0_10px_#3b82f6]" />}
       <span className={cn(
         "flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-black transition-colors",
-        active ? "bg-primary text-white" : "bg-white/5 text-slate-500"
+        active ? "bg-primary text-white" : "bg-slate-200 text-slate-700"
       )}>
         {step}
       </span>
@@ -114,7 +114,7 @@ function PeriodReviewCard({
             <h3 className="text-[20px] font-black tracking-tighter text-white italic">
                {suggestion.className}
             </h3>
-            <p className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-500 mt-1">
+            <p className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-700 mt-1">
                {suggestion.subject}
                {suggestion.room ? ` // ${suggestion.room}` : ""}
             </p>
@@ -123,13 +123,13 @@ function PeriodReviewCard({
 
         {suggestion.allCandidates.length > 0 ? (
           <select
-            className="w-full lg:w-72 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-[13px] font-black text-slate-300 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+            className="w-full lg:w-72 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-[13px] font-black text-slate-900 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
             value={assignment || ""}
             onChange={(event) => onChange(event.target.value)}
           >
-            <option value="" className="bg-[#020617]">SKIP SECTOR COVER</option>
+            <option value="" className="bg-white text-slate-900">SKIP SECTOR COVER</option>
             {suggestion.allCandidates.map((candidate) => (
-              <option key={candidate.id} value={candidate.id} className="bg-[#020617]">
+              <option key={candidate.id} value={candidate.id} className="bg-white text-slate-900">
                 {candidate.name.toUpperCase()}
                 {candidate.subjectMatch ? " // MATCH" : ""}
                 {` // LOAD: ${candidate.workload}`}
@@ -517,13 +517,13 @@ export default function SubstitutionManagementPage() {
                     <div className="relative z-10 flex flex-col h-full justify-between gap-8">
                       <div className="space-y-3">
                         <div className="flex items-center gap-2">
-                           <div className="h-1 w-1 rounded-full bg-slate-900" />
-                           <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">System Ready</span>
+                           <div className="h-1 w-1 rounded-full bg-slate-400" />
+                           <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-300">System Ready</span>
                         </div>
                         <h2 className="text-xl font-semibold tracking-tight text-slate-900">
                           Coverage Protocol
                         </h2>
-                        <p className="text-[13px] font-medium leading-relaxed text-slate-500">
+                        <p className="text-[13px] font-medium leading-relaxed text-slate-300">
                           Select the absent teacher and date to initiate the matching algorithm based on real-time availability.
                         </p>
                       </div>
@@ -541,7 +541,7 @@ export default function SubstitutionManagementPage() {
                         <button
                           disabled={!selectedTeacherId || !selectedDate || loadingSuggestions}
                           onClick={handleMarkPresent}
-                          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 py-3.5 text-[11px] font-black uppercase tracking-widest text-white transition-all hover:bg-white/10 disabled:opacity-30 active:scale-95"
+                          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-300 bg-slate-100 py-3.5 text-[11px] font-black uppercase tracking-widest text-slate-900 transition-all hover:bg-slate-200 disabled:opacity-30 active:scale-95"
                         >
                           Mark as present
                         </button>
@@ -595,7 +595,7 @@ export default function SubstitutionManagementPage() {
                 ) : (
                   <>
                     <div className="hidden overflow-hidden rounded-[32px] border border-white/5 bg-white/[0.02] lg:block relative backdrop-blur-3xl">
-                      <div className="grid grid-cols-[100px_1fr_1fr_1fr_1.5fr_140px] items-center border-b border-white/5 bg-white/5 px-8 py-6 text-[9px] font-black uppercase tracking-[0.4em] text-slate-500">
+                      <div className="grid grid-cols-[100px_1fr_1fr_1fr_1.5fr_140px] items-center border-b border-slate-200 bg-slate-50 px-8 py-6 text-[9px] font-black uppercase tracking-[0.4em] text-slate-700">
                         <span>Period</span>
                         <span>Sector</span>
                         <span>Topic</span>
@@ -621,7 +621,7 @@ export default function SubstitutionManagementPage() {
                             <span className="pr-4 text-[16px] font-black tracking-tighter text-white italic">
                               {suggestion.className}
                             </span>
-                            <span className="pr-4 text-[13px] font-bold text-slate-400">
+                            <span className="pr-4 text-[13px] font-bold text-slate-300">
                               {suggestion.subject}
                             </span>
                             <span className="pr-4 text-[11px] font-black uppercase tracking-[0.1em] text-slate-600">
@@ -630,7 +630,7 @@ export default function SubstitutionManagementPage() {
                             <div className="pr-4">
                               {suggestion.allCandidates.length > 0 ? (
                                 <select
-                                  className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-[13px] font-black text-slate-300 focus:border-primary transition-all outline-none"
+                                  className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-[13px] font-black text-slate-900 focus:border-primary transition-all outline-none"
                                   value={assignment || ""}
                                   onChange={(event) =>
                                     setAssignments((current) => ({
@@ -639,9 +639,9 @@ export default function SubstitutionManagementPage() {
                                     }))
                                   }
                                 >
-                                  <option value="" className="bg-[#020617]">SKIP SECTOR COVER</option>
+                                  <option value="" className="bg-white text-slate-900">SKIP SECTOR COVER</option>
                                   {suggestion.allCandidates.map((candidate) => (
-                                    <option key={candidate.id} value={candidate.id} className="bg-[#020617]">
+                                    <option key={candidate.id} value={candidate.id} className="bg-white text-slate-900">
                                       {candidate.name.toUpperCase()}
                                       {candidate.subjectMatch ? " // MATCH" : ""}
                                       {` // LOAD: ${candidate.workload}`}
@@ -724,7 +724,7 @@ export default function SubstitutionManagementPage() {
                     <h2 className="text-4xl font-black tracking-tighter text-white italic">
                       ORCHESTRATION COMPLETE
                     </h2>
-                    <p className="text-[13px] font-black uppercase tracking-[0.3em] leading-relaxed text-slate-500">
+                    <p className="text-[13px] font-black uppercase tracking-[0.3em] leading-relaxed text-slate-300">
                       Successfully assigned {confirmedCount} substitution{confirmedCount === 1 ? "" : "s"} for{" "}
                       <span className="text-primary font-black italic">
                         {selectedTeacher?.name || "the designated agent"}
