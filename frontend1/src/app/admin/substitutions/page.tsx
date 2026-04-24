@@ -494,10 +494,10 @@ export default function SubstitutionManagementPage() {
                 </div>
 
                 <div className="lg:col-span-4 translate-y-[-1px]">
-                  <div className="relative group overflow-hidden h-full rounded-[32px] bg-zinc-950 p-8 text-white shadow-2xl ring-1 ring-white/10">
+                  <div className="relative group overflow-hidden h-full rounded-[32px] border border-[var(--color-stroke)] bg-[linear-gradient(180deg,rgba(255,251,214,0.96),rgba(247,239,188,0.92))] p-8 text-[var(--color-text)] shadow-[0_22px_60px_rgba(120,102,32,0.18)]">
                     {/* Integrated Imagery */}
                     <div 
-                      className="absolute inset-0 opacity-20 mix-blend-overlay grayscale group-hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-100 pointer-events-none"
+                      className="absolute inset-0 opacity-10 mix-blend-multiply grayscale group-hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-100 pointer-events-none"
                       style={{ 
                         backgroundImage: "url('/substitution.png')",
                         backgroundSize: 'cover',
@@ -509,19 +509,20 @@ export default function SubstitutionManagementPage() {
                       <div className="space-y-4">
                         <div className="flex items-center gap-2">
                            <div className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)] shadow-[0_0_8px_var(--color-brand)] animate-pulse" />
-                           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Automation Engine</span>
+                           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--color-text-muted)]">Automation Engine</span>
                         </div>
                         <h2 className="text-2xl font-black leading-tight tracking-tight">
                           Orchestrate Coverage
                         </h2>
-                        <p className="text-[14px] font-medium leading-relaxed text-zinc-400">
+                        <p className="text-[14px] font-medium leading-relaxed text-[var(--color-text-muted)]">
                           Select the absent teacher and date to generate optimized matchings based on workload and subject expertise.
                         </p>
                       </div>
                       
-                      <div className="space-y-3 pt-6 border-t border-white/10">
+                      <div className="space-y-3 pt-6 border-t border-[var(--color-stroke)]">
                         <Button
-                          className="w-full shadow-2xl"
+                          variant="accent"
+                          className="w-full rounded-2xl shadow-2xl"
                           size="lg"
                           disabled={!selectedTeacherId || !selectedDate || loadingSuggestions}
                           icon={<SearchIcon className="h-4 w-4" />}
@@ -532,7 +533,7 @@ export default function SubstitutionManagementPage() {
                         <button
                           disabled={!selectedTeacherId || !selectedDate || loadingSuggestions}
                           onClick={handleMarkPresent}
-                          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 py-3.5 text-[11px] font-black uppercase tracking-widest text-white transition-all hover:bg-white/10 disabled:opacity-30 active:scale-95"
+                          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[var(--color-stroke)] bg-white/70 py-3.5 text-[11px] font-black uppercase tracking-widest text-[var(--color-text)] transition-all hover:bg-white disabled:opacity-30 active:scale-95"
                         >
                           Mark as present
                         </button>
