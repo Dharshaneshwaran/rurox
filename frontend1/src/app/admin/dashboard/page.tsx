@@ -129,10 +129,10 @@ export default function AdminDashboardPage() {
           description="Monitor teacher capacity, search subjects, and orchestrate profile-level timetable deployment from the centralized hub."
           actions={
             <div className="flex flex-wrap items-center gap-3">
-              <Link href="/admin/users" className={cn(buttonClasses({ variant: "secondary" }), "border border-white/10 bg-[#6d8f67]/70 text-white shadow-[0_10px_30px_rgba(37,68,39,0.18)] backdrop-blur-md hover:bg-[#5f8359]/80 transition-all")}>
+              <Link href="/admin/users" className={cn(buttonClasses({ variant: "secondary" }), "!border-primary/20 !bg-primary/90 !text-white shadow-[0_10px_30px_rgba(37,68,39,0.18)] backdrop-blur-md hover:!bg-primary-strong transition-all")}>
                 Review approvals
               </Link>
-              <Link href="/admin/special-class" className={cn(buttonClasses({ variant: "secondary" }), "border border-white/10 bg-[#6d8f67]/70 text-white shadow-[0_10px_30px_rgba(37,68,39,0.18)] backdrop-blur-md hover:bg-[#5f8359]/80 transition-all")}>
+              <Link href="/admin/special-class" className={cn(buttonClasses({ variant: "secondary" }), "!border-primary/20 !bg-primary/90 !text-white shadow-[0_10px_30px_rgba(37,68,39,0.18)] backdrop-blur-md hover:!bg-primary-strong transition-all")}>
                 Special classes
               </Link>
               <Link href="/admin/substitutions" className={buttonClasses({ variant: "accent" })}>

@@ -60,8 +60,8 @@ export default function TeacherSignupPage() {
       />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-[560px] text-center z-10 relative mb-8">
-        <h1 className="text-3xl font-display font-bold tracking-tight text-[#111827]">Ruroxz Time Management</h1>
-        <p className="mt-2 text-sm text-[#6B7280]">Teacher Registration Portal</p>
+        <h1 className="text-3xl font-display font-bold tracking-tight text-primary">Ruroxz Time Management</h1>
+        <p className="mt-2 text-sm text-primary/60">Teacher Registration Portal</p>
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-[560px] z-10 relative">
@@ -77,10 +77,10 @@ export default function TeacherSignupPage() {
               </div>
             </div>
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-[#1F2937] leading-tight mb-1">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-primary leading-tight mb-1">
                 Identity Verification Required
               </h3>
-              <p className="text-xs text-[#6B7280] leading-relaxed">
+              <p className="text-xs text-primary/60 leading-relaxed">
                 All new accounts require approval from the District Superintendent. Approval typically takes 24-48 business hours.
               </p>
             </div>
@@ -149,13 +149,13 @@ export default function TeacherSignupPage() {
                       <select
                         value={teacherCategory}
                         onChange={(e) => setTeacherCategory(e.target.value)}
-                        className="w-full bg-[#FCFDFD] border border-[#E2E8F0] rounded-md text-sm px-4 py-2.5 outline-none focus:border-black transition-colors appearance-none pr-10 text-[#1F2937]"
+                        className="w-full bg-white border border-border rounded-md text-sm px-4 py-2.5 outline-none focus:border-primary transition-colors appearance-none pr-10 text-primary"
                         required
                       >
                         <option value="Primary Teacher">Primary Teacher</option>
                         <option value="Secondary Teacher">Secondary Teacher</option>
                       </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#6B7280]">
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-primary/60">
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
@@ -170,14 +170,14 @@ export default function TeacherSignupPage() {
                       <select
                         value={administrativeRole}
                         onChange={(e) => setAdministrativeRole(e.target.value)}
-                        className="w-full bg-[#FCFDFD] border border-[#E2E8F0] rounded-md text-sm px-4 py-2.5 outline-none focus:border-black transition-colors appearance-none pr-10 text-[#1F2937]"
+                        className="w-full bg-white border border-border rounded-md text-sm px-4 py-2.5 outline-none focus:border-primary transition-colors appearance-none pr-10 text-primary"
                         required
                       >
                         <option value="Classroom Teacher">Classroom Teacher</option>
                         <option value="Site Coordinator">Site Coordinator</option>
                         <option value="Department Head">Department Head</option>
                       </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#6B7280]">
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-primary/60">
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
@@ -220,7 +220,7 @@ export default function TeacherSignupPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#5C5C5C] hover:bg-[#333333] text-white text-[11px] font-bold tracking-[0.15em] py-3.5 px-4 rounded-md transition-colors"
+                  className="w-full bg-primary hover:bg-primary-strong text-white text-[11px] font-bold tracking-[0.15em] py-3.5 px-4 rounded-md transition-colors"
                 >
                   {loading ? "CREATING..." : "CREATE ACCOUNT"}
                 </button>
@@ -229,7 +229,7 @@ export default function TeacherSignupPage() {
           </div>
 
           <div className="bg-[#FFFFFF] border-t border-[#E2E8F0] px-8 py-5 text-center">
-            <p className="text-[10px] text-[#6B7280]">
+            <p className="text-[10px] text-primary/60">
               By registering, you agree to the <a href="#" className="underline">Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a> of Architectural Ledger Systems.
             </p>
           </div>
@@ -237,15 +237,15 @@ export default function TeacherSignupPage() {
         </div>
 
         <div className="mt-8 flex justify-center items-center gap-6 pb-20">
-          <p className="text-xs text-[#6B7280]">
+          <p className="text-xs text-primary/60">
             Already have an account?{" "}
-            <Link href="/" className="font-bold text-[#1F2937] hover:text-black">
+            <Link href="/" className="font-bold text-primary hover:text-primary-strong">
               SIGN IN →
             </Link>
           </p>
-          <div className="w-[1px] h-3 bg-[#D1D5DB]"></div>
-          <button className="text-xs font-bold text-[#6B7280] flex items-center gap-2 hover:text-[#1F2937]">
-            <div className="w-3 h-3 rounded-full bg-[#6B7280] text-white flex items-center justify-center text-[10px]">?</div>
+          <div className="w-[1px] h-3 bg-primary/20"></div>
+          <button className="text-xs font-bold text-primary/60 flex items-center gap-2 hover:text-primary">
+            <div className="w-3 h-3 rounded-full bg-primary/60 text-white flex items-center justify-center text-[10px]">?</div>
             Support
           </button>
         </div>

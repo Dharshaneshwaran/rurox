@@ -177,7 +177,7 @@ export default function LoginPage() {
 
               {activeTab === "TEACHER" && (
                 <div className="mt-4 text-center">
-                  <Link href="/teacher/signup" className="text-xs text-blue-600 hover:text-blue-800 transition-colors uppercase tracking-widest font-semibold border-b border-transparent hover:border-blue-800 pb-0.5">
+                  <Link href="/teacher/signup" className="text-xs text-primary/70 hover:text-primary transition-colors uppercase tracking-widest font-semibold border-b border-transparent hover:border-primary pb-0.5">
                     Don't have an account? Sign up
                   </Link>
                 </div>

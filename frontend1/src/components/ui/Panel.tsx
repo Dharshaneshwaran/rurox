@@ -13,7 +13,7 @@ const tones = {
   muted:
     "border-[var(--color-stroke)] bg-[var(--color-panel-muted)] shadow-[var(--shadow-soft)]",
   highlight:
-    "border-[color:color-mix(in_oklab,var(--color-brand)_18%,white)] bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-brand-soft)_55%,white),white)] shadow-[0_32px_70px_-48px_rgba(36,88,230,0.6)]",
+    "border-[color:color-mix(in_oklab,var(--color-brand)_18%,white)] bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-brand-soft)_55%,white),white)] shadow-[0_32px_70px_-48px_rgba(var(--color-brand-rgb),0.35)]",
 };
 
 export default function Panel({
