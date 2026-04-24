@@ -172,7 +172,23 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   --stroke: #d4dbc1;
   --brand: #79AE6F;
   --brand-rgb: 121, 174, 111;
-  
+  --color-background: #F2EDC2;
+  --color-foreground: #346739;
+  --color-primary: #346739;
+  --color-primary-strong: #2a522e;
+  --color-secondary: #9FCB98;
+  --color-secondary-soft: #f0f7f0;
+  --color-border: #d4dbc1;
+  --color-surface: #F2EDC2;
+  --color-surface-subtle: #ebf0cc;
+  --color-on-surface: #346739;
+  --color-text: #346739;
+  --color-text-muted: #5a7d5e;
+  --color-text-soft: #5a7d5e;
+  --color-muted-foreground: #5a7d5e;
+  --color-accent: #79AE6F;
+  --color-accent-soft: #ecf4eb;
+
   --shadow-card: 0 4px 6px -1px rgba(52, 103, 57, 0.08), 0 2px 4px -2px rgba(52, 103, 57, 0.08);
 
   .hero-gradient {
