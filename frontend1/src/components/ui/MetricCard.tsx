@@ -44,15 +44,14 @@ export default function MetricCard({
   return (
     <article
       className={cn(
-        "relative group overflow-hidden rounded-[32px] border p-7 shadow-sm transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px]",
+        "relative group overflow-hidden rounded-[28px] border p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] sm:rounded-[32px] sm:p-7",
         toneStyles[tone]
       )}
     >
-      {/* Subtle Integrated Imagery */}
       {backgroundImage && (
-        <div 
-          className="absolute inset-0 opacity-[0.12] grayscale pointer-events-none transition-opacity duration-700 group-hover:opacity-[0.20]"
-          style={{ 
+        <div
+          className="absolute inset-0 opacity-[0.04] grayscale pointer-events-none"
+          style={{
             backgroundImage: `url('${backgroundImage}')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
@@ -63,7 +62,7 @@ export default function MetricCard({
       <div className="relative z-10 flex flex-col justify-between h-full gap-10">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-3">
-            <p className="font-mono-display text-[10px] font-black uppercase tracking-[0.35em] text-primary/60 group-hover:text-accent transition-colors">
+            <p className="font-mono-display text-[10px] font-black uppercase tracking-[0.28em] text-primary/72 transition-colors">
               {label}
             </p>
             {badge ? <Badge tone={badgeTone}>{badge}</Badge> : null}
@@ -76,11 +75,11 @@ export default function MetricCard({
         </div>
         
         <div>
-          <p className="font-display text-5xl font-black tracking-tighter text-primary leading-none">
+          <p className="font-display text-4xl font-black tracking-tighter text-primary leading-none sm:text-5xl">
             {value}
           </p>
           {supportingText ? (
-            <p className="mt-3 text-[13px] font-bold leading-relaxed text-primary/70 max-w-[200px]">
+            <p className="mt-3 max-w-[240px] text-[13px] font-semibold leading-relaxed text-primary/82">
               {supportingText}
             </p>
           ) : null}

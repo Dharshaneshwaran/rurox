@@ -117,19 +117,9 @@ export default function WorkspaceShell({
   );
 
   return (
-    <div className="min-h-screen bg-zinc-50/60">
+    <div className="min-h-screen bg-background">
       <div className="flex min-h-screen w-full">
-        <aside className="hidden w-72 flex-col border-r border-zinc-900 bg-zinc-950 lg:flex sticky top-0 h-screen overflow-hidden group/sidebar">
-          {/* Background Texture */}
-          <div 
-            className="absolute inset-0 opacity-[0.25] mix-blend-overlay grayscale transition-opacity duration-700 group-hover/sidebar:opacity-[0.40] pointer-events-none"
-            style={{ 
-              backgroundImage: 'url(/substitution.png)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              filter: 'contrast(1.2) brightness(0.8)'
-            }}
-          />
+        <aside className="sticky top-0 hidden h-screen w-72 flex-col overflow-hidden border-r border-primary/18 bg-primary lg:flex">
           <div className="relative z-10 flex flex-col h-full gap-8 p-6">
             <Link href="/" className="inline-flex items-center gap-3.5 px-1.5 group">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md transition-transform group-hover:scale-105">
@@ -139,30 +129,30 @@ export default function WorkspaceShell({
                 <p className="text-[14px] font-black tracking-tight text-white leading-tight">
                   ruroxz
                 </p>
-                <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-brand)] font-black mt-2 leading-none">
+                <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-secondary leading-none">
                   {roleLabel}
                 </p>
               </div>
             </Link>
 
-            <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-5 backdrop-blur-md">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-2.5">
+            <div className="rounded-2xl border border-white/8 bg-white/[0.05] p-5 backdrop-blur-md">
+              <h3 className="mb-2.5 text-[10px] font-black uppercase tracking-[0.2em] text-secondary/75">
                 Focus Mode
               </h3>
-              <p className="text-[12px] font-bold leading-relaxed text-zinc-500">
+              <p className="text-[12px] font-semibold leading-relaxed text-secondary/88">
                 {subtitle}
               </p>
             </div>
 
             <div className="flex-1 space-y-4">
-              <p className="px-3 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
+              <p className="px-3 text-[10px] font-black uppercase tracking-[0.24em] text-secondary/65">
                 Workspace
               </p>
               <SidebarNav pathname={pathname} navItems={navItems} />
             </div>
 
             <div className="mt-auto space-y-4">
-              <div className="rounded-2xl bg-white/[0.04] border border-white/5 p-4.5 flex items-center gap-3.5 backdrop-blur-md transition-colors hover:bg-white/[0.07]">
+              <div className="flex items-center gap-3.5 rounded-2xl border border-white/8 bg-white/[0.05] p-4.5 backdrop-blur-md transition-colors hover:bg-white/[0.08]">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand)] text-xs font-black text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]">
                   {user.name?.slice(0, 2).toUpperCase() || user.email[0].toUpperCase()}
                 </div>
@@ -170,14 +160,14 @@ export default function WorkspaceShell({
                   <p className="truncate text-[14px] font-black text-white tracking-tight">
                     {user.name ?? "Unnamed user"}
                   </p>
-                  <p className="truncate text-[10px] text-zinc-400 font-bold tracking-tight mt-0.5">
+                  <p className="mt-0.5 truncate text-[10px] font-medium tracking-tight text-secondary/78">
                     {user.email}
                   </p>
                 </div>
               </div>
               <button
                 onClick={onSignOut}
-                className="flex w-full items-center gap-3.5 rounded-xl px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 transition-all hover:bg-red-500/15 hover:text-red-400 ring-1 ring-white/5"
+                className="flex w-full items-center gap-3.5 rounded-xl px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-secondary/78 transition-all hover:bg-red-500/15 hover:text-red-300 ring-1 ring-white/8"
               >
                 <LogoutIcon className="h-4 w-4 opacity-70" />
                 Terminating Session
@@ -187,7 +177,7 @@ export default function WorkspaceShell({
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-30 border-b border-[var(--color-stroke)] bg-white/80 backdrop-blur-xl transition-all">
+          <header className="sticky top-0 z-30 border-b border-[var(--color-stroke)] bg-surface/88 backdrop-blur-xl transition-all">
             <div className="flex items-center justify-between gap-4 px-6 py-4">
               <div className="flex min-w-0 items-center gap-4">
                 <button
@@ -199,10 +189,10 @@ export default function WorkspaceShell({
                   <MenuIcon className="h-5 w-5" />
                 </button>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[var(--color-brand)]">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-brand)]">
                     {roleLabel}
                   </p>
-                  <h1 className="truncate text-2xl font-black tracking-tight text-zinc-900">
+                  <h1 className="truncate text-2xl font-black tracking-tight text-[var(--color-text)]">
                     {activeItem?.label ?? "Workspace"}
                   </h1>
                 </div>
@@ -210,14 +200,14 @@ export default function WorkspaceShell({
 
               <div className="flex items-center gap-4">
                 <div className="hidden text-right md:block">
-                  <p className="text-[13px] font-black text-zinc-900 leading-none">
+                  <p className="text-[13px] font-black leading-none text-[var(--color-text)]">
                     {user.name || "User"}
                   </p>
-                  <p className="text-[10px] text-zinc-500 font-bold mt-1 tracking-tight">
+                  <p className="mt-1 text-[10px] font-medium tracking-tight text-[var(--color-text-muted)]">
                     {user.email}
                   </p>
                 </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 text-[11px] font-black text-white shadow-lg md:h-11 md:w-11">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-[11px] font-black text-white shadow-lg md:h-11 md:w-11">
                   {user.name?.slice(0, 2).toUpperCase() || "U"}
                 </div>
               </div>
@@ -236,7 +226,7 @@ export default function WorkspaceShell({
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 bg-black/35"
           />
-          <aside className="relative flex h-full w-[min(88vw,21rem)] flex-col border-r border-zinc-900 bg-zinc-950 p-6 shadow-2xl">
+          <aside className="relative flex h-full w-[min(88vw,21rem)] flex-col border-r border-primary/18 bg-primary p-6 shadow-2xl">
             <div className="flex items-center justify-between gap-3 px-1.5 mb-8">
               <div className="flex items-center gap-3.5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
@@ -244,20 +234,20 @@ export default function WorkspaceShell({
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[14px] font-black tracking-[-0.02em] text-white">Smart Teacher</span>
-                  <span className="text-[10px] uppercase tracking-[0.25em] text-zinc-500 font-bold leading-none mt-0.5">{roleLabel}</span>
+                  <span className="mt-0.5 text-[10px] font-semibold uppercase leading-none tracking-[0.22em] text-secondary/75">{roleLabel}</span>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setMenuOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-zinc-400 hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-secondary/70 hover:text-white"
               >
                 <LogoutIcon className="h-4 w-4 rotate-180" />
               </button>
             </div>
 
             <div className="flex-1 space-y-4 overflow-y-auto">
-              <p className="px-3 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
+              <p className="px-3 text-[10px] font-black uppercase tracking-[0.24em] text-secondary/65">
                 Navigation
               </p>
               <SidebarNav
@@ -267,19 +257,19 @@ export default function WorkspaceShell({
               />
             </div>
 
-            <div className="mt-auto pt-6 border-t border-white/5">
-              <div className="flex items-center gap-3.5 px-3 py-4 rounded-2xl bg-white/5 border border-white/5">
+            <div className="mt-auto border-t border-white/8 pt-6">
+              <div className="flex items-center gap-3.5 rounded-2xl border border-white/8 bg-white/5 px-3 py-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-brand)] text-xs font-black text-white">
                    {user.name?.slice(0, 2).toUpperCase() || "U"}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-black text-white">{user.name || "Teacher"}</p>
-                  <p className="truncate text-[10px] text-zinc-500 font-bold tracking-tight">{user.email}</p>
+                  <p className="truncate text-[10px] font-medium tracking-tight text-secondary/76">{user.email}</p>
                 </div>
               </div>
               <button
                 onClick={onSignOut}
-                className="mt-4 flex w-full items-center gap-3.5 rounded-xl px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 hover:text-red-400 hover:bg-red-400/10 transition-all font-bold"
+                className="mt-4 flex w-full items-center gap-3.5 rounded-xl px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-secondary/76 transition-all hover:bg-red-400/10 hover:text-red-300"
               >
                 <LogoutIcon className="h-4 w-4" />
                 Sign Out

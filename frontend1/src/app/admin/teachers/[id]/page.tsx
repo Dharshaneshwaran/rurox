@@ -8,7 +8,7 @@ import AdminLayout from "@/components/AdminLayout";
 import SectionCard from "@/components/SectionCard";
 import TimetableGrid from "@/components/TimetableGrid";
 import { BookIcon, CalendarIcon, ClockIcon, SwapIcon } from "@/components/icons";
-import Button from "@/components/ui/Button";
+import Button, { buttonClasses } from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import PageHeader from "@/components/ui/PageHeader";
 import StatCard from "@/components/ui/StatCard";
@@ -148,20 +148,20 @@ export default function TeacherDetailsPage() {
 
   return (
     <AdminLayout>
-      <div className="px-4 py-6 sm:px-8 lg:px-10 xl:px-12">
+      <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
         <PageHeader
           eyebrow="Teacher profile"
           title={teacher?.name ?? "Teacher"}
           description="Review workload, assigned subjects, and weekly timetable structure. Add classes directly into free slots when the weekly plan changes."
           actions={
-            <>
-              <Link href="/admin/substitutions">
-                <Button variant="secondary">Mark absent</Button>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link href="/admin/substitutions" className={buttonClasses({ variant: "secondary" })}>
+                Mark absent
               </Link>
               <Button variant="danger" onClick={handleDeleteTeacher}>
                 Delete teacher
               </Button>
-            </>
+            </div>
           }
           meta={
             <>
@@ -179,7 +179,7 @@ export default function TeacherDetailsPage() {
           </div>
         ) : null}
 
-        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard
             label="Assigned subjects"
             value={String(subjectCount)}
@@ -207,7 +207,7 @@ export default function TeacherDetailsPage() {
           />
         </div>
 
-        <div className="mt-8 grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
+        <div className="mt-6 grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
           <SectionCard
             title="Assigned subjects"
             subtitle="Configured teaching subjects currently associated with this profile."

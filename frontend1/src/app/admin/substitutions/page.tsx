@@ -110,7 +110,7 @@ function PeriodReviewCard({
           </h3>
           <p className="text-sm leading-6 text-[var(--color-text-muted)]">
             {suggestion.subject}
-            {suggestion.room ? ` • ${suggestion.room}` : ""}
+            {suggestion.room ? ` - ${suggestion.room}` : ""}
           </p>
         </div>
 
@@ -124,8 +124,8 @@ function PeriodReviewCard({
             {suggestion.allCandidates.map((candidate) => (
               <option key={candidate.id} value={candidate.id}>
                 {candidate.name}
-                {candidate.subjectMatch ? " • subject match" : ""}
-                {` • load ${candidate.workload}`}
+                {candidate.subjectMatch ? " - subject match" : ""}
+                {` - load ${candidate.workload}`}
               </option>
             ))}
           </select>
@@ -412,7 +412,7 @@ export default function SubstitutionManagementPage() {
 
   return (
     <AdminLayout>
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-5 sm:px-6 sm:py-6 lg:gap-8 lg:px-8 lg:py-8">
         <PageHeader
           variant="command"
           backgroundImage="/substitution.png"
@@ -459,7 +459,7 @@ export default function SubstitutionManagementPage() {
 
         <SurfaceCard className="px-5 py-5 sm:px-6 sm:py-6">
           <div className="space-y-6">
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="grid gap-3 sm:grid-cols-3">
               <StepPill step="1" label="Select absence" active={step === "select"} complete={step !== "select"} />
               <StepPill step="2" label="Review coverage" active={step === "review"} complete={step === "confirmed"} />
               <StepPill step="3" label="Confirm" active={step === "confirmed"} complete={false} />
@@ -468,7 +468,7 @@ export default function SubstitutionManagementPage() {
             {step === "select" ? (
               <div className="grid gap-6 lg:grid-cols-12">
                 <div className="lg:col-span-8">
-                  <SurfaceCard className="bg-[var(--color-panel-muted)]/50 border-dashed border-[var(--color-stroke)] p-6">
+                  <SurfaceCard className="border-dashed border-[var(--color-stroke)] bg-[var(--color-panel-muted)]/50 p-4 sm:p-6">
                     <div className="grid gap-6 sm:grid-cols-2">
                       <SelectField
                         label="Absent teacher"
@@ -478,7 +478,7 @@ export default function SubstitutionManagementPage() {
                         <option value="">Select a teacher</option>
                         {teachers.map((teacher) => (
                           <option key={teacher.id} value={teacher.id}>
-                            {teacher.name} • {teacher.subjects.join(", ")}
+                            {teacher.name} - {teacher.subjects.join(", ")}
                           </option>
                         ))}
                       </SelectField>
@@ -493,28 +493,18 @@ export default function SubstitutionManagementPage() {
                   </SurfaceCard>
                 </div>
 
-                <div className="lg:col-span-4 translate-y-[-1px]">
-                  <div className="relative group overflow-hidden h-full rounded-[32px] border border-[var(--color-stroke)] bg-[linear-gradient(180deg,rgba(255,251,214,0.96),rgba(247,239,188,0.92))] p-8 text-[var(--color-text)] shadow-[0_22px_60px_rgba(120,102,32,0.18)]">
-                    {/* Integrated Imagery */}
-                    <div 
-                      className="absolute inset-0 opacity-10 mix-blend-multiply grayscale group-hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-100 pointer-events-none"
-                      style={{ 
-                        backgroundImage: "url('/substitution.png')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                      }}
-                    />
-                    
+                <div className="lg:col-span-4">
+                  <div className="relative h-full rounded-[28px] border border-[var(--color-stroke)] bg-[linear-gradient(180deg,rgba(255,252,228,0.98),rgba(248,242,204,0.96))] p-5 text-[var(--color-text)] shadow-[0_22px_60px_rgba(120,102,32,0.12)] sm:rounded-[32px] sm:p-8">
                     <div className="relative z-10 flex flex-col h-full justify-between gap-8">
                       <div className="space-y-4">
                         <div className="flex items-center gap-2">
                            <div className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)] shadow-[0_0_8px_var(--color-brand)] animate-pulse" />
                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--color-text-muted)]">Automation Engine</span>
                         </div>
-                        <h2 className="text-2xl font-black leading-tight tracking-tight">
+                        <h2 className="text-2xl font-black leading-tight tracking-tight sm:text-[2rem]">
                           Orchestrate Coverage
                         </h2>
-                        <p className="text-[14px] font-medium leading-relaxed text-[var(--color-text-muted)]">
+                        <p className="text-[14px] font-semibold leading-relaxed text-[var(--color-text-muted)]">
                           Select the absent teacher and date to generate optimized matchings based on workload and subject expertise.
                         </p>
                       </div>
@@ -533,7 +523,7 @@ export default function SubstitutionManagementPage() {
                         <button
                           disabled={!selectedTeacherId || !selectedDate || loadingSuggestions}
                           onClick={handleMarkPresent}
-                          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[var(--color-stroke)] bg-white/70 py-3.5 text-[11px] font-black uppercase tracking-widest text-[var(--color-text)] transition-all hover:bg-white disabled:opacity-30 active:scale-95"
+                          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[var(--color-stroke)] bg-white/70 px-4 text-center text-[11px] font-black uppercase leading-none tracking-widest text-[var(--color-text)] whitespace-nowrap transition-all hover:bg-white disabled:opacity-30 active:scale-95"
                         >
                           Mark as present
                         </button>
@@ -562,7 +552,7 @@ export default function SubstitutionManagementPage() {
                     <h2 className="text-3xl font-black tracking-tight text-[var(--color-text)]">
                       Review suggested coverage
                     </h2>
-                    <p className="text-[14px] font-medium leading-relaxed text-zinc-500">
+                    <p className="text-[14px] font-semibold leading-relaxed text-[var(--color-text-muted)]">
                       Verify selected teachers for each period before confirming the entire day.
                     </p>
                   </div>
@@ -613,7 +603,7 @@ export default function SubstitutionManagementPage() {
                               {suggestion.subject}
                             </span>
                             <span className="pr-4 text-sm text-[var(--color-text-muted)]">
-                              {suggestion.room || "—"}
+                              {suggestion.room || "-"}
                             </span>
                             <div className="pr-4">
                               {suggestion.allCandidates.length > 0 ? (
@@ -631,8 +621,8 @@ export default function SubstitutionManagementPage() {
                                   {suggestion.allCandidates.map((candidate) => (
                                     <option key={candidate.id} value={candidate.id}>
                                       {candidate.name}
-                                      {candidate.subjectMatch ? " • subject match" : ""}
-                                      {` • load ${candidate.workload}`}
+                                      {candidate.subjectMatch ? " - subject match" : ""}
+                                      {` - load ${candidate.workload}`}
                                     </option>
                                   ))}
                                 </select>
@@ -695,17 +685,7 @@ export default function SubstitutionManagementPage() {
             ) : null}
 
             {step === "confirmed" ? (
-              <div className="relative mx-auto max-w-2xl py-20 px-6 overflow-hidden rounded-[48px] bg-zinc-50 border border-zinc-200 shadow-2xl">
-                {/* Decorative Success Background */}
-                <div 
-                  className="absolute inset-0 opacity-[0.03] grayscale pointer-events-none"
-                  style={{ 
-                    backgroundImage: "url('/substitution.png')",
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
-                  }}
-                />
-                
+              <div className="relative mx-auto max-w-2xl overflow-hidden rounded-[40px] border border-zinc-200 bg-zinc-50 px-5 py-14 shadow-2xl sm:px-6 sm:py-20">
                 <div className="relative z-10 flex flex-col items-center gap-8 text-center">
                   <div className="flex h-24 w-24 items-center justify-center rounded-[32px] bg-zinc-950 text-white shadow-2xl ring-1 ring-white/10 animate-in zoom-in duration-500">
                     <CheckCircleIcon className="h-12 w-12 text-emerald-400" />
@@ -734,7 +714,7 @@ export default function SubstitutionManagementPage() {
 
         <SurfaceCard className="px-5 py-5 sm:px-6 sm:py-6">
           <div className="space-y-5">
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-1">
                   <h2 className="font-[family-name:var(--font-heading)] text-2xl font-semibold tracking-[-0.04em] text-[var(--color-text)]">
                     Recent substitutions
@@ -743,7 +723,7 @@ export default function SubstitutionManagementPage() {
                     Monitor the latest substitution activity across the system.
                   </p>
                 </div>
-                 <Button variant="ghost" size="sm" onClick={handleCleanup} className="text-xs text-red-500 hover:text-red-600">
+                 <Button variant="ghost" size="sm" onClick={handleCleanup} className="self-start text-xs text-red-500 hover:bg-red-50 hover:text-red-600 sm:self-auto">
                    Cleanup records
                 </Button>
               </div>

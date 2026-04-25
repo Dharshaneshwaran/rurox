@@ -33,16 +33,15 @@ export default function StatCard({
   return (
     <section
       className={cn(
-        "relative group overflow-hidden rounded-[32px] border border-border bg-surface p-7 shadow-sm transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px]",
+        "relative group overflow-hidden rounded-[24px] border border-border bg-surface p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] sm:rounded-[28px] sm:p-6 lg:rounded-[32px] lg:p-7",
         toneClasses[tone],
         className
       )}
     >
-      {/* Subtle Background Texture Implementation */}
       {backgroundImage && (
-        <div 
-          className="absolute inset-0 opacity-[0.10] grayscale pointer-events-none transition-opacity duration-700 group-hover:opacity-[0.22] scale-110 group-hover:scale-100"
-          style={{ 
+        <div
+          className="absolute inset-0 opacity-[0.04] grayscale pointer-events-none"
+          style={{
             backgroundImage: `url('${backgroundImage}')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
@@ -50,9 +49,9 @@ export default function StatCard({
         />
       )}
 
-      <div className="relative z-10 flex flex-col items-start justify-between gap-6 h-full">
+      <div className="relative z-10 flex h-full flex-col items-start justify-between gap-5 sm:gap-6">
         <div className="flex w-full items-center justify-between">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/50">
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/72">
              {label}
            </p>
            {icon ? (
@@ -63,12 +62,10 @@ export default function StatCard({
         </div>
         
         <div>
-          <p className="font-display text-5xl font-extrabold tracking-tighter text-primary">
+          <p className="font-display text-4xl font-extrabold tracking-tighter text-primary sm:text-5xl">
             {value}
           </p>
-          {supportingText ? (
-            <p className="mt-3 text-[13px] font-semibold leading-relaxed text-primary/70 max-w-[200px]">{supportingText}</p>
-          ) : null}
+          {supportingText ? <p className="mt-3 max-w-[200px] text-[13px] font-semibold leading-relaxed text-primary/84">{supportingText}</p> : null}
         </div>
       </div>
     </section>

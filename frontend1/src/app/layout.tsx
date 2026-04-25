@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
+import ThemeToggle from "@/components/ThemeToggle";
 import "./globals.css";
 
 const headlineFont = Manrope({
@@ -29,13 +30,22 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${headlineFont.variable} ${bodyFont.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${headlineFont.variable} ${bodyFont.variable} theme-modern h-full antialiased`}
     >
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var key='rurox-theme';var saved=localStorage.getItem(key);var root=document.documentElement;root.classList.remove('theme-modern','theme-legacy');root.classList.add(saved==='legacy'?'theme-legacy':'theme-modern');}catch(e){}})();`,
+          }}
+        />
       </head>
       <body className="min-h-full font-body text-on-surface">
-        <div className="flex min-h-full flex-col">{children}</div>
+        <div className="flex min-h-full flex-col">
+          {children}
+          <ThemeToggle />
+        </div>
       </body>
     </html>
   );

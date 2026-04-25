@@ -28,20 +28,19 @@ export default function PageHeader({
   return (
     <header
       className={cn(
-        "relative flex flex-col gap-6 overflow-hidden rounded-[40px] border p-8 shadow-2xl transition-all duration-500 lg:flex-row lg:items-center lg:justify-between lg:p-10",
+        "relative flex flex-col gap-5 overflow-hidden rounded-[32px] border p-6 shadow-2xl transition-all duration-500 sm:p-8 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:rounded-[40px] lg:p-10",
         isCommand
           ? "border-primary/20 bg-primary text-white shadow-primary/40"
           : "border-border bg-surface shadow-card"
       )}
     >
-      {/* Dynamic Background Image Implementation */}
       {backgroundImage && (
-        <div 
+        <div
           className={cn(
             "absolute inset-0 pointer-events-none transition-opacity duration-700",
-            isCommand ? "opacity-30 mix-blend-screen scale-110" : "opacity-[0.08] grayscale"
+            isCommand ? "opacity-[0.06] grayscale" : "opacity-[0.04] grayscale"
           )}
-          style={{ 
+          style={{
             backgroundImage: `url('${backgroundImage}')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
@@ -49,33 +48,32 @@ export default function PageHeader({
         />
       )}
 
-      {/* Decorative Gradient Overlays */}
       {isCommand && (
-        <div className="absolute inset-0 bg-gradient-to-br from-[rgba(var(--color-brand-rgb),0.05)] to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(15,35,18,0.14),rgba(15,35,18,0.02))] pointer-events-none" />
       )}
 
       <div className="relative z-10 space-y-4 max-w-4xl">
         <div className="flex items-center gap-3">
           {isCommand && <div className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)] shadow-[0_0_8px_var(--color-brand)] animate-pulse" />}
           <p className={cn(
-            "text-[10px] font-black uppercase tracking-[0.4em]",
-            isCommand ? "text-secondary/60" : "text-primary/60"
+            "text-[10px] font-black uppercase tracking-[0.28em]",
+            isCommand ? "text-secondary/85" : "text-primary/70"
           )}>
             {resolvedEyebrow}
           </p>
         </div>
-        
+
         <div className="space-y-3">
           <h1 className={cn(
-            "font-display text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-5xl",
+            "font-display text-3xl font-black tracking-[-0.04em] sm:text-4xl lg:text-5xl",
             isCommand ? "text-white" : "text-primary"
           )}>
             {title}
           </h1>
           {description ? (
             <p className={cn(
-              "text-[15px] font-medium leading-relaxed max-w-2xl",
-              isCommand ? "text-secondary/80" : "text-primary/70"
+              "max-w-2xl text-[14px] font-medium leading-7 sm:text-[15px]",
+              isCommand ? "text-white/86" : "text-primary/80"
             )}>
               {description}
             </p>

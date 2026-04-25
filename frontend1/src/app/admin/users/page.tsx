@@ -111,7 +111,7 @@ export default function AdminUsersPage() {
 
   return (
     <AdminLayout>
-      <div className="px-4 py-6 sm:px-8 lg:px-10 xl:px-12">
+      <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
         <PageHeader
           eyebrow="User approvals"
           title="Access control"
@@ -135,7 +135,7 @@ export default function AdminUsersPage() {
           </div>
         ) : null}
 
-        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard
             label="Pending"
             value={String(pendingUsers.length)}
@@ -165,14 +165,14 @@ export default function AdminUsersPage() {
           />
         </div>
 
-        <div className="mt-8 border border-border bg-white p-2">
+        <div className="mt-6 rounded-[24px] border border-border bg-white p-2">
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => setActiveTab("pending")}
-              className={`px-4 py-3 text-sm font-medium transition ${
+              className={`inline-flex h-11 items-center justify-center rounded-full px-4 text-sm font-medium transition ${
                 activeTab === "pending"
-                  ? "bg-accent text-white"
+                  ? "bg-accent text-white shadow-sm"
                   : "text-muted-foreground hover:bg-background hover:text-foreground"
               }`}
             >
@@ -181,9 +181,9 @@ export default function AdminUsersPage() {
             <button
               type="button"
               onClick={() => setActiveTab("all")}
-              className={`px-4 py-3 text-sm font-medium transition ${
+              className={`inline-flex h-11 items-center justify-center rounded-full px-4 text-sm font-medium transition ${
                 activeTab === "all"
-                  ? "bg-accent text-white"
+                  ? "bg-accent text-white shadow-sm"
                   : "text-muted-foreground hover:bg-background hover:text-foreground"
               }`}
             >
@@ -203,7 +203,7 @@ export default function AdminUsersPage() {
                   {pendingUsers.map((user) => (
                     <div
                       key={user.id}
-                      className="border border-border bg-background/45 p-5"
+                      className="rounded-[24px] border border-border bg-background/45 p-5"
                     >
                       <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                         <div>
@@ -221,7 +221,7 @@ export default function AdminUsersPage() {
                           </p>
                         </div>
 
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-wrap items-center gap-3 lg:justify-end">
                           <Button
                             onClick={() => handleApprove(user.id)}
                             variant="accent"
@@ -258,7 +258,7 @@ export default function AdminUsersPage() {
                   {allUsers.map((user) => (
                     <div
                       key={user.id}
-                      className="border border-border bg-background/45 p-5"
+                      className="rounded-[24px] border border-border bg-background/45 p-5"
                     >
                       <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                         <div>
@@ -276,13 +276,15 @@ export default function AdminUsersPage() {
                           </p>
                         </div>
 
-                        <Button
-                          onClick={() => handleDelete(user.id)}
-                          variant="danger"
-                          disabled={loadingState || user.role === "ADMIN"}
-                        >
-                          Delete user
-                        </Button>
+                        <div className="flex items-center">
+                          <Button
+                            onClick={() => handleDelete(user.id)}
+                            variant="danger"
+                            disabled={loadingState || user.role === "ADMIN"}
+                          >
+                            Delete user
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   ))}

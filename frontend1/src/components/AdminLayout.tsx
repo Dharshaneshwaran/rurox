@@ -63,7 +63,7 @@ function NavItems({
               "group relative flex items-center gap-3.5 rounded-xl px-3.5 py-3 transition-all duration-300",
               isActive
                 ? "bg-white/10 text-white shadow-sm"
-                : "text-secondary/70 hover:bg-white/5 hover:text-white"
+                : "text-secondary/88 hover:bg-white/6 hover:text-white"
             )}
           >
             {isActive && (
@@ -74,7 +74,7 @@ function NavItems({
                 "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all duration-300",
                 isActive
                   ? "bg-accent text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]"
-                  : "bg-primary-strong/40 text-secondary/50 group-hover:bg-primary-strong/60 group-hover:text-secondary/90"
+                  : "bg-primary-strong/40 text-secondary/72 group-hover:bg-primary-strong/60 group-hover:text-secondary"
               )}
             >
               <Icon className="h-4.5 w-4.5" />
@@ -82,7 +82,7 @@ function NavItems({
             <div className="min-w-0 flex-1 py-0.5">
               <p 
                 className={cn(
-                  "text-[14px] font-black leading-none tracking-tight transition-colors",
+                  "text-[14px] font-extrabold leading-none tracking-[-0.02em] transition-colors",
                   isActive ? "text-white" : "text-secondary group-hover:text-white"
                 )}
               >
@@ -90,8 +90,8 @@ function NavItems({
               </p>
               <p
                 className={cn(
-                  "mt-1.5 truncate text-[10px] uppercase font-bold tracking-[0.15em] transition-colors",
-                  isActive ? "text-white/70" : "text-secondary/50 group-hover:text-secondary/80"
+                  "mt-1.5 truncate text-[10px] uppercase font-semibold tracking-[0.18em] transition-colors",
+                  isActive ? "text-white/75" : "text-secondary/70 group-hover:text-secondary"
                 )}
               >
                 {item.description}
@@ -137,42 +137,23 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="admin-theme page-shell min-h-screen lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
-      <aside className="hidden border-r border-primary/20 bg-primary px-3 py-6 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-8 overflow-hidden group/sidebar">
-        {/* Background Texture */}
-        <div 
-          className="absolute inset-0 opacity-[0.25] mix-blend-overlay grayscale transition-opacity duration-700 group-hover/sidebar:opacity-[0.40] pointer-events-none"
-          style={{ 
-            backgroundImage: 'url(/substitution.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'contrast(1.2) brightness(0.8)'
-          }}
-        />
+      <aside className="hidden border-r border-primary/20 bg-primary px-3 py-6 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-8">
         <div className="px-3 space-y-6">
           <div className="flex items-center gap-4 px-2 translate-x-[-2px]">
             <AppMark hideText inverse className="shrink-0 scale-105" />
             <div className="flex flex-col">
               <span className="text-[15px] font-black tracking-tight text-secondary leading-none">ruroxz</span>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-accent font-black mt-2">Command Hub</span>
+              <span className="mt-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-accent">Command Hub</span>
             </div>
           </div>
 
-          <div className="relative group overflow-hidden rounded-2xl border border-white/5 bg-primary-strong/60 p-5 shadow-2xl transition-all hover:bg-primary-strong/90">
-            {/* Professional Texture Integration */}
-            <div
-              className="absolute inset-0 opacity-[0.25] mix-blend-screen pointer-events-none grayscale group-hover:opacity-40 transition-all duration-700 scale-[1.3] group-hover:scale-100"
-              style={{
-                backgroundImage: "url('/substitution.png')",
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }}
-            />
+          <div className="relative rounded-2xl border border-white/5 bg-primary-strong/60 p-5 shadow-2xl transition-all hover:bg-primary-strong/90">
             <div className="relative z-10">
-              <h3 className="text-[9px] font-black uppercase tracking-[0.35em] text-secondary/50 mb-2.5 flex items-center gap-2">
+              <h3 className="mb-2.5 flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.28em] text-secondary/72">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
                 Network Live
               </h3>
-              <p className="text-[12px] font-bold leading-relaxed text-secondary/70">
+              <p className="text-[12px] font-semibold leading-relaxed text-secondary/90">
                 Orchestrating school resources and deployment in real-time.
               </p>
             </div>
@@ -181,7 +162,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
         <div className="flex-1 px-1">
           <div className="space-y-4">
-            <p className="px-3 text-[10px] font-black uppercase tracking-[0.3em] text-secondary/40">
+            <p className="px-3 text-[10px] font-black uppercase tracking-[0.24em] text-secondary/65">
               Navigation
             </p>
             <NavItems pathname={pathname} />
@@ -197,14 +178,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               <p className="truncate text-[13px] font-black text-white">
                 {user.name || "Administrator"}
               </p>
-              <p className="truncate text-[10px] text-secondary/60 font-bold tracking-tight">
+              <p className="truncate text-[10px] font-medium tracking-tight text-secondary/78">
                 {user.email}
               </p>
             </div>
           </div>
           <button
             onClick={handleSignOut}
-            className="mt-4 flex w-full items-center gap-3 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-secondary/50 transition-all hover:bg-red-500/15 hover:text-red-400 ring-1 ring-white/5"
+            className="mt-4 flex w-full items-center gap-3 rounded-xl px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-secondary/78 transition-all hover:bg-red-500/15 hover:text-red-400 ring-1 ring-white/5"
           >
             <LogOutIcon className="h-4 w-4 opacity-70" />
             Sign out

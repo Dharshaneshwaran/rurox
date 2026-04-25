@@ -39,7 +39,7 @@ export default function SubstitutionList({
         <article
           key={item.id}
           className={cn(
-            "border px-4 py-4",
+            "rounded-[24px] border px-4 py-4",
             dark
               ? "border-white/15 bg-white/5"
               : "border-border bg-white"
@@ -100,7 +100,7 @@ export default function SubstitutionList({
               </span>
               
               {onAccept && onReject && item.status === "PENDING" && item.replacementTeacherId === currentTeacherId && (
-                <div className="flex gap-2 mt-2">
+                <div className="mt-2 flex flex-wrap justify-end gap-2">
                   <Button
                     variant="secondary"
                     size="sm"
@@ -121,7 +121,7 @@ export default function SubstitutionList({
               )}
               
               {isAdmin && onApproveRejection && item.status === "REJECTED" && (
-                <div className="flex gap-2 mt-2">
+                <div className="mt-2 flex flex-wrap justify-end gap-2">
                   <Button
                     variant="accent"
                     size="sm"
@@ -134,13 +134,15 @@ export default function SubstitutionList({
               )}
 
               {isAdmin && onDelete && (
-                <button
+                <Button
                   onClick={() => onDelete(item.id)}
                   disabled={loadingId === item.id}
-                  className="mt-2 text-[10px] font-bold uppercase tracking-widest text-red-500/60 hover:text-red-500 transition-colors"
+                  variant="ghost"
+                  size="sm"
+                  className="mt-2 text-red-500 hover:bg-red-50 hover:text-red-600"
                 >
                   Delete Record
-                </button>
+                </Button>
               )}
             </div>
           </div>

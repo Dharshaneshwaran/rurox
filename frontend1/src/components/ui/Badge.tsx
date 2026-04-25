@@ -20,7 +20,7 @@ export function badgeClasses({
   className?: string;
 }) {
   return cn(
-    "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-medium uppercase tracking-[0.22em]",
+    "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]",
     variantClasses[variant],
     className
   );

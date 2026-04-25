@@ -21,12 +21,11 @@ export default function SectionCard({
   backgroundImage,
 }: SectionCardProps) {
   return (
-    <section className={cn("relative overflow-hidden rounded-[40px] border border-border bg-surface shadow-sm transition-all duration-500 hover:shadow-md", className)}>
-      {/* Subtle Integrated Imagery */}
+    <section className={cn("relative overflow-hidden rounded-[28px] border border-border bg-surface shadow-sm transition-all duration-500 hover:shadow-md sm:rounded-[34px] lg:rounded-[40px]", className)}>
       {backgroundImage && (
-        <div 
-          className="absolute inset-0 opacity-[0.08] grayscale pointer-events-none transition-opacity duration-700 hover:opacity-[0.18] scale-105 hover:scale-100"
-          style={{ 
+        <div
+          className="absolute inset-0 opacity-[0.03] grayscale pointer-events-none"
+          style={{
             backgroundImage: `url('${backgroundImage}')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
@@ -34,20 +33,20 @@ export default function SectionCard({
         />
       )}
 
-      <div className="relative z-10 flex flex-wrap items-start justify-between gap-6 border-b border-border/10 bg-surface-subtle/80 px-8 py-7 backdrop-blur-sm sm:px-10">
-        <div className="space-y-1.5">
-          <h2 className="font-display text-2xl font-black tracking-tight text-primary">
+      <div className="relative z-10 flex flex-col gap-4 border-b border-border/10 bg-surface-subtle/80 px-5 py-5 backdrop-blur-sm sm:px-7 sm:py-6 lg:flex-row lg:items-start lg:justify-between lg:gap-6 lg:px-8 lg:py-7 xl:px-10">
+        <div className="min-w-0 space-y-1.5">
+          <h2 className="font-display text-xl font-black tracking-tight text-primary sm:text-2xl">
             {title}
           </h2>
           {subtitle ? (
-            <p className="max-w-xl text-[13.5px] font-semibold leading-relaxed text-primary/70">
+            <p className="max-w-xl text-[13.5px] font-semibold leading-relaxed text-primary/82">
               {subtitle}
             </p>
           ) : null}
         </div>
-        {actions}
+        {actions ? <div className="w-full lg:w-auto lg:shrink-0">{actions}</div> : null}
       </div>
-      <div className={cn("relative z-10 px-8 py-8 sm:px-10", contentClassName)}>
+      <div className={cn("relative z-10 px-5 py-5 sm:px-7 sm:py-7 lg:px-8 lg:py-8 xl:px-10", contentClassName)}>
         {children}
       </div>
     </section>

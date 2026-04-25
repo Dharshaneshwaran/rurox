@@ -7,13 +7,13 @@ import type {
 import { cn } from "@/lib/cn";
 
 export const inputClassName =
-  "mt-3 h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm text-foreground placeholder:text-muted-foreground transition focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10";
+  "mt-3 h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm font-medium text-foreground placeholder:text-muted-foreground transition focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10";
 
 export const textareaClassName =
-  "mt-3 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10";
+  "mt-3 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm font-medium text-foreground placeholder:text-muted-foreground transition focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10";
 
 export const selectClassName =
-  "mt-3 h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm text-foreground transition focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10";
+  "mt-3 h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm font-medium text-foreground transition focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10";
 
 type FieldProps = {
   label: string;
@@ -37,14 +37,14 @@ export default function Field({
       <div className="flex items-end justify-between gap-3">
         <label
           htmlFor={htmlFor}
-          className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground"
+          className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
         >
           {label}
         </label>
-        {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
+        {hint ? <p className="text-[11px] font-medium text-muted-foreground">{hint}</p> : null}
       </div>
       {children}
-      {error ? <p className="mt-2 text-sm text-danger">{error}</p> : null}
+      {error ? <p className="mt-2 text-sm font-medium text-danger">{error}</p> : null}
     </div>
   );
 }
@@ -118,7 +118,7 @@ export function FieldNote({
   className?: string;
 }) {
   return (
-    <p className={cn("text-sm leading-6 text-muted-foreground", className)}>
+    <p className={cn("text-sm font-medium leading-6 text-muted-foreground", className)}>
       {children}
     </p>
   );
