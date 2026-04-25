@@ -37,7 +37,7 @@ export default function ThemeToggle() {
   }
 
   return (
-    <div className="fixed right-4 top-4 z-[100] sm:right-6 sm:top-6">
+    <div className="fixed right-6 bottom-6 z-[100]">
       <Button
         variant="secondary"
         size="sm"
