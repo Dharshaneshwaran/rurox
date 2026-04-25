@@ -8,9 +8,10 @@ import TeacherLayout from "@/components/TeacherLayout";
 import PageHeader from "@/components/ui/PageHeader";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
-import { UserIcon } from "@/components/icons";
+import { PlusIcon } from "@/components/icons";
 import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/api";
+import AddStudentModal from "@/components/AddStudentModal";
 import type { Student } from "@/lib/types";
 
 type StudentWithTeachers = Student & {
@@ -29,6 +30,9 @@ export default function TeacherStudentsPage() {
   const [selectedStudent, setSelectedStudent] = useState<StudentWithTeachers | null>(null);
   const [timetableModalOpen, setTimetableModalOpen] = useState(false);
   const [assigningTimetable, setAssigningTimetable] = useState(false);
+  const [addStudentModalOpen, setAddStudentModalOpen] = useState(false);
+  const [addingStudent, setAddingStudent] = useState(false);
+  const [teachers, setTeachers] = useState<{ id: string; name: string }[]>([]);
 
   const loadStudents = useCallback(async () => {
     if (!token || !user?.teacherId) return;
@@ -47,11 +51,26 @@ export default function TeacherStudentsPage() {
     }
   }, [token, user?.teacherId]);
 
+  const loadTeachers = useCallback(async () => {
+    if (!token) return;
+    try {
+      const data = await apiFetch<{ teachers: { id: string; name: string }[] }>(
+        "/api/teachers",
+        {},
+        token
+      );
+      setTeachers(data.teachers || []);
+    } catch (err) {
+      console.error("Failed to load teachers", err);
+    }
+  }, [token]);
+
   useEffect(() => {
     if (!loading) {
       void loadStudents();
+      void loadTeachers();
     }
-  }, [loading, loadStudents]);
+  }, [loading, loadStudents, loadTeachers]);
 
   const handleAssignTimetable = async (formData: {
     day: string;
@@ -82,6 +101,34 @@ export default function TeacherStudentsPage() {
     }
   };
 
+  const handleAddStudent = async (formData: {
+    name: string;
+    rollNumber: string;
+    className: string;
+    email?: string;
+    password?: string;
+    teacherId?: string;
+  }) => {
+    if (!token) return;
+    setAddingStudent(true);
+    try {
+      await apiFetch(
+        "/api/students",
+        {
+          method: "POST",
+          body: JSON.stringify(formData),
+        },
+        token
+      );
+      setAddStudentModalOpen(false);
+      await loadStudents();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add student");
+    } finally {
+      setAddingStudent(false);
+    }
+  };
+
   if (loading) {
     return (
       <TeacherLayout>
@@ -91,6 +138,14 @@ export default function TeacherStudentsPage() {
       </TeacherLayout>
     );
   }
+
+  const groupedStudents = students.reduce((acc, student) => {
+    if (!acc[student.className]) {
+      acc[student.className] = [];
+    }
+    acc[student.className].push(student);
+    return acc;
+  }, {} as Record<string, StudentWithTeachers[]>);
 
   return (
     <TeacherLayout>
@@ -106,6 +161,18 @@ export default function TeacherStudentsPage() {
               <Badge variant="neutral">{students.length} students</Badge>
             </>
           }
+          actions={
+            user?.canCreateStudents && (
+              <Button
+                variant="primary"
+                onClick={() => setAddStudentModalOpen(true)}
+                className="gap-2"
+              >
+                <PlusIcon className="h-4 w-4" />
+                Add Student
+              </Button>
+            )
+          }
         />
 
         {error && (
@@ -114,23 +181,35 @@ export default function TeacherStudentsPage() {
           </div>
         )}
 
-        <div className="mt-6">
-          <SectionCard
-            title="Students"
-            subtitle="Click on any student to expand and assign teachers or timetable."
-          >
-            <StudentsList
-              students={students}
-              loading={pageLoading}
-              onAssignTimetable={(studentId) => {
-                const student = students.find((s) => s.id === studentId);
-                if (student) {
-                  setSelectedStudent(student);
-                  setTimetableModalOpen(true);
-                }
-              }}
-            />
-          </SectionCard>
+        <div className="mt-6 space-y-6">
+          {Object.keys(groupedStudents).length === 0 ? (
+            <SectionCard
+              title="Students"
+              subtitle="Click on any student to expand and assign teachers or timetable."
+            >
+              <StudentsList students={[]} loading={pageLoading} />
+            </SectionCard>
+          ) : (
+            Object.entries(groupedStudents).map(([className, classStudents]) => (
+              <SectionCard
+                key={className}
+                title={`Class: ${className}`}
+                subtitle={`Folder for ${className} students. Click to expand.`}
+              >
+                <StudentsList
+                  students={classStudents}
+                  loading={pageLoading}
+                  onAssignTimetable={(studentId) => {
+                    const student = students.find((s) => s.id === studentId);
+                    if (student) {
+                      setSelectedStudent(student);
+                      setTimetableModalOpen(true);
+                    }
+                  }}
+                />
+              </SectionCard>
+            ))
+          )}
         </div>
 
         <AssignStudentTimetableModal
@@ -142,6 +221,14 @@ export default function TeacherStudentsPage() {
           }}
           onSubmit={handleAssignTimetable}
           loading={assigningTimetable}
+        />
+
+        <AddStudentModal
+          isOpen={addStudentModalOpen}
+          onClose={() => setAddStudentModalOpen(false)}
+          onSubmit={handleAddStudent}
+          loading={addingStudent}
+          teachers={teachers}
         />
       </div>
     </TeacherLayout>

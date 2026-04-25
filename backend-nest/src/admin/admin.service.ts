@@ -15,6 +15,7 @@ export class AdminService {
         email: true,
         role: true,
         approved: true,
+        canCreateStudents: true,
         createdAt: true,
       },
       orderBy: { createdAt: 'asc' },
@@ -31,6 +32,7 @@ export class AdminService {
         email: true,
         role: true,
         approved: true,
+        canCreateStudents: true,
         createdAt: true,
       },
       orderBy: { createdAt: 'desc' },
@@ -112,6 +114,31 @@ export class AdminService {
 
     return {
       message: 'User deleted successfully',
+    };
+  }
+
+  async toggleCreateStudents(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { canCreateStudents: !user.canCreateStudents },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        approved: true,
+        canCreateStudents: true,
+      },
+    });
+
+    return {
+      message: 'Create student permission updated successfully',
+      user: updatedUser,
     };
   }
 

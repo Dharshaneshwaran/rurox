@@ -50,6 +50,8 @@ export class AuthService {
         email: user.email,
         role: user.role,
         teacherId: user.teacherId ?? null,
+        studentId: user.studentId ?? null,
+        canCreateStudents: user.canCreateStudents,
       },
       jwtSecret,
       { expiresIn: '7d' }
@@ -63,6 +65,8 @@ export class AuthService {
         email: user.email,
         role: user.role,
         teacherId: user.teacherId ?? null,
+        studentId: user.studentId ?? null,
+        canCreateStudents: user.canCreateStudents,
       },
     };
   }
@@ -70,7 +74,7 @@ export class AuthService {
   async me(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, name: true, email: true, role: true, teacherId: true },
+      select: { id: true, name: true, email: true, role: true, teacherId: true, studentId: true, canCreateStudents: true },
     });
 
     return { user };

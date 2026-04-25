@@ -40,6 +40,12 @@ export default function StudentLayout({
           description: "Profile and access",
           icon: <BookIcon className="h-full w-full" />,
         },
+        {
+          label: "Leave Requests",
+          href: "/student/leaves",
+          description: "Apply and track leaves",
+          icon: <BookIcon className="h-full w-full" />,
+        },
       ]}
     >
       {children}

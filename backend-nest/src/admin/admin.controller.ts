@@ -27,6 +27,11 @@ export class AdminController {
     return this.adminService.approveUser(userId);
   }
 
+  @Post(':id/toggle-create-students')
+  async toggleCreateStudents(@Param('id') userId: string) {
+    return this.adminService.toggleCreateStudents(userId);
+  }
+
   @Delete(':id')
   async deleteUser(@Param('id') userId: string) {
     return this.adminService.deleteUser(userId);

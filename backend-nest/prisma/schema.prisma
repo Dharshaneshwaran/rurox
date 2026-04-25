@@ -39,8 +39,9 @@ model User {
   teacher   Teacher? @relation(fields: [teacherId], references: [id])
   teacherId String?  @unique
   student   Student? @relation(fields: [studentId], references: [id])
-  studentId String?  @unique
-  createdAt DateTime @default(now())
+  studentId         String?  @unique
+  canCreateStudents Boolean  @default(false)
+  createdAt         DateTime @default(now())
 }
 
 model Teacher {
@@ -64,7 +65,20 @@ model Student {
   user                User?
   teachers            Teacher[] @relation("StudentTeacher")
   studentTimetables   StudentTimetable[]
+  leaveRequests       LeaveRequest[]
   createdAt           DateTime @default(now())
+}
+
+model LeaveRequest {
+  id        String   @id @default(uuid())
+  student   Student  @relation(fields: [studentId], references: [id])
+  studentId String
+  startDate DateTime
+  endDate   DateTime
+  reason    String
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Timetable {

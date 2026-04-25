@@ -3,18 +3,67 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { AssignStudentToTeacherDto } from './dto/assign-student-to-teacher.dto';
 import { AssignTimetableDto } from './dto/assign-timetable.dto';
+import * as bcrypt from 'bcryptjs';
+import { MailService } from '../mail/mail.service';
+
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class StudentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mailService: MailService,
+  ) {}
 
-  async createStudent(createStudentDto: CreateStudentDto) {
-    return this.prisma.student.create({
-      data: {
-        name: createStudentDto.name,
-        rollNumber: createStudentDto.rollNumber,
-        className: createStudentDto.className,
-      },
+  async createStudent(
+    createStudentDto: CreateStudentDto,
+    teacherId?: string,
+  ) {
+    const data: Prisma.StudentCreateInput = {
+      name: createStudentDto.name,
+      rollNumber: createStudentDto.rollNumber,
+      className: createStudentDto.className,
+    };
+
+    if (teacherId) {
+      data.teachers = {
+        connect: {
+          id: teacherId,
+        },
+      };
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Create the Student
+      const student = await tx.student.create({
+        data,
+        include: {
+          teachers: true,
+        },
+      });
+
+      // 2. If email and password are provided, create the User record
+      if (createStudentDto.email && createStudentDto.password) {
+        const hashedPassword = await bcrypt.hash(createStudentDto.password, 10);
+        await tx.user.create({
+          data: {
+            name: createStudentDto.name,
+            email: createStudentDto.email,
+            password: hashedPassword,
+            role: 'STUDENT',
+            studentId: student.id,
+          },
+        });
+
+        // 3. Send welcome email (we don't await it to block the response, but we can)
+        this.mailService.sendStudentWelcomeEmail(
+          createStudentDto.email,
+          createStudentDto.name,
+          createStudentDto.password,
+        );
+      }
+
+      return student;
     });
   }
 
@@ -57,6 +106,12 @@ export class StudentsService {
         },
       },
       include: {
+        teachers: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         studentTimetables: true,
       },
     });

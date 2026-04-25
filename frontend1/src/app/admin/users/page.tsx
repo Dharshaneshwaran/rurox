@@ -18,6 +18,7 @@ interface UserRecord {
   email: string;
   role: string;
   approved: boolean;
+  canCreateStudents?: boolean;
   createdAt: string;
 }
 
@@ -89,6 +90,23 @@ export default function AdminUsersPage() {
       await loadUsers();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete user");
+    } finally {
+      setLoadingState(false);
+    }
+  };
+
+  const handleToggleCreateStudents = async (userId: string) => {
+    if (!token) return;
+    setLoadingState(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      await apiFetch(`/api/admin/users/${userId}/toggle-create-students`, { method: "POST" }, token);
+      setSuccess("Permission updated successfully.");
+      await loadUsers();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update permission");
     } finally {
       setLoadingState(false);
     }
@@ -276,7 +294,16 @@ export default function AdminUsersPage() {
                           </p>
                         </div>
 
-                        <div className="flex items-center">
+                        <div className="flex items-center gap-3">
+                          {user.role === "TEACHER" && user.approved && (
+                            <Button
+                              onClick={() => handleToggleCreateStudents(user.id)}
+                              variant={user.canCreateStudents ? "accent" : "ghost"}
+                              disabled={loadingState}
+                            >
+                              {user.canCreateStudents ? "Revoke Create Students" : "Allow Create Students"}
+                            </Button>
+                          )}
                           <Button
                             onClick={() => handleDelete(user.id)}
                             variant="danger"

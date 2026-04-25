@@ -6,6 +6,8 @@ export type User = {
   email: string;
   role: Role;
   teacherId?: string | null;
+  studentId?: string | null;
+  canCreateStudents?: boolean;
 };
 
 export type TimetableEntry = {

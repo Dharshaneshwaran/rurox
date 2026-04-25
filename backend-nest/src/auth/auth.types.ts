@@ -5,4 +5,6 @@ export interface AuthUser {
   email: string;
   role: Role;
   teacherId: string | null;
+  studentId: string | null;
+  canCreateStudents?: boolean;
 }

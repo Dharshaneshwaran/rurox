@@ -46,6 +46,12 @@ export default function TeacherLayout({
           description: "Manage and assign students",
           icon: <UserIcon className="h-full w-full" />,
         },
+        {
+          label: "Leave Approvals",
+          href: "/teacher/leaves",
+          description: "Review student requests",
+          icon: <CalendarIcon className="h-full w-full" />,
+        },
       ]}
     >
       {children}

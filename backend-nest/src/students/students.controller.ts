@@ -5,8 +5,10 @@ import {
   Body,
   Param,
   UseGuards,
-  BadRequestException,
   NotFoundException,
+  ForbiddenException,
+  Request,
+  BadRequestException,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -20,10 +22,18 @@ export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
   @Post()
-  async createStudent(@Body() createStudentDto: CreateStudentDto) {
+  async createStudent(
+    @Body() createStudentDto: CreateStudentDto,
+    @Request() req: any,
+  ) {
+    if (req.user?.role === 'TEACHER' && !req.user?.canCreateStudents) {
+      throw new ForbiddenException('You do not have permission to create students');
+    }
+
     try {
       const student = await this.studentsService.createStudent(
         createStudentDto,
+        req.user?.teacherId,
       );
       return { success: true, student };
     } catch (error) {
@@ -32,8 +42,14 @@ export class StudentsController {
   }
 
   @Get()
-  async getAllStudents() {
+  async getAllStudents(@Request() req: any) {
     try {
+      if (req.user?.role === 'TEACHER' && req.user?.teacherId) {
+        const students = await this.studentsService.getStudentsByTeacher(
+          req.user.teacherId,
+        );
+        return { success: true, students };
+      }
       const students = await this.studentsService.getAllStudents();
       return { success: true, students };
     } catch (error) {
