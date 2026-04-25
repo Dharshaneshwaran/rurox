@@ -6,6 +6,7 @@ import { TeachersModule } from './teachers/teachers.module';
 import { TimetablesModule } from './timetables/timetables.module';
 import { SubstitutionsModule } from './substitutions/substitutions.module';
 import { SpecialClassesModule } from './special-classes/special-classes.module';
+import { StudentsModule } from './students/students.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SpecialClassesModule } from './special-classes/special-classes.module';
     TimetablesModule,
     SubstitutionsModule,
     SpecialClassesModule,
+    StudentsModule,
   ],
   controllers: [],
   providers: [],

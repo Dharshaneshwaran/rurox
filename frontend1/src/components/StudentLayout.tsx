@@ -1,17 +1,17 @@
 "use client";
 
-import { useAuth } from "@/hooks/useAuth";
-import { CalendarIcon, UserIcon } from "@/components/icons";
+import { BookIcon } from "@/components/icons";
 import WorkspaceShell from "@/components/WorkspaceShell";
+import { useAuth } from "@/hooks/useAuth";
 
-export default function TeacherLayout({
+export default function StudentLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const { user, clear, loading } = useAuth({
-    role: "TEACHER",
-    redirectTo: "/teacher/login",
+    role: "STUDENT",
+    redirectTo: "/student/login",
   });
 
   if (loading || !user) {
@@ -26,8 +26,8 @@ export default function TeacherLayout({
 
   return (
     <WorkspaceShell
-      roleLabel="Teacher Hub"
-      subtitle="Track your week, review substitute assignments, and update open timetable slots."
+      roleLabel="Student Hub"
+      subtitle="Track your school access, review learning resources, and stay ready for timetable-linked updates."
       user={user}
       onSignOut={() => {
         clear();
@@ -36,15 +36,9 @@ export default function TeacherLayout({
       navItems={[
         {
           label: "My Dashboard",
-          href: "/teacher/dashboard",
-          description: "Timetable and coverage",
-          icon: <CalendarIcon className="h-full w-full" />,
-        },
-        {
-          label: "Students",
-          href: "/teacher/students",
-          description: "Manage and assign students",
-          icon: <UserIcon className="h-full w-full" />,
+          href: "/student/dashboard",
+          description: "Profile and access",
+          icon: <BookIcon className="h-full w-full" />,
         },
       ]}
     >

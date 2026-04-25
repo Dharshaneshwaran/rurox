@@ -28,9 +28,9 @@ export default function PageHeader({
   return (
     <header
       className={cn(
-        "relative flex flex-col gap-5 overflow-hidden rounded-[32px] border p-6 shadow-2xl transition-all duration-500 sm:p-8 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:rounded-[40px] lg:p-10",
+        "relative flex flex-col gap-4 overflow-hidden rounded-[28px] border p-5 shadow-lg transition-all duration-500 sm:p-6 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:rounded-[32px] lg:p-8",
         isCommand
-          ? "border-primary/20 bg-primary text-white shadow-primary/40"
+          ? "border-primary/20 bg-primary text-white shadow-primary/30"
           : "border-border bg-surface shadow-card"
       )}
     >
@@ -52,28 +52,28 @@ export default function PageHeader({
         <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(15,35,18,0.14),rgba(15,35,18,0.02))] pointer-events-none" />
       )}
 
-      <div className="relative z-10 space-y-4 max-w-4xl">
-        <div className="flex items-center gap-3">
+      <div className="relative z-10 space-y-3 max-w-4xl">
+        <div className="flex items-center gap-2">
           {isCommand && <div className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)] shadow-[0_0_8px_var(--color-brand)] animate-pulse" />}
           <p className={cn(
-            "text-[10px] font-black uppercase tracking-[0.28em]",
-            isCommand ? "text-secondary/85" : "text-primary/70"
+            "text-[9px] font-bold uppercase tracking-[0.25em]",
+            isCommand ? "text-secondary/75" : "text-primary/65"
           )}>
             {resolvedEyebrow}
           </p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2">
           <h1 className={cn(
-            "font-display text-3xl font-black tracking-[-0.04em] sm:text-4xl lg:text-5xl",
+            "font-display text-2xl font-bold tracking-[-0.02em] sm:text-3xl lg:text-3xl",
             isCommand ? "text-white" : "text-primary"
           )}>
             {title}
           </h1>
           {description ? (
             <p className={cn(
-              "max-w-2xl text-[14px] font-medium leading-7 sm:text-[15px]",
-              isCommand ? "text-white/86" : "text-primary/80"
+              "max-w-2xl text-[13px] font-normal leading-6 sm:text-[13.5px]",
+              isCommand ? "text-white/80" : "text-primary/75"
             )}>
               {description}
             </p>

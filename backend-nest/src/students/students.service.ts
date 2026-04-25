@@ -1,0 +1,184 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateStudentDto } from './dto/create-student.dto';
+import { AssignStudentToTeacherDto } from './dto/assign-student-to-teacher.dto';
+import { AssignTimetableDto } from './dto/assign-timetable.dto';
+
+@Injectable()
+export class StudentsService {
+  constructor(private prisma: PrismaService) {}
+
+  async createStudent(createStudentDto: CreateStudentDto) {
+    return this.prisma.student.create({
+      data: {
+        name: createStudentDto.name,
+        rollNumber: createStudentDto.rollNumber,
+        className: createStudentDto.className,
+      },
+    });
+  }
+
+  async getAllStudents() {
+    return this.prisma.student.findMany({
+      include: {
+        teachers: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        studentTimetables: true,
+      },
+    });
+  }
+
+  async getStudentById(id: string) {
+    return this.prisma.student.findUnique({
+      where: { id },
+      include: {
+        teachers: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        studentTimetables: true,
+      },
+    });
+  }
+
+  async getStudentsByTeacher(teacherId: string) {
+    return this.prisma.student.findMany({
+      where: {
+        teachers: {
+          some: {
+            id: teacherId,
+          },
+        },
+      },
+      include: {
+        studentTimetables: true,
+      },
+    });
+  }
+
+  async getStudentsByClass(className: string) {
+    return this.prisma.student.findMany({
+      where: { className },
+      include: {
+        teachers: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        studentTimetables: true,
+      },
+    });
+  }
+
+  async assignStudentToTeacher(
+    studentId: string,
+    assignDto: AssignStudentToTeacherDto,
+  ) {
+    const teacher = await this.prisma.teacher.findUnique({
+      where: { id: assignDto.teacherId || '' },
+    });
+
+    if (!teacher) {
+      throw new Error('Teacher not found');
+    }
+
+    return this.prisma.student.update({
+      where: { id: studentId },
+      data: {
+        teachers: {
+          connect: {
+            id: teacher.id,
+          },
+        },
+      },
+      include: {
+        teachers: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
+  async removeStudentFromTeacher(studentId: string, teacherId: string) {
+    return this.prisma.student.update({
+      where: { id: studentId },
+      data: {
+        teachers: {
+          disconnect: {
+            id: teacherId,
+          },
+        },
+      },
+      include: {
+        teachers: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
+  async assignStudentTimetable(
+    studentId: string,
+    assignTimetableDto: AssignTimetableDto,
+  ) {
+    return this.prisma.studentTimetable.upsert({
+      where: {
+        studentId_day_period: {
+          studentId,
+          day: assignTimetableDto.day as any,
+          period: assignTimetableDto.period,
+        },
+      },
+      update: {
+        subject: assignTimetableDto.subject,
+        className: assignTimetableDto.className,
+        teacher: assignTimetableDto.teacher || null,
+        room: assignTimetableDto.room || null,
+      },
+      create: {
+        studentId,
+        day: assignTimetableDto.day as any,
+        period: assignTimetableDto.period,
+        subject: assignTimetableDto.subject,
+        className: assignTimetableDto.className,
+        teacher: assignTimetableDto.teacher || null,
+        room: assignTimetableDto.room || null,
+      },
+    });
+  }
+
+  async getStudentTimetable(studentId: string) {
+    return this.prisma.studentTimetable.findMany({
+      where: { studentId },
+    });
+  }
+
+  async updateStudent(studentId: string, name: string, className: string) {
+    return this.prisma.student.update({
+      where: { id: studentId },
+      data: {
+        name,
+        className,
+      },
+    });
+  }
+
+  async deleteStudent(studentId: string) {
+    return this.prisma.student.delete({
+      where: { id: studentId },
+    });
+  }
+}

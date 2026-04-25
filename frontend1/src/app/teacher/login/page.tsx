@@ -102,6 +102,14 @@ export default function TeacherLoginPage() {
               <span className="font-label text-[11px] uppercase tracking-wider text-on-surface-variant">Administrator Login</span>
               <span className="h-[2px] w-full bg-outline-variant mt-1 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
             </button>
+            <button
+              type="button"
+              onClick={() => router.push('/student/login')}
+              className="flex-shrink-0 group flex flex-col items-start opacity-40 hover:opacity-100 transition-opacity"
+            >
+              <span className="font-label text-[11px] uppercase tracking-wider text-on-surface-variant">Student Portal</span>
+              <span className="h-[2px] w-full bg-outline-variant mt-1 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+            </button>
             <button className="flex-shrink-0 group flex flex-col items-start" type="button">
               <span className="font-label text-[11px] uppercase tracking-wider text-primary font-bold">Teacher Portal</span>
               <span className="h-[2px] w-full bg-primary mt-1 scale-x-100 transition-transform origin-left"></span>

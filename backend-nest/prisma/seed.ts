@@ -466,6 +466,14 @@ const seed = async () => {
   });
   console.log('✅ Admin user created');
 
+  const studentPassword = await bcrypt.hash('studentpass', 10);
+  await prisma.user.upsert({
+    where: { email: 'student@example.com' },
+    update: { name: 'Student User', password: studentPassword, role: 'STUDENT', approved: true },
+    create: { name: 'Student User', email: 'student@example.com', password: studentPassword, role: 'STUDENT', approved: true },
+  });
+  console.log('✅ Student user created');
+
   // 2. Create teachers + user accounts
   const teacherPassword = await bcrypt.hash('teacherpass', 10);
   const teacherRecords: { id: string; name: string }[] = [];

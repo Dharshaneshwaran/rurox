@@ -49,23 +49,23 @@ export default function StatCard({
         />
       )}
 
-      <div className="relative z-10 flex h-full flex-col items-start justify-between gap-5 sm:gap-6">
+      <div className="relative z-10 flex h-full flex-col items-start justify-between gap-4 sm:gap-5">
         <div className="flex w-full items-center justify-between">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/72">
+            <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary/65">
              {label}
            </p>
            {icon ? (
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border/10 bg-surface-subtle text-primary transition-colors group-hover:border-accent group-hover:text-accent">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/10 bg-surface-subtle text-primary transition-colors group-hover:border-accent group-hover:text-accent">
                 {icon}
               </div>
            ) : null}
         </div>
         
         <div>
-          <p className="font-display text-4xl font-extrabold tracking-tighter text-primary sm:text-5xl">
+          <p className="font-display text-2xl font-bold tracking-tight text-primary sm:text-3xl">
             {value}
           </p>
-          {supportingText ? <p className="mt-3 max-w-[200px] text-[13px] font-semibold leading-relaxed text-primary/84">{supportingText}</p> : null}
+          {supportingText ? <p className="mt-2 max-w-[200px] text-[12px] font-medium leading-relaxed text-primary/75">{supportingText}</p> : null}
         </div>
       </div>
     </section>

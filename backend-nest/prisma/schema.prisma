@@ -11,6 +11,7 @@ datasource db {
 enum Role {
   ADMIN
   TEACHER
+  STUDENT
 }
 
 enum Day {
@@ -37,6 +38,8 @@ model User {
   approved  Boolean  @default(false)
   teacher   Teacher? @relation(fields: [teacherId], references: [id])
   teacherId String?  @unique
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?  @unique
   createdAt DateTime @default(now())
 }
 
@@ -49,7 +52,19 @@ model Teacher {
   specialClasses           SpecialClass[]
   substitutionsAsReplacement Substitution[] @relation("replacement")
   substitutionsAsAbsent    Substitution[] @relation("absent")
+  students                 Student[]      @relation("StudentTeacher")
   workload                 Int            @default(0)
+}
+
+model Student {
+  id                  String   @id @default(cuid())
+  name                String
+  rollNumber          String   @unique
+  className           String
+  user                User?
+  teachers            Teacher[] @relation("StudentTeacher")
+  studentTimetables   StudentTimetable[]
+  createdAt           DateTime @default(now())
 }
 
 model Timetable {
@@ -65,6 +80,22 @@ model Timetable {
 
   @@unique([teacherId, day, period])
   @@index([day, period])
+}
+
+model StudentTimetable {
+  id        String   @id @default(cuid())
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+  day       Day
+  period    Int
+  subject   String
+  className String
+  teacher   String?
+  room      String?
+  createdAt DateTime @default(now())
+
+  @@unique([studentId, day, period])
+  @@index([studentId, day, period])
 }
 
 model Substitution {

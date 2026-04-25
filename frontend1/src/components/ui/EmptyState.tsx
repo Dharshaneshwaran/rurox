@@ -12,12 +12,12 @@ export default function EmptyState({
   action,
 }: EmptyStateProps) {
   return (
-    <div className="border border-dashed border-border bg-background px-6 py-12 text-center">
-      <h3 className="font-display text-2xl tracking-[-0.03em] text-foreground">{title}</h3>
-      <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
+    <div className="border border-dashed border-border bg-background px-6 py-10 text-center">
+      <h3 className="font-display text-lg tracking-tight text-foreground">{title}</h3>
+      <p className="mx-auto mt-2 max-w-xl text-[12.5px] leading-relaxed text-muted-foreground">
         {description}
       </p>
-      {action ? <div className="mt-6 flex justify-center">{action}</div> : null}
+      {action ? <div className="mt-5 flex justify-center">{action}</div> : null}
     </div>
   );
 }

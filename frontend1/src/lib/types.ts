@@ -1,4 +1,4 @@
-export type Role = "ADMIN" | "TEACHER";
+export type Role = "ADMIN" | "TEACHER" | "STUDENT";
 
 export type User = {
   id: string;
@@ -48,6 +48,23 @@ export type Teacher = {
   name: string;
   subjects: string[];
   workload: number;
+};
+
+export type Student = {
+  id: string;
+  name: string;
+  rollNumber: string;
+  className: string;
+  teachers?: Array<{ id: string; name: string }>;
+  studentTimetables?: Array<{
+    id: string;
+    day: string;
+    period: number;
+    subject: string;
+    className: string;
+    teacher?: string;
+    room?: string;
+  }>;
 };
 
 export type SuggestionCandidate = {

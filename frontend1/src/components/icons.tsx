@@ -83,6 +83,15 @@ export function UsersIcon(props: IconProps) {
   );
 }
 
+export function UserIcon(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M6 21c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+    </BaseIcon>
+  );
+}
+
 export function CalendarIcon(props: IconProps) {
   return (
     <BaseIcon {...props}>
@@ -169,6 +178,14 @@ export function SparkIcon(props: IconProps) {
     <BaseIcon {...props}>
       <path d="M12 3v5M12 16v5M4.8 7.8l3.6 2.1M15.6 14.1l3.6 2.1M19.2 7.8l-3.6 2.1M8.4 14.1l-3.6 2.1" />
       <circle cx="12" cy="12" r="2.5" />
+    </BaseIcon>
+  );
+}
+
+export function X(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <path d="m19 5-14 14M5 5l14 14" />
     </BaseIcon>
   );
 }

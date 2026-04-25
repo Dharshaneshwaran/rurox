@@ -9,7 +9,7 @@ import type { User } from "@/lib/types";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"ADMIN" | "TEACHER">("ADMIN");
+  const [activeTab, setActiveTab] = useState<"ADMIN" | "TEACHER" | "STUDENT">("ADMIN");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -39,9 +39,20 @@ export default function LoginPage() {
         setLoading(false);
         return;
       }
+      if (activeTab === "STUDENT" && data.user.role !== "STUDENT") {
+        setError("This account is not a student account.");
+        setLoading(false);
+        return;
+      }
 
       setStoredAuth(data.token, data.user);
-      router.push(activeTab === "ADMIN" ? "/admin/dashboard" : "/teacher/dashboard");
+      router.push(
+        activeTab === "ADMIN"
+          ? "/admin/dashboard"
+          : activeTab === "TEACHER"
+            ? "/teacher/dashboard"
+            : "/student/dashboard"
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -102,7 +113,7 @@ export default function LoginPage() {
         <div className="flex-1 flex flex-col px-8 sm:px-16 pt-16 pb-8 max-w-[600px] w-full mx-auto justify-center">
 
           {/* Tabs */}
-          <div className="flex gap-6 border-b border-primary/10 mb-12 uppercase text-xs tracking-widest font-semibold text-primary/40">
+          <div className="flex flex-wrap gap-6 border-b border-primary/10 mb-12 uppercase text-xs tracking-widest font-semibold text-primary/40">
             <button
               onClick={() => { setActiveTab("ADMIN"); setError(null); }}
               className={`pb-4 border-b-2 transition-colors ${activeTab === "ADMIN" ? "border-primary text-primary" : "border-transparent hover:text-primary/70"}`}
@@ -114,6 +125,12 @@ export default function LoginPage() {
               className={`pb-4 border-b-2 transition-colors ${activeTab === "TEACHER" ? "border-primary text-primary" : "border-transparent hover:text-primary/70"}`}
             >
               Teacher Portal
+            </button>
+            <button
+              onClick={() => { setActiveTab("STUDENT"); setError(null); }}
+              className={`pb-4 border-b-2 transition-colors ${activeTab === "STUDENT" ? "border-primary text-primary" : "border-transparent hover:text-primary/70"}`}
+            >
+              Student Portal
             </button>
           </div>
 
@@ -172,7 +189,13 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full bg-primary hover:opacity-90 text-white text-[11px] font-bold uppercase tracking-[0.15em] py-4 px-4 transition-all flex justify-center items-center gap-2"
               >
-                {loading ? "INITIALIZING..." : activeTab === "ADMIN" ? "INITIALIZE ACCESS →" : "ACCESS PORTAL →"}
+                {loading
+                  ? "INITIALIZING..."
+                  : activeTab === "ADMIN"
+                    ? "INITIALIZE ACCESS →"
+                    : activeTab === "TEACHER"
+                      ? "ACCESS TEACHER PORTAL →"
+                      : "ACCESS STUDENT HUB →"}
               </button>
 
               {activeTab === "TEACHER" && (
@@ -180,6 +203,14 @@ export default function LoginPage() {
                   <Link href="/teacher/signup" className="text-xs text-primary/70 hover:text-primary transition-colors uppercase tracking-widest font-semibold border-b border-transparent hover:border-primary pb-0.5">
                     Don't have an account? Sign up
                   </Link>
+                </div>
+              )}
+
+              {activeTab === "STUDENT" && (
+                <div className="mt-4 text-center">
+                  <span className="text-xs text-primary/70 uppercase tracking-widest font-semibold">
+                    Demo student login: `student@example.com`
+                  </span>
                 </div>
               )}
             </form>
