@@ -84,7 +84,7 @@ export default function ApplyLeaveModal({
           <div className="mt-6 flex gap-3">
             <Button
               type="button"
-              variant="neutral"
+              variant="secondary"
               onClick={onClose}
               className="flex-1"
               disabled={loading}
