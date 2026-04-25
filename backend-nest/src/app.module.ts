@@ -9,6 +9,9 @@ import { SpecialClassesModule } from './special-classes/special-classes.module';
 import { StudentsModule } from './students/students.module';
 import { MailModule } from './mail/mail.module';
 import { LeavesModule } from './leaves/leaves.module';
+import { ExamsModule } from './exams/exams.module';
+import { NoticesModule } from './notices/notices.module';
+import { AttendanceModule } from './attendance/attendance.module';
 
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import { LeavesModule } from './leaves/leaves.module';
     StudentsModule,
     MailModule,
     LeavesModule,
+    ExamsModule,
+    NoticesModule,
+    AttendanceModule,
   ],
   controllers: [],
   providers: [],

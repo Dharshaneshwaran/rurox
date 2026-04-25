@@ -52,6 +52,18 @@ export default function TeacherLayout({
           description: "Review student requests",
           icon: <CalendarIcon className="h-full w-full" />,
         },
+        {
+          label: "Exams & Marks",
+          href: "/teacher/exams",
+          description: "Create exams and enter marks",
+          icon: <CalendarIcon className="h-full w-full" />,
+        },
+        {
+          label: "Attendance",
+          href: "/teacher/attendance",
+          description: "Mark daily class attendance",
+          icon: <CalendarIcon className="h-full w-full" />,
+        },
       ]}
     >
       {children}

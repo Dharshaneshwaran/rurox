@@ -39,6 +39,12 @@ const navItems = [
     description: "Approvals and access",
     icon: UsersIcon,
   },
+  {
+    label: "Notices",
+    href: "/admin/notices",
+    description: "Announcements",
+    icon: UsersIcon,
+  },
 ];
 
 function NavItems({

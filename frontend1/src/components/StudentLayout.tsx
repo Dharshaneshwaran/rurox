@@ -46,6 +46,12 @@ export default function StudentLayout({
           description: "Apply and track leaves",
           icon: <BookIcon className="h-full w-full" />,
         },
+        {
+          label: "Report Card",
+          href: "/student/report-card",
+          description: "CBSE grades and results",
+          icon: <BookIcon className="h-full w-full" />,
+        },
       ]}
     >
       {children}

@@ -58,15 +58,62 @@ model Teacher {
 }
 
 model Student {
-  id                  String   @id @default(cuid())
+  id                  String        @id @default(cuid())
   name                String
-  rollNumber          String   @unique
+  rollNumber          String        @unique
   className           String
   user                User?
-  teachers            Teacher[] @relation("StudentTeacher")
+  teachers            Teacher[]     @relation("StudentTeacher")
   studentTimetables   StudentTimetable[]
   leaveRequests       LeaveRequest[]
-  createdAt           DateTime @default(now())
+  examResults         ExamResult[]
+  attendances         Attendance[]
+  createdAt           DateTime      @default(now())
+}
+
+model Exam {
+  id        String       @id @default(uuid())
+  name      String
+  className String
+  subject   String
+  maxMarks  Int          @default(100)
+  examDate  DateTime
+  results   ExamResult[]
+  createdAt DateTime     @default(now())
+}
+
+model ExamResult {
+  id            String   @id @default(uuid())
+  exam          Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  examId        String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId     String
+  marksObtained Int
+  grade         String
+  createdAt     DateTime @default(now())
+
+  @@unique([examId, studentId])
+}
+
+model Notice {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  postedBy  String
+  createdAt DateTime @default(now())
+}
+
+model Attendance {
+  id        String   @id @default(uuid())
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+  date      DateTime
+  status    String   @default("PRESENT")
+  subject   String?
+  markedBy  String?
+  createdAt DateTime @default(now())
+
+  @@unique([studentId, date, subject])
 }
 
 model LeaveRequest {
