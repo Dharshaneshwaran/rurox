@@ -2,13 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { User } from "@/lib/types";
 import { cn } from "@/lib/cn";
-import { AppMark, LogoutIcon, MenuIcon } from "@/components/icons";
-import Badge from "@/components/ui/Badge";
-import Button, { buttonClasses } from "@/components/ui/Button";
 
 export type WorkspaceNavItem = {
   label: string;
@@ -28,75 +25,142 @@ type WorkspaceShellProps = {
 };
 
 function matchesPath(pathname: string, item: WorkspaceNavItem) {
-  if (pathname === item.href) {
-    return true;
-  }
-
+  if (pathname === item.href) return true;
   return item.matches?.some((match) => pathname.startsWith(match)) ?? false;
 }
 
-function SidebarNav({
-  pathname,
+function getInitials(name: string | null | undefined, email: string) {
+  if (name) {
+    return name.split(" ").map((p) => p[0]).join("").slice(0, 2).toUpperCase();
+  }
+  return email.slice(0, 2).toUpperCase();
+}
+
+// Simple SVG icons for nav
+const HomeIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    <polyline points="9 22 9 12 15 12 15 22"/>
+  </svg>
+);
+
+const MenuBars = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+);
+
+const LogoutIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <line x1="21" y1="12" x2="9" y2="12"/>
+  </svg>
+);
+
+const UserIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+  </svg>
+);
+
+const SettingsIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </svg>
+);
+
+function SidebarContents({
+  user,
+  roleLabel,
   navItems,
+  pathname,
+  onSignOut,
   onNavigate,
 }: {
-  pathname: string;
+  user: User;
+  roleLabel: string;
   navItems: WorkspaceNavItem[];
+  pathname: string;
+  onSignOut: () => void;
   onNavigate?: () => void;
 }) {
   return (
-    <nav className="flex flex-col gap-1.5">
-      {navItems.map((item) => {
-        const active = matchesPath(pathname, item);
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onNavigate}
-            className={cn(
-              "group relative flex items-center gap-3.5 rounded-xl px-3.5 py-3 transition-all duration-300",
-              active
-                ? "bg-white/10 text-white shadow-sm ring-1 ring-white/10"
-                : "text-zinc-300 hover:bg-white/5 hover:text-white"
-            )}
-          >
-            {active && (
-              <div className="absolute left-0 h-6 w-1 rounded-r-full bg-[var(--color-brand)] shadow-[0_0_15px_var(--color-brand)]" />
-            )}
-            <div
+    <div className="flex h-full flex-col bg-[var(--sidebar-bg)]">
+      {/* Logo / Brand */}
+      <div className="flex items-center gap-3 border-b border-[var(--sidebar-border)] px-5 py-[18px]">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-primary)] text-white shadow-sm">
+          <HomeIcon />
+        </div>
+        <div>
+          <p className="text-[14px] font-bold text-[var(--color-text)] leading-none">ruroxz</p>
+          <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--color-primary)] leading-none">{roleLabel}</p>
+        </div>
+      </div>
+
+      {/* User Card */}
+      <div className="mx-3 mt-4 flex items-center gap-3 rounded-xl bg-[var(--color-surface-subtle)] border border-[var(--color-border)] p-3">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-primary)] text-[12px] font-bold text-white shadow-sm">
+          {getInitials(user.name, user.email)}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[13px] font-semibold text-[var(--color-text)] leading-tight">{user.name || "User"}</p>
+          <p className="truncate text-[11px] text-[var(--color-text-muted)] leading-tight mt-0.5">{user.email}</p>
+        </div>
+      </div>
+
+      {/* Nav Label */}
+      <p className="px-6 pt-5 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+        Navigation
+      </p>
+
+      {/* Nav Items */}
+      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3">
+        {navItems.map((item, idx) => {
+          const active = matchesPath(pathname, item);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onNavigate}
+              style={{ animationDelay: `${idx * 40}ms` }}
               className={cn(
-                "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all duration-300",
+                "animate-slide-in-left flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13.5px] font-medium transition-all duration-150 relative",
                 active
-                  ? "bg-[var(--color-brand)] text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]"
-                  : "bg-zinc-900 border border-white/5 text-zinc-500 group-hover:bg-zinc-800 group-hover:text-zinc-200"
+                  ? "bg-[var(--sidebar-active-bg)] text-[var(--sidebar-active-text)] font-semibold"
+                  : "text-[var(--color-text-muted)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--color-text)]"
               )}
             >
-              <div className="h-4.5 w-4.5">{item.icon}</div>
-            </div>
-            <div className="min-w-0 flex-1 py-0.5">
-              <span 
-                className={cn(
-                  "text-[14px] font-black tracking-tight transition-colors",
-                  active ? "text-white" : "text-zinc-200 group-hover:text-white"
-                )}
-              >
-                {item.label}
-              </span>
-              {item.description && (
-                <p
-                  className={cn(
-                    "mt-1.5 truncate text-[10px] uppercase font-bold tracking-[0.14em] transition-colors",
-                    active ? "text-white/70" : "text-zinc-500 group-hover:text-zinc-300"
-                  )}
-                >
-                  {item.description}
-                </p>
+              {/* Active indicator */}
+              {active && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[var(--sidebar-active-border)]" />
               )}
-            </div>
-          </Link>
-        );
-      })}
-    </nav>
+              <span className={cn("shrink-0", active ? "text-[var(--sidebar-active-text)]" : "text-[var(--color-text-muted)]")}>
+                {item.icon}
+              </span>
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Sign Out */}
+      <div className="border-t border-[var(--color-border)] p-3">
+        <button
+          onClick={onSignOut}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-[var(--color-text-muted)] transition-all hover:bg-[var(--color-danger-soft)] hover:text-[var(--color-danger)]"
+        >
+          <LogoutIcon />
+          Sign Out
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -110,174 +174,152 @@ export default function WorkspaceShell({
 }: WorkspaceShellProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const activeItem = useMemo(
     () => navItems.find((item) => matchesPath(pathname, item)) ?? navItems[0],
     [navItems, pathname]
   );
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const initials = getInitials(user.name, user.email);
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex min-h-screen w-full">
-        <aside className="sticky top-0 hidden h-screen w-72 flex-col overflow-hidden border-r border-primary/18 bg-primary lg:flex">
-          <div className="relative z-10 flex flex-col h-full gap-8 p-6">
-            <Link href="/" className="inline-flex items-center gap-3.5 px-1.5 group">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md transition-transform group-hover:scale-105">
-                <AppMark className="h-6 w-6 invert opacity-100" />
-              </div>
-              <div>
-                <p className="text-[14px] font-black tracking-tight text-white leading-tight">
-                  ruroxz
-                </p>
-                <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-secondary leading-none">
-                  {roleLabel}
-                </p>
-              </div>
-            </Link>
+    <div className="flex min-h-screen bg-[var(--color-background)]">
+      {/* Desktop Sidebar */}
+      <aside className="fixed top-0 left-0 h-screen w-60 hidden lg:flex flex-col bg-[var(--sidebar-bg)] border-r border-[var(--sidebar-border)] z-40">
+        <SidebarContents
+          user={user}
+          roleLabel={roleLabel}
+          navItems={navItems}
+          pathname={pathname}
+          onSignOut={onSignOut}
+        />
+      </aside>
 
-            <div className="rounded-2xl border border-white/8 bg-white/[0.05] p-5 backdrop-blur-md">
-              <h3 className="mb-2.5 text-[10px] font-black uppercase tracking-[0.2em] text-secondary/75">
-                Focus Mode
-              </h3>
-              <p className="text-[12px] font-semibold leading-relaxed text-secondary/88">
-                {subtitle}
-              </p>
-            </div>
-
-            <div className="flex-1 space-y-4">
-              <p className="px-3 text-[10px] font-black uppercase tracking-[0.24em] text-secondary/65">
-                Workspace
-              </p>
-              <SidebarNav pathname={pathname} navItems={navItems} />
-            </div>
-
-            <div className="mt-auto space-y-4">
-              <div className="flex items-center gap-3.5 rounded-2xl border border-white/8 bg-white/[0.05] p-4.5 backdrop-blur-md transition-colors hover:bg-white/[0.08]">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand)] text-xs font-black text-white shadow-[0_4px_12px_rgba(var(--color-brand-rgb),0.3)]">
-                  {user.name?.slice(0, 2).toUpperCase() || user.email[0].toUpperCase()}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[14px] font-black text-white tracking-tight">
-                    {user.name ?? "Unnamed user"}
-                  </p>
-                  <p className="mt-0.5 truncate text-[10px] font-medium tracking-tight text-secondary/78">
-                    {user.email}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={onSignOut}
-                className="flex w-full items-center gap-3.5 rounded-xl px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-secondary/78 transition-all hover:bg-red-500/15 hover:text-red-300 ring-1 ring-white/8"
-              >
-                <LogoutIcon className="h-4 w-4 opacity-70" />
-                Terminating Session
-              </button>
+      {/* Main content area */}
+      <div className="flex flex-1 flex-col lg:ml-60 min-w-0">
+        {/* Topbar */}
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-4 lg:px-6">
+          <div className="flex items-center gap-3">
+            {/* Mobile menu button */}
+            <button
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)] transition hover:bg-[var(--color-surface-subtle)] lg:hidden"
+              aria-label="Open menu"
+            >
+              <MenuBars />
+            </button>
+            <div>
+              <h1 className="text-[15px] font-bold text-[var(--color-text)] leading-tight">{activeItem?.label}</h1>
             </div>
           </div>
-        </aside>
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-30 border-b border-[var(--color-stroke)] bg-surface/88 backdrop-blur-xl transition-all">
-            <div className="flex items-center justify-between gap-4 px-6 py-4">
-              <div className="flex min-w-0 items-center gap-4">
-                <button
-                  type="button"
-                  onClick={() => setMenuOpen(true)}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--color-stroke)] bg-white text-zinc-900 shadow-sm transition-all hover:bg-zinc-50 active:scale-95 lg:hidden"
-                  aria-label="Open navigation"
-                >
-                  <MenuIcon className="h-5 w-5" />
-                </button>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-brand)]">
-                    {roleLabel}
-                  </p>
-                  <h1 className="truncate text-2xl font-black tracking-tight text-[var(--color-text)]">
-                    {activeItem?.label ?? "Workspace"}
-                  </h1>
+          <div className="flex items-center gap-3">
+            {/* Profile Dropdown Trigger */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="flex items-center gap-2.5 rounded-full p-0.5 pr-3 transition-all hover:bg-[var(--color-surface-subtle)] focus:outline-none"
+              >
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)] text-[11px] font-bold text-white shadow-sm ring-2 ring-[var(--color-surface)] ring-offset-1 ring-offset-[var(--color-border)]">
+                  {initials}
                 </div>
-              </div>
+                <div className="hidden sm:block text-left">
+                  <p className="text-[13px] font-bold text-[var(--color-text)] leading-none">{user.name || "User"}</p>
+                  <p className="text-[10px] font-semibold text-[var(--color-text-muted)] mt-1 uppercase tracking-wider">{roleLabel}</p>
+                </div>
+                <svg className={cn("h-3 w-3 text-[var(--color-text-muted)] transition-transform", profileOpen && "rotate-180")} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
 
-              <div className="flex items-center gap-4">
-                <div className="hidden text-right md:block">
-                  <p className="text-[13px] font-black leading-none text-[var(--color-text)]">
-                    {user.name || "User"}
-                  </p>
-                  <p className="mt-1 text-[10px] font-medium tracking-tight text-[var(--color-text-muted)]">
-                    {user.email}
-                  </p>
+              {/* Dropdown Menu */}
+              {profileOpen && (
+                <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-1.5 shadow-2xl animate-scale-in z-50">
+                  <div className="px-3 py-2 border-b border-[var(--color-border)] mb-1">
+                    <p className="text-[13px] font-bold text-[var(--color-text)]">{user.name || "User"}</p>
+                    <p className="text-[11px] text-[var(--color-text-muted)] truncate">{user.email}</p>
+                  </div>
+                  
+                  <Link
+                    href="/profile"
+                    onClick={() => setProfileOpen(false)}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-subtle)] transition-colors"
+                  >
+                    <UserIcon />
+                    My Profile
+                  </Link>
+                  <Link
+                    href="/settings"
+                    onClick={() => setProfileOpen(false)}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-subtle)] transition-colors"
+                  >
+                    <SettingsIcon />
+                    Account Settings
+                  </Link>
+                  
+                  <div className="my-1 border-t border-[var(--color-border)]" />
+                  
+                  <button
+                    onClick={() => { setProfileOpen(false); onSignOut(); }}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-[var(--color-danger)] hover:bg-[var(--color-danger-soft)] transition-colors"
+                  >
+                    <LogoutIcon />
+                    Sign Out
+                  </button>
                 </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-[11px] font-black text-white shadow-lg md:h-11 md:w-11">
-                  {user.name?.slice(0, 2).toUpperCase() || "U"}
-                </div>
-              </div>
+              )}
             </div>
-          </header>
+          </div>
+        </header>
 
-          <main className="min-w-0 flex-1">{children}</main>
-        </div>
+        {/* Page Content */}
+        <main className="flex-1 animate-fade-in">
+          {children}
+        </main>
       </div>
 
-      {menuOpen ? (
-        <div className="fixed inset-0 z-40 lg:hidden">
+      {/* Mobile Drawer Overlay */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
           <button
             type="button"
-            aria-label="Close navigation"
+            aria-label="Close menu"
             onClick={() => setMenuOpen(false)}
-            className="absolute inset-0 bg-black/35"
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
           />
-          <aside className="relative flex h-full w-[min(88vw,21rem)] flex-col border-r border-primary/18 bg-primary p-6 shadow-2xl">
-            <div className="flex items-center justify-between gap-3 px-1.5 mb-8">
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
-                  <AppMark className="invert opacity-100 h-5 w-5" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[14px] font-black tracking-[-0.02em] text-white">Smart Teacher</span>
-                  <span className="mt-0.5 text-[10px] font-semibold uppercase leading-none tracking-[0.22em] text-secondary/75">{roleLabel}</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setMenuOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-secondary/70 hover:text-white"
-              >
-                <LogoutIcon className="h-4 w-4 rotate-180" />
-              </button>
-            </div>
-
-            <div className="flex-1 space-y-4 overflow-y-auto">
-              <p className="px-3 text-[10px] font-black uppercase tracking-[0.24em] text-secondary/65">
-                Navigation
-              </p>
-              <SidebarNav
-                pathname={pathname}
-                navItems={navItems}
-                onNavigate={() => setMenuOpen(false)}
-              />
-            </div>
-
-            <div className="mt-auto border-t border-white/8 pt-6">
-              <div className="flex items-center gap-3.5 rounded-2xl border border-white/8 bg-white/5 px-3 py-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-brand)] text-xs font-black text-white">
-                   {user.name?.slice(0, 2).toUpperCase() || "U"}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-black text-white">{user.name || "Teacher"}</p>
-                  <p className="truncate text-[10px] font-medium tracking-tight text-secondary/76">{user.email}</p>
-                </div>
-              </div>
-              <button
-                onClick={onSignOut}
-                className="mt-4 flex w-full items-center gap-3.5 rounded-xl px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-secondary/76 transition-all hover:bg-red-400/10 hover:text-red-300"
-              >
-                <LogoutIcon className="h-4 w-4" />
-                Sign Out
-              </button>
-            </div>
+          <aside className="absolute left-0 top-0 h-full w-72 bg-[var(--sidebar-bg)] shadow-2xl z-10 animate-slide-in-left">
+            {/* Close button */}
+            <button
+              type="button"
+              onClick={() => setMenuOpen(false)}
+              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)] hover:bg-[var(--color-border)]"
+            >
+              <CloseIcon />
+            </button>
+            <SidebarContents
+              user={user}
+              roleLabel={roleLabel}
+              navItems={navItems}
+              pathname={pathname}
+              onSignOut={() => { setMenuOpen(false); onSignOut(); }}
+              onNavigate={() => setMenuOpen(false)}
+            />
           </aside>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

@@ -7,17 +7,20 @@ export type User = {
   role: Role;
   teacherId?: string | null;
   studentId?: string | null;
+  className?: string | null;
+  schoolClassId?: string | null;
   canCreateStudents?: boolean;
 };
 
 export type TimetableEntry = {
   id?: string;
   teacherId?: string;
-  teacher?: { name: string } | null;
+  teacher?: { id: string; name: string } | null;
   day: "MON" | "TUE" | "WED" | "THU" | "FRI";
   period: number;
   subject: string;
   className: string;
+  schoolClassId?: string | null;
   room?: string | null;
   isSubstitution?: boolean;
 };
@@ -31,8 +34,8 @@ export type Substitution = {
   status: "PENDING" | "ACCEPTED" | "REJECTED" | "REASSIGNED";
   absentTeacherId?: string | null;
   replacementTeacherId?: string | null;
-  absentTeacher?: { name: string } | null;
-  replacementTeacher?: { name: string } | null;
+  absentTeacher?: { id: string; name: string } | null;
+  replacementTeacher?: { id: string; name: string } | null;
 };
 
 export type SpecialClass = {

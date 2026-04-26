@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
   Request,
@@ -41,5 +42,11 @@ export class AttendanceController {
     @Query('date') date: string,
   ) {
     return this.attendanceService.getClassAttendance(className, date);
+  }
+
+  @Get('student/:id/summary')
+  @Roles('TEACHER', 'ADMIN')
+  async getStudentSummary(@Param('id') id: string) {
+    return this.attendanceService.getStudentAttendanceSummary(id);
   }
 }

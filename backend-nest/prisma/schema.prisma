@@ -44,6 +44,17 @@ model User {
   createdAt         DateTime @default(now())
 }
 
+model SchoolClass {
+  id           String      @id @default(cuid())
+  name         String      @unique
+  teacherId    String?     @unique
+  classTeacher Teacher?    @relation("ClassTeacher", fields: [teacherId], references: [id])
+  students     Student[]
+  timetables   Timetable[]
+  exams        Exam[]
+  createdAt    DateTime    @default(now())
+}
+
 model Teacher {
   id                       String         @id @default(cuid())
   name                     String
@@ -54,6 +65,7 @@ model Teacher {
   substitutionsAsReplacement Substitution[] @relation("replacement")
   substitutionsAsAbsent    Substitution[] @relation("absent")
   students                 Student[]      @relation("StudentTeacher")
+  classLed                 SchoolClass?   @relation("ClassTeacher")
   workload                 Int            @default(0)
 }
 
@@ -61,7 +73,9 @@ model Student {
   id                  String        @id @default(cuid())
   name                String
   rollNumber          String        @unique
-  className           String
+  className           String?
+  class               SchoolClass?  @relation(fields: [schoolClassId], references: [id])
+  schoolClassId       String?
   user                User?
   teachers            Teacher[]     @relation("StudentTeacher")
   studentTimetables   StudentTimetable[]
@@ -72,14 +86,16 @@ model Student {
 }
 
 model Exam {
-  id        String       @id @default(uuid())
-  name      String
-  className String
-  subject   String
-  maxMarks  Int          @default(100)
-  examDate  DateTime
-  results   ExamResult[]
-  createdAt DateTime     @default(now())
+  id            String       @id @default(uuid())
+  name          String
+  className     String?
+  class         SchoolClass? @relation(fields: [schoolClassId], references: [id])
+  schoolClassId String?
+  subject       String
+  maxMarks      Int          @default(100)
+  examDate      DateTime
+  results       ExamResult[]
+  createdAt     DateTime     @default(now())
 }
 
 model ExamResult {
@@ -129,15 +145,17 @@ model LeaveRequest {
 }
 
 model Timetable {
-  id        String   @id @default(cuid())
-  teacher   Teacher  @relation(fields: [teacherId], references: [id])
-  teacherId String
-  day       Day
-  period    Int
-  subject   String
-  className String
-  room      String?
-  createdAt DateTime @default(now())
+  id            String       @id @default(cuid())
+  teacher       Teacher      @relation(fields: [teacherId], references: [id])
+  teacherId     String
+  day           Day
+  period        Int
+  subject       String
+  className     String?
+  class         SchoolClass? @relation(fields: [schoolClassId], references: [id])
+  schoolClassId String?
+  room          String?
+  createdAt     DateTime     @default(now())
 
   @@unique([teacherId, day, period])
   @@index([day, period])

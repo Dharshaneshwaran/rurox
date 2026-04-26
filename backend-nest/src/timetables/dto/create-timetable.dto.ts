@@ -21,4 +21,8 @@ export class CreateTimetableDto {
   @IsOptional()
   @IsString()
   room?: string;
+
+  @IsOptional()
+  @IsString()
+  schoolClassId?: string;
 }

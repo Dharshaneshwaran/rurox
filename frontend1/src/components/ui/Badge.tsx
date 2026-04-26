@@ -5,11 +5,11 @@ type BadgeVariant = "neutral" | "accent" | "success" | "warning" | "danger";
 type BadgeTone = "default" | "brand" | "accent" | "success" | "warning" | "danger";
 
 const variantClasses: Record<BadgeVariant, string> = {
-  neutral: "border-border bg-background text-muted-foreground",
-  accent: "border-primary/20 bg-primary-soft text-primary-strong",
-  success: "border-success bg-success-soft text-success",
-  warning: "border-warning bg-warning-soft text-warning",
-  danger: "border-danger bg-danger-soft text-danger",
+  neutral: "bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)] border-[var(--color-border)]",
+  accent:  "bg-[var(--color-accent-soft)] text-[var(--color-accent)] border-[var(--color-accent-soft)]",
+  success: "bg-[var(--color-success-soft)] text-[var(--color-success)] border-[var(--color-success-soft)]",
+  warning: "bg-[var(--color-warning-soft)] text-[var(--color-warning)] border-[var(--color-warning-soft)]",
+  danger:  "bg-[var(--color-danger-soft)] text-[var(--color-danger)] border-[var(--color-danger-soft)]",
 };
 
 export function badgeClasses({
@@ -20,7 +20,7 @@ export function badgeClasses({
   className?: string;
 }) {
   return cn(
-    "inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-[9px] font-medium uppercase tracking-[0.15em]",
+    "inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[11px] font-medium",
     variantClasses[variant],
     className
   );
@@ -42,7 +42,7 @@ export default function Badge({
       ? "accent"
       : tone === "default"
         ? "neutral"
-        : tone ?? variant;
+        : (tone as BadgeVariant) ?? variant;
 
   return (
     <span

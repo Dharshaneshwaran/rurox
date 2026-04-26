@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import TeacherLayout from "@/components/TeacherLayout";
 import SectionCard from "@/components/SectionCard";
 import PageHeader from "@/components/ui/PageHeader";
@@ -31,16 +32,25 @@ interface ExamWithStudents {
   submittedIds: string[];
 }
 
-export default function TeacherExamsPage() {
+function ExamsContent() {
   const { token, loading } = useAuth({ role: "TEACHER", redirectTo: "/teacher/login" });
+  const searchParams = useSearchParams();
+  const urlClass = searchParams.get("className");
+
   const [exams, setExams] = useState<Exam[]>([]);
   const [pageLoading, setPageLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   // Create exam form
-  const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ name: "", className: "", subject: "", maxMarks: 100, examDate: "" });
+  const [showForm, setShowForm] = useState(!!urlClass);
+  const [formData, setFormData] = useState({ 
+    name: "", 
+    className: urlClass || "", 
+    subject: "", 
+    maxMarks: 100, 
+    examDate: "" 
+  });
   const [submitting, setSubmitting] = useState(false);
 
   // Marks entry
@@ -270,7 +280,10 @@ export default function TeacherExamsPage() {
         )}
 
         <div className="mt-6">
-          <SectionCard title="All Exams" subtitle="Click 'Enter Marks' to input student marks for any exam.">
+          <SectionCard 
+            title={urlClass ? `Exams for ${urlClass}` : "All Exams"} 
+            subtitle={urlClass ? "Review and enter marks for exams in this class." : "Click 'Enter Marks' to input student marks for any exam."}
+          >
             {pageLoading ? (
               <div className="py-10 text-center text-sm text-muted-foreground">Loading exams...</div>
             ) : exams.length === 0 ? (
@@ -289,22 +302,24 @@ export default function TeacherExamsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {exams.map((exam) => (
-                      <tr key={exam.id} className="hover:bg-background/60 transition-colors">
-                        <td className="px-4 py-4 font-medium text-foreground">{exam.name}</td>
-                        <td className="px-4 py-4"><Badge variant="neutral">{exam.className}</Badge></td>
-                        <td className="px-4 py-4 text-muted-foreground">{exam.subject}</td>
-                        <td className="px-4 py-4 text-xs text-muted-foreground">
-                          {new Date(exam.examDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
-                        </td>
-                        <td className="px-4 py-4 font-mono text-xs">{exam.maxMarks}</td>
-                        <td className="px-4 py-4">
-                          <Button variant="accent" size="sm" onClick={() => openMarksEntry(exam.id)}>
-                            Enter Marks
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
+                    {exams
+                      .filter(exam => !urlClass || exam.className === urlClass)
+                      .map((exam) => (
+                        <tr key={exam.id} className="hover:bg-background/60 transition-colors">
+                          <td className="px-4 py-4 font-medium text-foreground">{exam.name}</td>
+                          <td className="px-4 py-4"><Badge variant="neutral">{exam.className}</Badge></td>
+                          <td className="px-4 py-4 text-muted-foreground">{exam.subject}</td>
+                          <td className="px-4 py-4 text-xs text-muted-foreground">
+                            {new Date(exam.examDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                          </td>
+                          <td className="px-4 py-4 font-mono text-xs">{exam.maxMarks}</td>
+                          <td className="px-4 py-4">
+                            <Button variant="accent" size="sm" onClick={() => openMarksEntry(exam.id)}>
+                              Enter Marks
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
@@ -313,5 +328,13 @@ export default function TeacherExamsPage() {
         </div>
       </div>
     </TeacherLayout>
+  );
+}
+
+export default function TeacherExamsPage() {
+  return (
+    <Suspense fallback={null}>
+      <ExamsContent />
+    </Suspense>
   );
 }

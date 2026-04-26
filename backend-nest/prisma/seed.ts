@@ -5,7 +5,6 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 type Day = 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI';
-
 const DAYS: Day[] = ['MON', 'TUE', 'WED', 'THU', 'FRI'];
 
 const TEACHERS = [
@@ -17,536 +16,134 @@ const TEACHERS = [
   { name: 'Frank Davis', email: 'frank@example.com', subjects: ['History', 'Geography'] },
   { name: 'Grace Wilson', email: 'grace@example.com', subjects: ['Biology', 'English'] },
   { name: 'Henry Taylor', email: 'henry@example.com', subjects: ['Geography', 'Computer Science'] },
+  { name: 'Ivy Chen', email: 'ivy@example.com', subjects: ['Math', 'Art'] },
+  { name: 'Jack Miller', email: 'jack@example.com', subjects: ['Science', 'Physical Education'] },
 ];
 
-const CLASSES = ['8A', '8B', '9A', '9B', '10A', '10B', '11A', '11B'];
-const ROOMS = ['R101', 'R102', 'R103', 'R104', 'R201', 'R202', 'R203', 'R204'];
+const CLASSES = ['5th Std', '6th Std', '7th Std', '8th Std', '9th Std'];
 
-// Each teacher's schedule: [day][period] = { subject, className, room } or null (free)
-// Periods are 1-8. Teachers teach 5-6 periods/day leaving 2-3 free.
-const SCHEDULES: Record<
-  number,
-  Record<Day, (null | { subject: string; className: string; room: string })[]>
-> = {
-  // Alice Johnson - Math, Physics (6 periods/day)
-  0: {
-    MON: [
-      { subject: 'Math', className: '10A', room: 'R101' },
-      { subject: 'Physics', className: '10B', room: 'R201' },
-      { subject: 'Math', className: '9A', room: 'R101' },
-      null,
-      { subject: 'Physics', className: '11A', room: 'R201' },
-      { subject: 'Math', className: '8A', room: 'R101' },
-      null,
-      { subject: 'Math', className: '11B', room: 'R102' },
-    ],
-    TUE: [
-      { subject: 'Physics', className: '10A', room: 'R201' },
-      { subject: 'Math', className: '10B', room: 'R101' },
-      null,
-      { subject: 'Math', className: '9B', room: 'R102' },
-      { subject: 'Physics', className: '8B', room: 'R201' },
-      { subject: 'Math', className: '11A', room: 'R101' },
-      null,
-      { subject: 'Physics', className: '9A', room: 'R202' },
-    ],
-    WED: [
-      { subject: 'Math', className: '8A', room: 'R101' },
-      null,
-      { subject: 'Physics', className: '10A', room: 'R201' },
-      { subject: 'Math', className: '10B', room: 'R101' },
-      null,
-      { subject: 'Math', className: '9A', room: 'R102' },
-      { subject: 'Physics', className: '11B', room: 'R201' },
-      { subject: 'Math', className: '11A', room: 'R101' },
-    ],
-    THU: [
-      null,
-      { subject: 'Math', className: '10A', room: 'R101' },
-      { subject: 'Physics', className: '9B', room: 'R201' },
-      { subject: 'Math', className: '8B', room: 'R102' },
-      { subject: 'Physics', className: '10B', room: 'R201' },
-      null,
-      { subject: 'Math', className: '11A', room: 'R101' },
-      { subject: 'Physics', className: '11B', room: 'R202' },
-    ],
-    FRI: [
-      { subject: 'Math', className: '9A', room: 'R101' },
-      { subject: 'Physics', className: '10A', room: 'R201' },
-      { subject: 'Math', className: '10B', room: 'R101' },
-      null,
-      { subject: 'Math', className: '8A', room: 'R102' },
-      { subject: 'Physics', className: '11A', room: 'R201' },
-      null,
-      { subject: 'Math', className: '9B', room: 'R101' },
-    ],
-  },
-  // Bob Smith - Chemistry, Biology (6 periods/day)
-  1: {
-    MON: [
-      null,
-      { subject: 'Chemistry', className: '10A', room: 'R103' },
-      { subject: 'Biology', className: '9B', room: 'R203' },
-      { subject: 'Chemistry', className: '11A', room: 'R103' },
-      { subject: 'Biology', className: '8A', room: 'R203' },
-      null,
-      { subject: 'Chemistry', className: '9A', room: 'R103' },
-      { subject: 'Biology', className: '10B', room: 'R203' },
-    ],
-    TUE: [
-      { subject: 'Biology', className: '10A', room: 'R203' },
-      null,
-      { subject: 'Chemistry', className: '8B', room: 'R103' },
-      { subject: 'Biology', className: '11B', room: 'R203' },
-      { subject: 'Chemistry', className: '10B', room: 'R103' },
-      { subject: 'Biology', className: '9A', room: 'R203' },
-      null,
-      { subject: 'Chemistry', className: '11A', room: 'R104' },
-    ],
-    WED: [
-      { subject: 'Chemistry', className: '9A', room: 'R103' },
-      { subject: 'Biology', className: '10A', room: 'R203' },
-      null,
-      { subject: 'Chemistry', className: '10B', room: 'R103' },
-      { subject: 'Biology', className: '8B', room: 'R203' },
-      { subject: 'Chemistry', className: '11B', room: 'R103' },
-      null,
-      { subject: 'Biology', className: '9B', room: 'R204' },
-    ],
-    THU: [
-      { subject: 'Biology', className: '11A', room: 'R203' },
-      { subject: 'Chemistry', className: '9B', room: 'R103' },
-      null,
-      { subject: 'Biology', className: '10A', room: 'R203' },
-      null,
-      { subject: 'Chemistry', className: '8A', room: 'R103' },
-      { subject: 'Biology', className: '10B', room: 'R203' },
-      { subject: 'Chemistry', className: '11B', room: 'R104' },
-    ],
-    FRI: [
-      { subject: 'Chemistry', className: '10A', room: 'R103' },
-      { subject: 'Biology', className: '9A', room: 'R203' },
-      { subject: 'Chemistry', className: '11A', room: 'R103' },
-      null,
-      { subject: 'Biology', className: '8A', room: 'R203' },
-      null,
-      { subject: 'Chemistry', className: '10B', room: 'R103' },
-      { subject: 'Biology', className: '11B', room: 'R204' },
-    ],
-  },
-  // Carol Williams - English, History (5 periods/day)
-  2: {
-    MON: [
-      { subject: 'English', className: '8A', room: 'R104' },
-      null,
-      { subject: 'History', className: '10A', room: 'R204' },
-      { subject: 'English', className: '11A', room: 'R104' },
-      null,
-      { subject: 'History', className: '9B', room: 'R204' },
-      { subject: 'English', className: '10B', room: 'R104' },
-      null,
-    ],
-    TUE: [
-      null,
-      { subject: 'English', className: '9A', room: 'R104' },
-      { subject: 'History', className: '11B', room: 'R204' },
-      null,
-      { subject: 'English', className: '8B', room: 'R104' },
-      { subject: 'History', className: '10A', room: 'R204' },
-      { subject: 'English', className: '10B', room: 'R104' },
-      null,
-    ],
-    WED: [
-      { subject: 'History', className: '9A', room: 'R204' },
-      { subject: 'English', className: '11A', room: 'R104' },
-      { subject: 'English', className: '8A', room: 'R104' },
-      null,
-      { subject: 'History', className: '10B', room: 'R204' },
-      null,
-      { subject: 'English', className: '9B', room: 'R104' },
-      null,
-    ],
-    THU: [
-      { subject: 'English', className: '10A', room: 'R104' },
-      null,
-      { subject: 'History', className: '8B', room: 'R204' },
-      { subject: 'English', className: '11B', room: 'R104' },
-      { subject: 'History', className: '9A', room: 'R204' },
-      null,
-      null,
-      { subject: 'English', className: '9B', room: 'R104' },
-    ],
-    FRI: [
-      null,
-      { subject: 'History', className: '11A', room: 'R204' },
-      null,
-      { subject: 'English', className: '10A', room: 'R104' },
-      { subject: 'English', className: '8A', room: 'R104' },
-      { subject: 'History', className: '9B', room: 'R204' },
-      { subject: 'English', className: '11B', room: 'R104' },
-      null,
-    ],
-  },
-  // David Brown - Computer Science, Math (5 periods/day)
-  3: {
-    MON: [
-      { subject: 'Computer Science', className: '10B', room: 'R202' },
-      { subject: 'Math', className: '8B', room: 'R102' },
-      null,
-      { subject: 'Computer Science', className: '11B', room: 'R202' },
-      { subject: 'Math', className: '9B', room: 'R102' },
-      null,
-      { subject: 'Computer Science', className: '9A', room: 'R202' },
-      null,
-    ],
-    TUE: [
-      null,
-      { subject: 'Computer Science', className: '10A', room: 'R202' },
-      { subject: 'Math', className: '11A', room: 'R102' },
-      null,
-      { subject: 'Computer Science', className: '8A', room: 'R202' },
-      { subject: 'Math', className: '9B', room: 'R102' },
-      { subject: 'Computer Science', className: '11B', room: 'R202' },
-      null,
-    ],
-    WED: [
-      null,
-      { subject: 'Math', className: '10A', room: 'R102' },
-      { subject: 'Computer Science', className: '9B', room: 'R202' },
-      { subject: 'Math', className: '8B', room: 'R102' },
-      { subject: 'Computer Science', className: '11A', room: 'R202' },
-      null,
-      { subject: 'Math', className: '9A', room: 'R102' },
-      null,
-    ],
-    THU: [
-      { subject: 'Computer Science', className: '10A', room: 'R202' },
-      { subject: 'Math', className: '11B', room: 'R102' },
-      { subject: 'Computer Science', className: '8A', room: 'R202' },
-      null,
-      null,
-      { subject: 'Math', className: '10B', room: 'R102' },
-      { subject: 'Computer Science', className: '9B', room: 'R202' },
-      null,
-    ],
-    FRI: [
-      { subject: 'Math', className: '8B', room: 'R102' },
-      null,
-      { subject: 'Computer Science', className: '10B', room: 'R202' },
-      { subject: 'Math', className: '11A', room: 'R102' },
-      null,
-      { subject: 'Computer Science', className: '9A', room: 'R202' },
-      { subject: 'Math', className: '10A', room: 'R102' },
-      null,
-    ],
-  },
-  // Eva Martinez - Physics, Chemistry (5 periods/day)
-  4: {
-    MON: [
-      { subject: 'Physics', className: '9B', room: 'R201' },
-      null,
-      { subject: 'Chemistry', className: '10B', room: 'R103' },
-      { subject: 'Physics', className: '8B', room: 'R201' },
-      null,
-      { subject: 'Chemistry', className: '11B', room: 'R104' },
-      { subject: 'Physics', className: '10A', room: 'R201' },
-      null,
-    ],
-    TUE: [
-      { subject: 'Chemistry', className: '9B', room: 'R103' },
-      { subject: 'Physics', className: '11A', room: 'R201' },
-      null,
-      { subject: 'Chemistry', className: '8A', room: 'R104' },
-      null,
-      { subject: 'Physics', className: '10B', room: 'R201' },
-      { subject: 'Chemistry', className: '10A', room: 'R103' },
-      null,
-    ],
-    WED: [
-      null,
-      { subject: 'Physics', className: '9A', room: 'R201' },
-      { subject: 'Chemistry', className: '11A', room: 'R103' },
-      null,
-      { subject: 'Physics', className: '8A', room: 'R201' },
-      { subject: 'Chemistry', className: '10A', room: 'R104' },
-      { subject: 'Physics', className: '10B', room: 'R201' },
-      null,
-    ],
-    THU: [
-      { subject: 'Chemistry', className: '10A', room: 'R103' },
-      null,
-      { subject: 'Physics', className: '11B', room: 'R201' },
-      { subject: 'Chemistry', className: '9A', room: 'R104' },
-      { subject: 'Physics', className: '8B', room: 'R201' },
-      null,
-      null,
-      { subject: 'Chemistry', className: '10B', room: 'R103' },
-    ],
-    FRI: [
-      null,
-      { subject: 'Physics', className: '9B', room: 'R201' },
-      { subject: 'Chemistry', className: '8B', room: 'R103' },
-      { subject: 'Physics', className: '11B', room: 'R201' },
-      { subject: 'Chemistry', className: '10A', room: 'R104' },
-      null,
-      { subject: 'Physics', className: '10B', room: 'R201' },
-      null,
-    ],
-  },
-  // Frank Davis - History, Geography (4 periods/day)
-  5: {
-    MON: [
-      null,
-      { subject: 'History', className: '8A', room: 'R204' },
-      null,
-      { subject: 'Geography', className: '10A', room: 'R204' },
-      { subject: 'History', className: '11B', room: 'R204' },
-      null,
-      null,
-      { subject: 'Geography', className: '9A', room: 'R204' },
-    ],
-    TUE: [
-      { subject: 'Geography', className: '10B', room: 'R204' },
-      null,
-      { subject: 'History', className: '9A', room: 'R204' },
-      null,
-      null,
-      { subject: 'Geography', className: '8A', room: 'R204' },
-      { subject: 'History', className: '11A', room: 'R204' },
-      null,
-    ],
-    WED: [
-      null,
-      null,
-      { subject: 'Geography', className: '9B', room: 'R204' },
-      { subject: 'History', className: '10A', room: 'R204' },
-      null,
-      { subject: 'Geography', className: '11B', room: 'R204' },
-      null,
-      { subject: 'History', className: '8B', room: 'R204' },
-    ],
-    THU: [
-      { subject: 'History', className: '10B', room: 'R204' },
-      null,
-      null,
-      { subject: 'Geography', className: '11A', room: 'R204' },
-      { subject: 'History', className: '9B', room: 'R204' },
-      null,
-      { subject: 'Geography', className: '8A', room: 'R204' },
-      null,
-    ],
-    FRI: [
-      { subject: 'Geography', className: '10A', room: 'R204' },
-      null,
-      null,
-      { subject: 'History', className: '11B', room: 'R204' },
-      null,
-      { subject: 'Geography', className: '9A', room: 'R204' },
-      null,
-      { subject: 'History', className: '8A', room: 'R204' },
-    ],
-  },
-  // Grace Wilson - Biology, English (5 periods/day)
-  6: {
-    MON: [
-      null,
-      { subject: 'Biology', className: '11A', room: 'R203' },
-      { subject: 'English', className: '9A', room: 'R104' },
-      null,
-      { subject: 'Biology', className: '10A', room: 'R203' },
-      { subject: 'English', className: '8B', room: 'R104' },
-      { subject: 'Biology', className: '9B', room: 'R203' },
-      null,
-    ],
-    TUE: [
-      { subject: 'English', className: '11A', room: 'R104' },
-      null,
-      { subject: 'Biology', className: '10B', room: 'R203' },
-      { subject: 'English', className: '8A', room: 'R104' },
-      null,
-      null,
-      { subject: 'Biology', className: '9A', room: 'R203' },
-      { subject: 'English', className: '10A', room: 'R104' },
-    ],
-    WED: [
-      { subject: 'Biology', className: '8B', room: 'R203' },
-      null,
-      null,
-      { subject: 'English', className: '10A', room: 'R104' },
-      { subject: 'Biology', className: '11B', room: 'R203' },
-      { subject: 'English', className: '9A', room: 'R104' },
-      null,
-      { subject: 'Biology', className: '10B', room: 'R203' },
-    ],
-    THU: [
-      null,
-      { subject: 'Biology', className: '9A', room: 'R203' },
-      { subject: 'English', className: '11A', room: 'R104' },
-      null,
-      { subject: 'Biology', className: '8A', room: 'R203' },
-      { subject: 'English', className: '10B', room: 'R104' },
-      null,
-      { subject: 'Biology', className: '11B', room: 'R203' },
-    ],
-    FRI: [
-      { subject: 'English', className: '9B', room: 'R104' },
-      { subject: 'Biology', className: '10A', room: 'R203' },
-      null,
-      { subject: 'English', className: '8B', room: 'R104' },
-      { subject: 'Biology', className: '11A', room: 'R203' },
-      null,
-      null,
-      { subject: 'English', className: '10B', room: 'R104' },
-    ],
-  },
-  // Henry Taylor - Geography, Computer Science (4 periods/day)
-  7: {
-    MON: [
-      null,
-      null,
-      { subject: 'Geography', className: '11A', room: 'R204' },
-      { subject: 'Computer Science', className: '8A', room: 'R202' },
-      null,
-      { subject: 'Geography', className: '10B', room: 'R204' },
-      null,
-      { subject: 'Computer Science', className: '11A', room: 'R202' },
-    ],
-    TUE: [
-      { subject: 'Computer Science', className: '9A', room: 'R202' },
-      { subject: 'Geography', className: '11B', room: 'R204' },
-      null,
-      null,
-      { subject: 'Computer Science', className: '10B', room: 'R202' },
-      null,
-      null,
-      { subject: 'Geography', className: '8B', room: 'R204' },
-    ],
-    WED: [
-      { subject: 'Geography', className: '10A', room: 'R204' },
-      null,
-      null,
-      { subject: 'Computer Science', className: '9A', room: 'R202' },
-      null,
-      { subject: 'Geography', className: '8B', room: 'R204' },
-      { subject: 'Computer Science', className: '11B', room: 'R202' },
-      null,
-    ],
-    THU: [
-      null,
-      { subject: 'Geography', className: '9A', room: 'R204' },
-      { subject: 'Computer Science', className: '10B', room: 'R202' },
-      null,
-      { subject: 'Geography', className: '11B', room: 'R204' },
-      { subject: 'Computer Science', className: '8B', room: 'R202' },
-      null,
-      null,
-    ],
-    FRI: [
-      null,
-      { subject: 'Computer Science', className: '8A', room: 'R202' },
-      { subject: 'Geography', className: '11A', room: 'R204' },
-      null,
-      { subject: 'Computer Science', className: '9B', room: 'R202' },
-      null,
-      { subject: 'Geography', className: '10B', room: 'R204' },
-      null,
-    ],
-  },
-};
+const STUDENTS = [
+  { name: 'Aryan Sharma', email: 'aryan@example.com', rollNumber: 'S101', className: '5th Std' },
+  { name: 'Diya Patel', email: 'diya@example.com', rollNumber: 'S102', className: '5th Std' },
+  { name: 'Kabir Singh', email: 'kabir@example.com', rollNumber: 'S103', className: '6th Std' },
+  { name: 'Ananya Rao', email: 'ananya@example.com', rollNumber: 'S104', className: '6th Std' },
+  { name: 'Ishaan Gupta', email: 'ishaan@example.com', rollNumber: 'S105', className: '7th Std' },
+  { name: 'Myra Khan', email: 'myra@example.com', rollNumber: 'S106', className: '7th Std' },
+  { name: 'Rohan Verma', email: 'rohan@example.com', rollNumber: 'S107', className: '8th Std' },
+  { name: 'Sia Malhotra', email: 'sia@example.com', rollNumber: 'S108', className: '8th Std' },
+  { name: 'Vihaan Jain', email: 'vihaan@example.com', rollNumber: 'S109', className: '9th Std' },
+  { name: 'Zoya Ahmed', email: 'zoya@example.com', rollNumber: 'S110', className: '9th Std' },
+];
 
 const seed = async () => {
   console.log('🌱 Seeding database...');
 
-  // 1. Create admin user
+  // 1. Admin
   const adminPassword = await bcrypt.hash('adminpass', 10);
   await prisma.user.upsert({
     where: { email: 'admin@example.com' },
     update: { name: 'Admin User', password: adminPassword, role: 'ADMIN', approved: true },
     create: { name: 'Admin User', email: 'admin@example.com', password: adminPassword, role: 'ADMIN', approved: true },
   });
-  console.log('✅ Admin user created');
 
-  const studentPassword = await bcrypt.hash('studentpass', 10);
-  await prisma.user.upsert({
-    where: { email: 'student@example.com' },
-    update: { name: 'Student User', password: studentPassword, role: 'STUDENT', approved: true },
-    create: { name: 'Student User', email: 'student@example.com', password: studentPassword, role: 'STUDENT', approved: true },
-  });
-  console.log('✅ Student user created');
-
-  // 2. Create teachers + user accounts
+  // 2. Teachers
   const teacherPassword = await bcrypt.hash('teacherpass', 10);
-  const teacherRecords: { id: string; name: string }[] = [];
-
+  const teacherRecords: any[] = [];
   for (const t of TEACHERS) {
-    const existing = await prisma.teacher.findFirst({ where: { name: t.name } });
-    const teacher = existing
-      ? await prisma.teacher.update({ where: { id: existing.id }, data: { subjects: t.subjects } })
-      : await prisma.teacher.create({ data: { name: t.name, subjects: t.subjects } });
-
+    const teacher = await prisma.teacher.upsert({
+      where: { id: t.email }, // Using email as temp id for upsert if needed, or find by name
+      update: { name: t.name, subjects: t.subjects },
+      create: { name: t.name, subjects: t.subjects },
+    });
     await prisma.user.upsert({
       where: { email: t.email },
       update: { name: t.name, password: teacherPassword, role: 'TEACHER', teacherId: teacher.id, approved: true },
       create: { name: t.name, email: t.email, password: teacherPassword, role: 'TEACHER', teacherId: teacher.id, approved: true },
     });
-
     teacherRecords.push(teacher);
-    console.log(`✅ Teacher ${t.name} created`);
+  }
+  console.log('✅ 10 Teachers created');
+
+  // 3. School Classes
+  console.log('🏫 Creating School Classes...');
+  const schoolClassRecords: Record<string, any> = {};
+  for (let i = 0; i < CLASSES.length; i++) {
+    const className = CLASSES[i];
+    const teacher = teacherRecords[i]; // Assign first 5 teachers as class teachers
+    const sc = await prisma.schoolClass.upsert({
+      where: { name: className },
+      update: { teacherId: teacher.id },
+      create: { name: className, teacherId: teacher.id },
+    });
+    schoolClassRecords[className] = sc;
   }
 
-  // 3. Create timetable entries
-  let timetableCount = 0;
-  for (let idx = 0; idx < teacherRecords.length; idx++) {
-    const teacher = teacherRecords[idx];
-    const schedule = SCHEDULES[idx];
-    if (!schedule) continue;
+  // 4. Timetables (Teacher schedules)
+  // Let's assign Alice, Bob, Carol, David, and Eva to their respective classes
+  for (let i = 0; i < CLASSES.length; i++) {
+    const className = CLASSES[i];
+    const teacher = teacherRecords[i];
+    const schoolClass = schoolClassRecords[className];
+    const subject = TEACHERS[i].subjects[0];
 
     for (const day of DAYS) {
-      const daySlots = schedule[day];
-      for (let periodIdx = 0; periodIdx < daySlots.length; periodIdx++) {
-        const slot = daySlots[periodIdx];
-        if (!slot) continue;
-
-        const period = periodIdx + 1;
+      for (let p = 1; p <= 4; p++) { // 4 periods per day for seed
         await prisma.timetable.upsert({
-          where: { teacherId_day_period: { teacherId: teacher.id, day, period } },
-          update: { subject: slot.subject, className: slot.className, room: slot.room },
-          create: { teacherId: teacher.id, day, period, subject: slot.subject, className: slot.className, room: slot.room },
+          where: { teacherId_day_period: { teacherId: teacher.id, day, period: p } },
+          update: { subject, className, schoolClassId: schoolClass.id, room: `Room ${i + 1}0${p}` },
+          create: { teacherId: teacher.id, day, period: p, subject, className, schoolClassId: schoolClass.id, room: `Room ${i + 1}0${p}` },
         });
-        timetableCount++;
       }
     }
   }
-  console.log(`✅ ${timetableCount} timetable entries created`);
+  console.log('✅ Timetables created for all classes');
 
-  // 4. Create sample special class
-  const aliceTeacher = teacherRecords[0];
-  const existingSpecial = await prisma.specialClass.findFirst({
-    where: { teacherId: aliceTeacher.id, subject: 'Math', className: '10A', fromTime: '16:00' },
-  });
-  if (!existingSpecial) {
-    await prisma.specialClass.create({
-      data: {
-        teacherId: aliceTeacher.id,
-        date: new Date(),
-        fromTime: '16:00',
-        toTime: '17:00',
-        subject: 'Math',
-        className: '10A',
-        notes: 'Extra practice session for board exams',
-      },
+  // 5. Students
+  const studentPassword = await bcrypt.hash('studentpass', 10);
+  for (const s of STUDENTS) {
+    const schoolClass = schoolClassRecords[s.className];
+    const student = await prisma.student.upsert({
+      where: { rollNumber: s.rollNumber },
+      update: { name: s.name, className: s.className, schoolClassId: schoolClass.id },
+      create: { name: s.name, rollNumber: s.rollNumber, className: s.className, schoolClassId: schoolClass.id },
     });
-    console.log('✅ Sample special class created');
+    await prisma.user.upsert({
+      where: { email: s.email },
+      update: { name: s.name, password: studentPassword, role: 'STUDENT', studentId: student.id, approved: true },
+      create: { name: s.name, email: s.email, password: studentPassword, role: 'STUDENT', studentId: student.id, approved: true },
+    });
+
+    // Auto-sync timetable for EVERY student based on their class
+    const classTimetable = await prisma.timetable.findMany({
+      where: { schoolClassId: schoolClass.id },
+      include: { teacher: true },
+    });
+    for (const entry of classTimetable) {
+      await prisma.studentTimetable.upsert({
+        where: { studentId_day_period: { studentId: student.id, day: entry.day, period: entry.period } },
+        update: { 
+          subject: entry.subject, 
+          className: entry.className || s.className, 
+          teacher: entry.teacher.name, 
+          room: entry.room 
+        },
+        create: { 
+          studentId: student.id, 
+          day: entry.day, 
+          period: entry.period, 
+          subject: entry.subject, 
+          className: entry.className || s.className, 
+          teacher: entry.teacher.name, 
+          room: entry.room 
+        },
+      });
+    }
   }
+  console.log('✅ 10 Students created and synced with their class timetables');
 
   console.log('🎉 Seed complete!');
 };
 
 seed()
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .catch((e) => { console.error(e); process.exit(1); })
+  .finally(async () => { await prisma.$disconnect(); });

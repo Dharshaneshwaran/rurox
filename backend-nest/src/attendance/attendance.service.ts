@@ -34,7 +34,7 @@ export class AttendanceService {
     return this.prisma.$transaction(operations);
   }
 
-  async getMyAttendance(studentId: string) {
+  async getStudentAttendanceSummary(studentId: string) {
     const records = await this.prisma.attendance.findMany({
       where: { studentId },
       orderBy: { date: 'desc' },
@@ -45,6 +45,10 @@ export class AttendanceService {
     const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
 
     return { records, total, present, percentage };
+  }
+
+  async getMyAttendance(studentId: string) {
+    return this.getStudentAttendanceSummary(studentId);
   }
 
   async getClassAttendance(className: string, dateStr: string) {

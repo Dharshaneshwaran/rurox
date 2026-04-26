@@ -29,4 +29,22 @@ export class AuthController {
 
     return this.authService.me(req.user.id);
   }
+
+  @Post('profile')
+  @UseGuards(AuthGuard)
+  async updateProfile(
+    @Req() req: Request & { user: AuthUser },
+    @Body() body: { name?: string; email?: string }
+  ) {
+    return this.authService.updateProfile(req.user.id, body.name, body.email);
+  }
+
+  @Post('password')
+  @UseGuards(AuthGuard)
+  async updatePassword(
+    @Req() req: Request & { user: AuthUser },
+    @Body() body: { password: string }
+  ) {
+    return this.authService.updatePassword(req.user.id, body.password);
+  }
 }

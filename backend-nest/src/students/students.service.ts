@@ -63,8 +63,51 @@ export class StudentsService {
         );
       }
 
+      // 4. Auto-sync timetable based on class
+      if (student.className) {
+        await this.syncStudentTimetable(tx, student.id, student.className);
+      }
+
       return student;
     });
+  }
+
+  private async syncStudentTimetable(
+    tx: Prisma.TransactionClient,
+    studentId: string,
+    className: string,
+  ) {
+    const classTimetable = await tx.timetable.findMany({
+      where: { className },
+      include: { teacher: true },
+    });
+
+    for (const entry of classTimetable) {
+      await tx.studentTimetable.upsert({
+        where: {
+          studentId_day_period: {
+            studentId,
+            day: entry.day,
+            period: entry.period,
+          },
+        },
+        update: {
+          subject: entry.subject,
+          className: entry.className || className,
+          teacher: entry.teacher.name,
+          room: entry.room,
+        },
+        create: {
+          studentId,
+          day: entry.day,
+          period: entry.period,
+          subject: entry.subject,
+          className: entry.className || className,
+          teacher: entry.teacher.name,
+          room: entry.room,
+        },
+      });
+    }
   }
 
   async getAllStudents() {
@@ -222,12 +265,13 @@ export class StudentsService {
   }
 
   async updateStudent(studentId: string, name: string, className: string) {
-    return this.prisma.student.update({
-      where: { id: studentId },
-      data: {
-        name,
-        className,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const student = await tx.student.update({
+        where: { id: studentId },
+        data: { name, className },
+      });
+      await this.syncStudentTimetable(tx, studentId, className);
+      return student;
     });
   }
 

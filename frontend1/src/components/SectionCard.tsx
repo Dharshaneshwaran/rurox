@@ -1,54 +1,44 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-type SectionCardProps = {
+interface SectionCardProps {
   title: string;
   subtitle?: string;
-  actions?: ReactNode;
   children: ReactNode;
   className?: string;
-  contentClassName?: string;
+  actions?: ReactNode;
   backgroundImage?: string;
-};
+}
 
-export default function SectionCard({
-  title,
-  subtitle,
+export default function SectionCard({ 
+  title, 
+  subtitle, 
+  children, 
+  className, 
   actions,
-  children,
-  className,
-  contentClassName,
-  backgroundImage,
+  backgroundImage 
 }: SectionCardProps) {
   return (
-    <section className={cn("relative overflow-hidden rounded-[24px] border border-border bg-surface shadow-sm transition-all duration-500 hover:shadow-md sm:rounded-[28px] lg:rounded-[32px]", className)}>
+    <div className={cn("relative rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm overflow-hidden", className)}>
       {backgroundImage && (
-        <div
-          className="absolute inset-0 opacity-[0.03] grayscale pointer-events-none"
-          style={{
-            backgroundImage: `url('${backgroundImage}')`,
+        <div 
+          className="absolute right-0 top-0 h-24 w-1/2 opacity-[0.04] pointer-events-none"
+          style={{ 
+            backgroundImage: `url(${backgroundImage})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center'
+            backgroundPosition: 'center',
+            maskImage: 'linear-gradient(to left, black, transparent)'
           }}
         />
       )}
-
-      <div className="relative z-10 flex flex-col gap-3 border-b border-border/10 bg-surface-subtle/80 px-5 py-4 backdrop-blur-sm sm:px-6 sm:py-5 lg:flex-row lg:items-start lg:justify-between lg:gap-5 lg:px-7 lg:py-6 xl:px-8">
-        <div className="min-w-0 space-y-1">
-          <h2 className="font-display text-lg font-bold tracking-tight text-primary sm:text-lg">
-            {title}
-          </h2>
-          {subtitle ? (
-            <p className="max-w-xl text-[12.5px] font-normal leading-relaxed text-primary/75">
-              {subtitle}
-            </p>
-          ) : null}
+      <div className="relative z-10 flex items-center justify-between border-b border-[var(--color-surface-subtle)] px-5 py-4">
+        <div>
+          <h2 className="text-[14px] font-semibold text-[var(--color-text)] leading-none">{title}</h2>
+          {subtitle && <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">{subtitle}</p>}
         </div>
-        {actions ? <div className="w-full lg:w-auto lg:shrink-0">{actions}</div> : null}
+        {actions && <div className="shrink-0">{actions}</div>}
       </div>
-      <div className={cn("relative z-10 px-5 py-5 sm:px-6 sm:py-6 lg:px-7 lg:py-7 xl:px-8", contentClassName)}>
-        {children}
-      </div>
-    </section>
+      <div className="relative z-10 p-5">{children}</div>
+    </div>
   );
 }

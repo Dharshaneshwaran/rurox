@@ -47,13 +47,50 @@ export class TimetablesService {
   }
 
   async create(payload: CreateTimetableDto) {
-    const { teacherId, day, period, subject, className, room } = payload;
-    const timetable = await this.prisma.timetable.upsert({
-      where: { teacherId_day_period: { teacherId, day, period } },
-      update: { subject, className, room: room ?? null },
-      create: { teacherId, day, period, subject, className, room },
-    });
+    const { teacherId, day, period, subject, className, room, schoolClassId } = payload;
+    
+    return this.prisma.$transaction(async (tx) => {
+      const timetable = await tx.timetable.upsert({
+        where: { teacherId_day_period: { teacherId, day, period } },
+        update: { subject, className, room: room ?? null, schoolClassId },
+        create: { teacherId, day, period, subject, className, room, schoolClassId },
+        include: { teacher: true }
+      });
 
-    return { timetable };
+      // Sync to students in this class
+      if (schoolClassId || className) {
+        const students = await tx.student.findMany({
+          where: {
+            OR: [
+              { schoolClassId: schoolClassId || undefined },
+              { className: className || undefined }
+            ]
+          }
+        });
+
+        for (const student of students) {
+          await tx.studentTimetable.upsert({
+            where: { studentId_day_period: { studentId: student.id, day, period } },
+            update: { 
+              subject, 
+              className: className || '', 
+              teacher: timetable.teacher.name, 
+              room: room || null 
+            },
+            create: { 
+              studentId: student.id, 
+              day, 
+              period, 
+              subject, 
+              className: className || '', 
+              teacher: timetable.teacher.name, 
+              room: room || null 
+            },
+          });
+        }
+      }
+
+      return { timetable };
+    });
   }
 }

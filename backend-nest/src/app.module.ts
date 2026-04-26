@@ -12,6 +12,7 @@ import { LeavesModule } from './leaves/leaves.module';
 import { ExamsModule } from './exams/exams.module';
 import { NoticesModule } from './notices/notices.module';
 import { AttendanceModule } from './attendance/attendance.module';
+import { SchoolClassesModule } from './school-classes/school-classes.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AttendanceModule } from './attendance/attendance.module';
     ExamsModule,
     NoticesModule,
     AttendanceModule,
+    SchoolClassesModule,
   ],
   controllers: [],
   providers: [],

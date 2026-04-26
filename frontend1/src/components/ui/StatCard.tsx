@@ -13,9 +13,27 @@ type StatCardProps = {
 };
 
 const toneClasses: Record<NonNullable<StatCardProps["tone"]>, string> = {
-  default: "border-foreground/10",
-  accent: "border-primary/30 bg-primary-soft/55",
-  success: "border-success bg-success-soft/65",
+  default: "border-[var(--color-border)] bg-[var(--color-surface)]",
+  accent: "border-[var(--color-accent-soft)] bg-[var(--color-accent-soft)]",
+  success: "border-[var(--color-success-soft)] bg-[var(--color-success-soft)]",
+};
+
+const labelTone: Record<NonNullable<StatCardProps["tone"]>, string> = {
+  default: "text-[var(--color-text-muted)]",
+  accent: "text-[var(--color-accent)]",
+  success: "text-[var(--color-success)]",
+};
+
+const valueTone: Record<NonNullable<StatCardProps["tone"]>, string> = {
+  default: "text-[var(--color-text)]",
+  accent: "text-[var(--color-accent)]",
+  success: "text-[var(--color-success)]",
+};
+
+const iconTone: Record<NonNullable<StatCardProps["tone"]>, string> = {
+  default: "bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)]",
+  accent: "bg-[var(--color-surface)] text-[var(--color-accent)]",
+  success: "bg-[var(--color-surface)] text-[var(--color-success)]",
 };
 
 export default function StatCard({
@@ -31,43 +49,42 @@ export default function StatCard({
   const supportingText = helper ?? detail;
 
   return (
-    <section
+    <div
       className={cn(
-        "relative group overflow-hidden rounded-[24px] border border-border bg-surface p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] sm:rounded-[28px] sm:p-6 lg:rounded-[32px] lg:p-7",
+        "relative overflow-hidden rounded-xl border p-5 shadow-sm transition-shadow hover:shadow-md",
         toneClasses[tone],
         className
       )}
     >
       {backgroundImage && (
-        <div
-          className="absolute inset-0 opacity-[0.04] grayscale pointer-events-none"
-          style={{
-            backgroundImage: `url('${backgroundImage}')`,
+        <div 
+          className="absolute right-0 top-0 h-full w-1/2 opacity-[0.03] pointer-events-none"
+          style={{ 
+            backgroundImage: `url(${backgroundImage})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center'
+            backgroundPosition: 'center',
+            maskImage: 'linear-gradient(to left, black, transparent)'
           }}
         />
       )}
-
-      <div className="relative z-10 flex h-full flex-col items-start justify-between gap-4 sm:gap-5">
-        <div className="flex w-full items-center justify-between">
-            <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary/65">
-             {label}
-           </p>
-           {icon ? (
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/10 bg-surface-subtle text-primary transition-colors group-hover:border-accent group-hover:text-accent">
-                {icon}
-              </div>
-           ) : null}
-        </div>
-        
-        <div>
-          <p className="font-display text-2xl font-bold tracking-tight text-primary sm:text-3xl">
+      <div className="relative z-10 flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <p className={cn("text-[11px] font-semibold uppercase tracking-[0.1em]", labelTone[tone])}>
+            {label}
+          </p>
+          <p className={cn("mt-2 text-2xl font-bold tracking-tight", valueTone[tone])}>
             {value}
           </p>
-          {supportingText ? <p className="mt-2 max-w-[200px] text-[12px] font-medium leading-relaxed text-primary/75">{supportingText}</p> : null}
+          {supportingText && (
+            <p className="mt-1 text-[12px] text-[var(--color-text-muted)] leading-relaxed">{supportingText}</p>
+          )}
         </div>
+        {icon && (
+          <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg shadow-sm", iconTone[tone])}>
+            {icon}
+          </div>
+        )}
       </div>
-    </section>
+    </div>
   );
 }

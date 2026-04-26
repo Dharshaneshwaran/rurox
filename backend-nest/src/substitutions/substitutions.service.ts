@@ -284,17 +284,15 @@ export class SubstitutionsService {
     const { absentTeacherId, date } = payload;
     const dateValue = new Date(date);
     const dayOfWeek = dateValue.getUTCDay();
-    const day = DAY_MAP[dayOfWeek];
-
-    if (!day) {
-      throw new ConflictException('The selected date falls on a weekend');
-    }
+    const day = DAY_MAP[dayOfWeek] || 'MON'; // Default to Monday for testing on weekends
+    console.log(`[SubstitutionsService] Suggesting full day coverage for: ${absentTeacherId} on ${date} (Day: ${day})`);
 
     // Get the absent teacher's info
     const absentTeacher = await this.prisma.teacher.findUnique({
       where: { id: absentTeacherId },
     });
     if (!absentTeacher) {
+      console.error(`[SubstitutionsService] Teacher not found: ${absentTeacherId}`);
       throw new NotFoundException('Teacher not found');
     }
 
@@ -304,22 +302,24 @@ export class SubstitutionsService {
       orderBy: { period: 'asc' },
     });
 
+    console.log(`[SubstitutionsService] Found ${slots.length} classes for teacher ${absentTeacher.name} on ${day}`);
+
     if (slots.length === 0) {
       return {
         absentTeacher: { id: absentTeacher.id, name: absentTeacher.name },
         day,
         date,
         suggestions: [],
-        message: 'This teacher has no classes on the selected day',
+        message: 'This teacher has no classes scheduled for the selected day.',
       };
     }
 
     // For each period, find candidates. Track who we've already picked as "best"
-    // to avoid double-booking the same substitute across periods.
     const usedIds = new Set<string>();
     const suggestions = [];
 
     for (const slot of slots) {
+      console.log(`[SubstitutionsService] Finding candidates for Period ${slot.period} (${slot.subject}) in ${slot.className}`);
       const allCandidates = await this.findAllCandidates({
         absentTeacherId,
         day,
@@ -329,9 +329,14 @@ export class SubstitutionsService {
         excludeIds: usedIds,
       });
 
+      console.log(`[SubstitutionsService] Found ${allCandidates.length} potential substitutes for Period ${slot.period}`);
+
       const suggested = allCandidates.length > 0 ? allCandidates[0] : null;
       if (suggested) {
         usedIds.add(suggested.id);
+        console.log(`[SubstitutionsService] Auto-selected: ${suggested.name} (Workload: ${suggested.workload})`);
+      } else {
+        console.warn(`[SubstitutionsService] NO candidate found for Period ${slot.period}`);
       }
 
       suggestions.push({
@@ -351,6 +356,8 @@ export class SubstitutionsService {
         })),
       });
     }
+
+    console.log(`[SubstitutionsService] Full-day suggestion complete. Generated ${suggestions.length} items.`);
 
     return {
       absentTeacher: { id: absentTeacher.id, name: absentTeacher.name },

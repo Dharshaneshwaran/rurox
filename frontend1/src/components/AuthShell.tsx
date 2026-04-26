@@ -31,9 +31,9 @@ export default function AuthShell({
 }: AuthShellProps) {
   return (
     <div className="min-h-screen bg-background px-4 py-4 sm:px-6 lg:p-6">
-      <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-[1500px] overflow-hidden border border-border bg-white lg:grid-cols-[1.1fr_0.9fr]">
-        <section className="relative flex flex-col justify-between border-b border-border bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(241,236,229,0.92))] p-8 sm:p-10 lg:border-b-0 lg:border-r lg:p-12">
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(194,65,12,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(194,65,12,0.06)_1px,transparent_1px)] bg-[size:48px_48px]" />
+      <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-[1500px] overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] lg:grid-cols-[1.1fr_0.9fr]">
+        <section className="relative flex flex-col justify-between border-b border-[var(--color-border)] bg-[linear-gradient(180deg,var(--auth-gradient-1),var(--auth-gradient-2))] p-8 sm:p-10 lg:border-b-0 lg:border-r lg:p-12">
+          <div className="absolute inset-0 bg-[linear-gradient(var(--auth-pattern)_1px,transparent_1px),linear-gradient(90deg,var(--auth-pattern)_1px,transparent_1px)] bg-[size:48px_48px]" />
           <div className="relative">
             <Link href="/" className="inline-flex items-center gap-3 text-foreground transition hover:text-accent">
               <AppMark className="h-10 w-10" />
@@ -62,14 +62,14 @@ export default function AuthShell({
 
             <div className="mt-10 grid gap-4 sm:grid-cols-2">
               {highlights.map((item) => (
-                <div key={item.label} className="border border-border bg-white/92 p-5">
-                  <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
+                <div key={item.label} className="border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+                  <p className="text-xs font-medium uppercase tracking-[0.24em] text-[var(--color-text-muted)]">
                     {item.label}
                   </p>
-                  <p className="mt-3 font-display text-3xl tracking-[-0.04em] text-foreground">
+                  <p className="mt-3 font-display text-3xl tracking-[-0.04em] text-[var(--color-text)]">
                     {item.value}
                   </p>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  <p className="mt-2 text-sm leading-6 text-[var(--color-text-muted)]">
                     {item.description}
                   </p>
                 </div>
@@ -77,20 +77,20 @@ export default function AuthShell({
             </div>
           </div>
 
-          <div className="relative mt-12 grid gap-4 border border-border bg-white/95 p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center">
-            <div className="flex h-11 w-11 items-center justify-center border border-border text-accent">
+          <div className="relative mt-12 grid gap-4 border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center">
+            <div className="flex h-11 w-11 items-center justify-center border border-[var(--color-border)] text-[var(--color-accent)]">
               <ShieldIcon className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm font-medium text-foreground">
+              <p className="text-sm font-medium text-[var(--color-text)]">
                 Approved access only
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 text-sm text-[var(--color-text-muted)]">
                 Role-aware access keeps admin operations and teacher views scoped
                 correctly.
               </p>
             </div>
-            <div className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.22em] text-accent">
+            <div className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.22em] text-[var(--color-accent)]">
               Verified <SparkIcon className="h-4 w-4" />
             </div>
           </div>
@@ -108,7 +108,7 @@ export default function AuthShell({
               {description}
             </p>
 
-            <div className="mt-10 border border-border bg-background/70 p-6 sm:p-8">
+            <div className="mt-10 border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-6 sm:p-8">
               {children}
             </div>
 

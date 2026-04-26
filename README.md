@@ -23,6 +23,12 @@ Built with a robust **NestJS (Node.js)** backend and a sleek, modern **Next.js (
 
 ---
 
+## 📖 Documentation
+
+- **[System Flow & Architecture](file:///d:/projects/rurox/docs/system_flow.md)**: A detailed mermaid diagram and breakdown of the core orchestration logic, role branching, and mobile responsiveness.
+
+---
+
 ## 🖥️ Frontend Pages & Purposes
 
 Here is a breakdown of all the pages available in the frontend application and their roles:

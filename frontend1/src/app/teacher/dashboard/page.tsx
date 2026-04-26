@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import AddSubjectModal from "@/components/AddSubjectModal";
 import AddSpecialClassModal from "@/components/AddSpecialClassModal";
 import SectionCard from "@/components/SectionCard";
@@ -60,6 +61,7 @@ function TimetableSkeleton() {
 }
 
 export default function TeacherDashboardPage() {
+  const router = useRouter();
   const { token, user, loading } = useAuth({
     role: "TEACHER",
     redirectTo: "/teacher/login",
@@ -208,6 +210,17 @@ export default function TeacherDashboardPage() {
     }
   };
 
+  const handleEntryClick = (entry: TimetableEntry) => {
+    if (entry.schoolClassId) {
+      router.push(`/teacher/classes/${entry.schoolClassId}`);
+    } else if (entry.className) {
+      // Fallback for mock data or entries without schoolClassId
+      // We can search for the class by name or just alert
+      // For now, let's try to navigate to a generic search or handle it
+      console.log("No schoolClassId for entry:", entry);
+    }
+  };
+
   const timetableWithSubs = useMemo(() => {
     const marked = [...timetables];
     substitutions.forEach((sub) => {
@@ -292,7 +305,11 @@ export default function TeacherDashboardPage() {
             {dashboardLoading ? (
               <TimetableSkeleton />
             ) : (
-              <TimetableGrid entries={timetableWithSubs} onAddSubject={handleAddSubject} />
+              <TimetableGrid 
+                entries={timetableWithSubs} 
+                onAddSubject={handleAddSubject} 
+                onEntryClick={handleEntryClick}
+              />
             )}
           </SectionCard>
 

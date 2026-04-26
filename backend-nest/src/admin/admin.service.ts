@@ -17,6 +17,11 @@ export class AdminService {
         approved: true,
         canCreateStudents: true,
         createdAt: true,
+        student: {
+          select: {
+            className: true,
+          }
+        }
       },
       orderBy: { createdAt: 'asc' },
     });
@@ -34,6 +39,11 @@ export class AdminService {
         approved: true,
         canCreateStudents: true,
         createdAt: true,
+        student: {
+          select: {
+            className: true,
+          }
+        }
       },
       orderBy: { createdAt: 'desc' },
     });

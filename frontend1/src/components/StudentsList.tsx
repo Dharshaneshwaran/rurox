@@ -19,6 +19,7 @@ interface StudentsListProps {
   onRemoveTeacher?: (studentId: string, teacherId: string) => void;
   onAssignTimetable?: (studentId: string) => void;
   onViewTimetable?: (studentId: string) => void;
+  onViewProfile?: (studentId: string) => void;
   loading?: boolean;
 }
 
@@ -28,6 +29,7 @@ export default function StudentsList({
   onRemoveTeacher,
   onAssignTimetable,
   onViewTimetable,
+  onViewProfile,
   loading = false,
 }: StudentsListProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -138,6 +140,15 @@ export default function StudentsList({
                     onClick={() => onViewTimetable(student.id)}
                   >
                     View Timetable
+                  </Button>
+                )}
+                {onViewProfile && (
+                  <Button
+                    size="sm"
+                    variant="primary"
+                    onClick={() => onViewProfile(student.id)}
+                  >
+                    View Profile
                   </Button>
                 )}
               </div>

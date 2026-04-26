@@ -44,6 +44,14 @@ export class AuthService {
       throw new UnauthorizedException('Your account is pending admin approval');
     }
 
+    let studentData = null;
+    if (user.role === 'STUDENT' && user.studentId) {
+      studentData = await this.prisma.student.findUnique({
+        where: { id: user.studentId },
+        select: { className: true, schoolClassId: true },
+      });
+    }
+
     const token = jwt.sign(
       {
         id: user.id,
@@ -67,6 +75,8 @@ export class AuthService {
         teacherId: user.teacherId ?? null,
         studentId: user.studentId ?? null,
         canCreateStudents: user.canCreateStudents,
+        className: studentData?.className ?? null,
+        schoolClassId: studentData?.schoolClassId ?? null,
       },
     };
   }
@@ -74,10 +84,30 @@ export class AuthService {
   async me(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, name: true, email: true, role: true, teacherId: true, studentId: true, canCreateStudents: true },
+      select: { 
+        id: true, 
+        name: true, 
+        email: true, 
+        role: true, 
+        teacherId: true, 
+        studentId: true, 
+        canCreateStudents: true,
+        student: {
+          select: { className: true, schoolClassId: true }
+        }
+      },
     });
 
-    return { user };
+    if (!user) return { user: null };
+
+    return { 
+      user: {
+        ...user,
+        className: user.student?.className ?? null,
+        schoolClassId: user.student?.schoolClassId ?? null,
+        student: undefined
+      } 
+    };
   }
 
   async signup(name: string, emailStr: string, passwordStr: string) {
@@ -140,6 +170,52 @@ export class AuthService {
       }
       throw new BadRequestException('Signup failed');
     }
+  }
+
+  async updateProfile(userId: string, name?: string, emailStr?: string) {
+    const data: any = {};
+    if (name) data.name = name;
+    if (emailStr) data.email = emailStr.toLowerCase().trim();
+
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data,
+      include: { teacher: true, student: true },
+    });
+
+    // Sync names if linked
+    if (name) {
+      if (user.teacherId) {
+        await this.prisma.teacher.update({
+          where: { id: user.teacherId },
+          data: { name },
+        });
+      }
+      if (user.studentId) {
+        await this.prisma.student.update({
+          where: { id: user.studentId },
+          data: { name },
+        });
+      }
+    }
+
+    return {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    };
+  }
+
+  async updatePassword(userId: string, passwordStr: string) {
+    const hashedPassword = await bcrypt.hash(passwordStr.trim(), 10);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+    return { message: 'Password updated successfully' };
   }
 
   private async sendAdminApprovalEmail(payload: {

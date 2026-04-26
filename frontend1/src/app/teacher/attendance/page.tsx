@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import TeacherLayout from "@/components/TeacherLayout";
 import SectionCard from "@/components/SectionCard";
 import PageHeader from "@/components/ui/PageHeader";
@@ -26,9 +27,12 @@ interface ClassAttendanceData {
   date: string;
 }
 
-export default function TeacherAttendancePage() {
+function AttendanceContent() {
   const { token, user, loading } = useAuth({ role: "TEACHER", redirectTo: "/teacher/login" });
-  const [selectedClass, setSelectedClass] = useState("");
+  const searchParams = useSearchParams();
+  const urlClass = searchParams.get("className");
+
+  const [selectedClass, setSelectedClass] = useState(urlClass || "");
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -58,13 +62,22 @@ export default function TeacherAttendancePage() {
     if (!loading) void loadClasses();
   }, [loading, loadClasses]);
 
-  const fetchAttendance = async () => {
-    if (!token || !selectedClass || !selectedDate) return;
+  // Auto-fetch if class is provided in URL
+  useEffect(() => {
+    if (token && urlClass && classes.includes(urlClass)) {
+      setSelectedClass(urlClass);
+      void fetchAttendance(urlClass);
+    }
+  }, [token, urlClass, classes]);
+
+  const fetchAttendance = async (classNameOverride?: string) => {
+    const targetClass = classNameOverride || selectedClass;
+    if (!token || !targetClass || !selectedDate) return;
     setFetching(true);
     setError(null);
     try {
       const data = await apiFetch<ClassAttendanceData>(
-        `/api/attendance/class?className=${encodeURIComponent(selectedClass)}&date=${selectedDate}`,
+        `/api/attendance/class?className=${encodeURIComponent(targetClass)}&date=${selectedDate}`,
         {},
         token
       );
@@ -243,5 +256,13 @@ export default function TeacherAttendancePage() {
         )}
       </div>
     </TeacherLayout>
+  );
+}
+
+export default function TeacherAttendancePage() {
+  return (
+    <Suspense fallback={null}>
+      <AttendanceContent />
+    </Suspense>
   );
 }

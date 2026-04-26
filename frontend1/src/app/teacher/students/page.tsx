@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import StudentsList from "@/components/StudentsList";
 import AssignStudentTimetableModal from "@/components/AssignStudentTimetableModal";
 import SectionCard from "@/components/SectionCard";
@@ -19,6 +20,7 @@ type StudentWithTeachers = Student & {
 };
 
 export default function TeacherStudentsPage() {
+  const router = useRouter();
   const { token, user, loading } = useAuth({
     role: "TEACHER",
     redirectTo: "/teacher/login",
@@ -199,6 +201,7 @@ export default function TeacherStudentsPage() {
                 <StudentsList
                   students={classStudents}
                   loading={pageLoading}
+                  onViewProfile={(studentId) => router.push(`/teacher/students/${studentId}`)}
                   onAssignTimetable={(studentId) => {
                     const student = students.find((s) => s.id === studentId);
                     if (student) {

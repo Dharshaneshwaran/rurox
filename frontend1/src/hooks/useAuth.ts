@@ -65,5 +65,10 @@ export const useAuth = (options?: { role?: Role; redirectTo?: string }) => {
     setToken(null);
   };
 
-  return { user, token, loading, clear };
+  const updateStoredUser = (newUser: User) => {
+    localStorage.setItem(USER_KEY, JSON.stringify(newUser));
+    setUser(newUser);
+  };
+
+  return { user, token, loading, clear, setUser: updateStoredUser };
 };

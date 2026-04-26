@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { TimetableEntry } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { PlusIcon } from "@/components/icons";
+import Badge from "@/components/ui/Badge";
 
 const days = [
   { key: "MON", label: "Monday" },
@@ -18,12 +19,14 @@ const periods = Array.from({ length: 8 }, (_, index) => index + 1);
 type TimetableGridProps = {
   entries: TimetableEntry[];
   onAddSubject?: (day: string, period: number) => void;
+  onEntryClick?: (entry: TimetableEntry) => void;
   isTeacher?: boolean;
 };
 
 export default function TimetableGrid({
   entries,
   onAddSubject,
+  onEntryClick,
 }: TimetableGridProps) {
   const today = useMemo(() => {
     const dayIndex = new Date().getDay();
@@ -36,6 +39,8 @@ export default function TimetableGrid({
     };
     return map[dayIndex] ?? null;
   }, []);
+  
+  const [activeDay, setActiveDay] = useState<string>(today || "MON");
 
   const byKey = useMemo(() => {
     const map = new Map<string, TimetableEntry>();
@@ -47,21 +52,39 @@ export default function TimetableGrid({
 
   return (
     <div className="space-y-5">
-      <div className="space-y-4 lg:hidden">
+      {/* Mobile Day Selector */}
+      <div className="flex gap-1 overflow-x-auto pb-1 lg:hidden no-scrollbar">
         {days.map((day) => (
-          <section key={day.key} className="border border-border bg-white">
+          <button
+            key={day.key}
+            onClick={() => setActiveDay(day.key)}
+            className={cn(
+              "flex-1 min-w-[70px] px-3 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all",
+              activeDay === day.key 
+                ? "bg-[var(--color-primary)] text-white shadow-[0_4px_12px_rgba(var(--color-primary-rgb),0.3)] scale-105" 
+                : "bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)] hover:bg-[var(--color-border)]"
+            )}
+          >
+            {day.key}
+          </button>
+        ))}
+      </div>
+
+      <div className="space-y-4 lg:hidden">
+        {days.filter(d => d.key === activeDay).map((day) => (
+          <section key={day.key} className="border border-border bg-white rounded-2xl overflow-hidden shadow-sm">
             <div
               className={cn(
                 "flex items-center justify-between border-b border-border px-4 py-3",
-                today === day.key && "bg-accent-soft/60"
+                today === day.key ? "bg-indigo-50" : "bg-zinc-50"
               )}
             >
               <h3 className="font-display text-xl tracking-[-0.03em] text-foreground">
                 {day.label}
               </h3>
-              <span className="text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
-                8 periods
-              </span>
+              {today === day.key && (
+                 <Badge variant="accent">Today</Badge>
+              )}
             </div>
             <div className="divide-y divide-border">
               {periods.map((period) => {
@@ -76,8 +99,10 @@ export default function TimetableGrid({
                     </div>
                     {entry ? (
                       <div
+                        onClick={() => onEntryClick?.(entry)}
                         className={cn(
                           "rounded-2xl border p-4 min-w-0 flex-1 shadow-sm",
+                          onEntryClick && "cursor-pointer hover:border-[var(--color-primary)] hover:shadow-md transition-all",
                           entry.isSubstitution
                             ? "border-emerald-200 bg-emerald-50/80"
                             : "border-zinc-200 bg-white"
@@ -170,8 +195,10 @@ export default function TimetableGrid({
                   >
                     {entry ? (
                       <div
+                        onClick={() => onEntryClick?.(entry)}
                         className={cn(
                           "h-full rounded-xl border p-2.5 transition-all shadow-sm",
+                          onEntryClick && "cursor-pointer hover:border-[var(--color-primary)] hover:shadow-md",
                           entry.isSubstitution
                             ? "border-emerald-200 bg-emerald-50/80"
                             : "border-zinc-200 bg-white"

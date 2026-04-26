@@ -23,75 +23,68 @@ export default function PageHeader({
   backgroundImage,
 }: PageHeaderProps) {
   const resolvedEyebrow = eyebrow ?? kicker ?? "";
-  const isCommand = variant === "command";
+
+  if (variant === "command") {
+    return (
+      <div className="relative overflow-hidden rounded-[32px] border border-[var(--color-border)] bg-[var(--color-surface)] p-8 shadow-sm">
+        {backgroundImage && (
+          <div 
+            className="absolute right-0 top-0 h-full w-1/3 opacity-10 pointer-events-none"
+            style={{ 
+              backgroundImage: `url(${backgroundImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              maskImage: 'linear-gradient(to left, black, transparent)'
+            }}
+          />
+        )}
+        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-4">
+            {resolvedEyebrow && (
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[var(--color-primary)]">
+                {resolvedEyebrow}
+              </p>
+            )}
+            <h1 className="text-4xl font-black tracking-tight text-[var(--color-text)] sm:text-5xl">
+              {title}
+            </h1>
+            {description && (
+              <p className="max-w-2xl text-base font-medium leading-relaxed text-[var(--color-text-muted)]">
+                {description}
+              </p>
+            )}
+            {meta && (
+              <div className="flex flex-wrap items-center gap-3 pt-2">{meta}</div>
+            )}
+          </div>
+          {actions && (
+            <div className="flex flex-wrap items-center gap-3 lg:justify-end">{actions}</div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <header
-      className={cn(
-        "relative flex flex-col gap-4 overflow-hidden rounded-[28px] border p-5 shadow-lg transition-all duration-500 sm:p-6 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:rounded-[32px] lg:p-8",
-        isCommand
-          ? "border-primary/20 bg-primary text-white shadow-primary/30"
-          : "border-border bg-surface shadow-card"
-      )}
-    >
-      {backgroundImage && (
-        <div
-          className={cn(
-            "absolute inset-0 pointer-events-none transition-opacity duration-700",
-            isCommand ? "opacity-[0.06] grayscale" : "opacity-[0.04] grayscale"
-          )}
-          style={{
-            backgroundImage: `url('${backgroundImage}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-        />
-      )}
-
-      {isCommand && (
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(15,35,18,0.14),rgba(15,35,18,0.02))] pointer-events-none" />
-      )}
-
-      <div className="relative z-10 space-y-3 max-w-4xl">
-        <div className="flex items-center gap-2">
-          {isCommand && <div className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)] shadow-[0_0_8px_var(--color-brand)] animate-pulse" />}
-          <p className={cn(
-            "text-[9px] font-bold uppercase tracking-[0.25em]",
-            isCommand ? "text-secondary/75" : "text-primary/65"
-          )}>
+    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between animate-fade-in">
+      <div className="min-w-0 flex-1">
+        {resolvedEyebrow && (
+          <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--color-primary)]">
             {resolvedEyebrow}
           </p>
-        </div>
-
-        <div className="space-y-2">
-          <h1 className={cn(
-            "font-display text-2xl font-bold tracking-[-0.02em] sm:text-3xl lg:text-3xl",
-            isCommand ? "text-white" : "text-primary"
-          )}>
-            {title}
-          </h1>
-          {description ? (
-            <p className={cn(
-              "max-w-2xl text-[13px] font-normal leading-6 sm:text-[13.5px]",
-              isCommand ? "text-white/80" : "text-primary/75"
-            )}>
-              {description}
-            </p>
-          ) : null}
-        </div>
-
-        {meta ? (
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            {meta}
-          </div>
-        ) : null}
+        )}
+        <h1 className="text-[22px] font-bold text-[var(--color-text)] leading-tight">{title}</h1>
+        {description && (
+          <p className="mt-1 text-[13px] text-[var(--color-text-muted)] leading-relaxed max-w-2xl">{description}</p>
+        )}
+        {meta && (
+          <div className="mt-3 flex flex-wrap items-center gap-2">{meta}</div>
+        )}
       </div>
 
-      {actions ? (
-        <div className="relative z-10 flex flex-wrap items-center gap-4 lg:shrink-0">
-          {actions}
-        </div>
-      ) : null}
-    </header>
+      {actions && (
+        <div className="flex flex-wrap items-center gap-2 shrink-0">{actions}</div>
+      )}
+    </div>
   );
 }

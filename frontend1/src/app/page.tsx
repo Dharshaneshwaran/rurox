@@ -61,7 +61,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="admin-theme flex min-h-screen w-full font-body">
+    <div className="flex min-h-screen w-full font-body bg-[var(--color-background)]">
       {/* Left Panel */}
       <div className="hidden lg:flex flex-col justify-center w-1/2 spine-gradient text-white p-16 xl:p-24 relative overflow-hidden">
         {/* Subtle grid background */}
@@ -71,39 +71,39 @@ export default function LoginPage() {
         />
 
         <div className="max-w-xl z-10 relative">
-          <h1 className="text-5xl xl:text-6xl font-display font-bold mb-6 tracking-tight">Ruroxz Time Management</h1>
+          <h1 className="text-5xl xl:text-6xl font-display font-bold mb-6 tracking-tight text-white">Ruroxz Time Management</h1>
           <div className="w-12 h-1 bg-white/20 mb-8"></div>
 
-          <p className="text-lg xl:text-xl text-[#8E959E] mb-12 leading-relaxed">
+          <p className="text-lg xl:text-xl text-white/70 mb-12 leading-relaxed">
             Smart timetable management—automated assignments, instant substitutions, zero confusion.
           </p>
 
           <div className="space-y-4">
-            <div className="bg-[#242629] border border-white/5 p-6 rounded-md">
+            <div className="bg-white/5 border border-white/10 p-6 rounded-xl backdrop-blur-sm">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
-                  <div className="w-2.5 h-2.5 rounded-full bg-white/70"></div>
+                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+                  <div className="w-2.5 h-2.5 rounded-full bg-white"></div>
                 </div>
                 <h3 className="font-semibold text-white">Real-time Allocation</h3>
               </div>
-              <p className="text-sm text-[#8E959E] pl-9">.....</p>
+              <p className="text-sm text-white/50 pl-9">Automated period management that adapts to daily changes instantly.</p>
             </div>
 
-            <div className="bg-[#242629] border border-white/5 p-6 rounded-md">
+            <div className="bg-white/5 border border-white/10 p-6 rounded-xl backdrop-blur-sm">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
-                  <svg className="w-3 h-3 text-white/70" fill="currentColor" viewBox="0 0 20 20">
+                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <h3 className="font-semibold text-white">Enterprise Security</h3>
               </div>
-              <p className="text-sm text-[#8E959E] pl-9">.....</p>
+              <p className="text-sm text-white/50 pl-9">Role-based access controls ensuring data integrity across the school.</p>
             </div>
           </div>
         </div>
 
-        <div className="absolute bottom-8 left-16 xl:left-24 text-[10px] uppercase tracking-[0.2em] text-[#8E959E]/50">
+        <div className="absolute bottom-8 left-16 xl:left-24 text-[10px] uppercase tracking-[0.2em] text-white/30">
           © 2026 Ruroxz Timetable Assignment Systems. All rights reserved.
         </div>
       </div>
@@ -113,35 +113,35 @@ export default function LoginPage() {
         <div className="flex-1 flex flex-col px-8 sm:px-16 pt-16 pb-8 max-w-[600px] w-full mx-auto justify-center">
 
           {/* Tabs */}
-          <div className="flex flex-wrap gap-6 border-b border-primary/10 mb-12 uppercase text-xs tracking-widest font-semibold text-primary/40">
+          <div className="flex flex-wrap gap-6 border-b border-[var(--color-primary)]/10 mb-12 uppercase text-xs tracking-widest font-semibold text-[var(--color-text-muted)]">
             <button
               onClick={() => { setActiveTab("ADMIN"); setError(null); }}
-              className={`pb-4 border-b-2 transition-colors ${activeTab === "ADMIN" ? "border-primary text-primary" : "border-transparent hover:text-primary/70"}`}
+              className={`pb-4 border-b-2 transition-colors ${activeTab === "ADMIN" ? "border-[var(--color-primary)] text-[var(--color-primary)]" : "border-transparent hover:text-[var(--color-primary)]/70"}`}
             >
               Administrator Login
             </button>
             <button
               onClick={() => { setActiveTab("TEACHER"); setError(null); }}
-              className={`pb-4 border-b-2 transition-colors ${activeTab === "TEACHER" ? "border-primary text-primary" : "border-transparent hover:text-primary/70"}`}
+              className={`pb-4 border-b-2 transition-colors ${activeTab === "TEACHER" ? "border-[var(--color-primary)] text-[var(--color-primary)]" : "border-transparent hover:text-[var(--color-primary)]/70"}`}
             >
               Teacher Portal
             </button>
             <button
               onClick={() => { setActiveTab("STUDENT"); setError(null); }}
-              className={`pb-4 border-b-2 transition-colors ${activeTab === "STUDENT" ? "border-primary text-primary" : "border-transparent hover:text-primary/70"}`}
+              className={`pb-4 border-b-2 transition-colors ${activeTab === "STUDENT" ? "border-[var(--color-primary)] text-[var(--color-primary)]" : "border-transparent hover:text-[var(--color-primary)]/70"}`}
             >
               Student Portal
             </button>
           </div>
 
           {/* Form Card */}
-          <div className="bg-white border text-left border-primary/10 shadow-[0_8px_30px_rgba(52,103,57,0.06)] rounded-sm p-10 pb-8 mb-10">
-            <h2 className="text-2xl font-semibold text-primary mb-2 font-display">Sign In</h2>
-            <p className="text-sm text-primary/60 mb-8">Enter your credentials to access the ledger.</p>
+          <div className="bg-[var(--color-surface)] border text-left border-[var(--color-border)] shadow-[var(--shadow-lg)] rounded-2xl p-10 pb-8 mb-10">
+            <h2 className="text-2xl font-semibold text-[var(--color-text)] mb-2 font-display tracking-tight">Sign In</h2>
+            <p className="text-sm text-[var(--color-text-muted)] mb-8">Enter your credentials to access the ledger.</p>
 
             <form onSubmit={onSubmit} className="space-y-6">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-primary mb-2">
+                <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-text-muted)] mb-2">
                   Institutional Email
                 </label>
                 <input
@@ -149,31 +149,31 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@school.edu"
-                  className="w-full bg-surface-subtle border-none text-sm px-4 py-3 focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-secondary/60"
+                  className="w-full bg-[var(--color-surface-subtle)] border border-[var(--color-border)] rounded-xl text-sm px-4 py-3 focus:ring-1 focus:ring-[var(--color-primary)] outline-none transition-all placeholder:text-[var(--color-text-muted)]/50"
                   required
                 />
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-primary mb-2">
+                  <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-text-muted)] mb-2">
                     Security Token
                   </label>
-                  <a href="#" className="text-[10px] font-bold uppercase tracking-[0.1em] text-primary/40 hover:text-primary">Recover?</a>
+                  <a href="#" className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]/60 hover:text-[var(--color-primary)]">Recover?</a>
                 </div>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-[#F3F4F6] border-none text-sm px-4 py-3 focus:ring-1 focus:ring-black outline-none transition-all placeholder:text-[#9CA3AF]"
+                  className="w-full bg-[var(--color-surface-subtle)] border border-[var(--color-border)] rounded-xl text-sm px-4 py-3 focus:ring-1 focus:ring-[var(--color-primary)] outline-none transition-all placeholder:text-[var(--color-text-muted)]/50"
                   required
                 />
               </div>
 
               <div className="flex items-center gap-2 pt-2">
-                <input type="checkbox" id="session" className="w-3.5 h-3.5 border-gray-300 rounded-sm text-primary focus:ring-primary" />
-                <label htmlFor="session" className="text-xs text-[#6B7280]">
+                <input type="checkbox" id="session" className="w-3.5 h-3.5 border-[var(--color-border)] rounded-sm text-[var(--color-primary)] focus:ring-[var(--color-primary)]" />
+                <label htmlFor="session" className="text-xs text-[var(--color-text-muted)]">
                   Maintain active session for 8 hours
                 </label>
               </div>
@@ -187,7 +187,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary hover:opacity-90 text-white text-[11px] font-bold uppercase tracking-[0.15em] py-4 px-4 transition-all flex justify-center items-center gap-2"
+                className="w-full bg-[var(--color-primary)] hover:opacity-90 text-white text-[11px] font-bold uppercase tracking-[0.15em] py-4 px-4 rounded-xl transition-all shadow-[0_4px_12px_rgba(var(--color-primary-rgb),0.3)] flex justify-center items-center gap-2"
               >
                 {loading
                   ? "INITIALIZING..."
