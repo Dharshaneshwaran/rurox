@@ -1,18 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
-
-const headlineFont = Manrope({
-  variable: "--font-headline",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const bodyFont = Inter({
-  variable: "--font-body",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -34,7 +21,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${headlineFont.variable} ${bodyFont.variable} h-full antialiased`}
+      className="h-full antialiased"
     >
       <body className="min-h-full font-body">
         {children}

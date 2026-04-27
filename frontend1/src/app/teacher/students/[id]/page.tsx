@@ -180,7 +180,14 @@ export default function TeacherStudentDetailPage() {
                    <Button variant="secondary" fullWidth size="sm">Message Parent</Button>
                    <Button variant="secondary" fullWidth size="sm">Add Internal Note</Button>
                    <Button variant="secondary" fullWidth size="sm">Generate Report</Button>
-                   <Button variant="danger" fullWidth size="sm" outline>Flag for Review</Button>
+                   <Button
+                     variant="danger"
+                     fullWidth
+                     size="sm"
+                     className="border-[var(--color-danger)] bg-transparent text-[var(--color-danger)] hover:bg-[var(--color-danger)] hover:text-white"
+                   >
+                     Flag for Review
+                   </Button>
                 </div>
              </SectionCard>
 

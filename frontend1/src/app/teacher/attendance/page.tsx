@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import TeacherLayout from "@/components/TeacherLayout";
 import SectionCard from "@/components/SectionCard";
 import PageHeader from "@/components/ui/PageHeader";
@@ -28,7 +28,7 @@ interface ClassAttendanceData {
 }
 
 function AttendanceContent() {
-  const { token, user, loading } = useAuth({ role: "TEACHER", redirectTo: "/teacher/login" });
+  const { token, loading } = useAuth({ role: "TEACHER", redirectTo: "/teacher/login" });
   const searchParams = useSearchParams();
   const urlClass = searchParams.get("className");
 
@@ -168,7 +168,11 @@ function AttendanceContent() {
                   className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm focus:border-accent focus:outline-none"
                 />
               </div>
-              <Button variant="accent" onClick={fetchAttendance} disabled={fetching || !selectedClass}>
+              <Button
+                variant="accent"
+                onClick={() => void fetchAttendance()}
+                disabled={fetching || !selectedClass}
+              >
                 {fetching ? "Loading..." : "Load Students"}
               </Button>
             </div>

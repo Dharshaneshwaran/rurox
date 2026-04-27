@@ -46,9 +46,9 @@
   --color-danger-soft: #fff1f2;
 
   /* Fonts */
-  --font-headline: var(--font-headline);
-  --font-display: var(--font-headline);
-  --font-body: var(--font-body);
+  --font-headline: "Aptos Display", "Segoe UI Variable Display", "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-display: "Aptos Display", "Segoe UI Variable Display", "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-body: "Aptos", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
   --font-mono: "Consolas", "Monaco", monospace;
 
   /* Shadows */
