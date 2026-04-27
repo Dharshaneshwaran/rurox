@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 
@@ -9,7 +9,7 @@ type MessageResponse = {
   message: string;
 };
 
-export default function RecoverPage() {
+function RecoverContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -209,5 +209,13 @@ export default function RecoverPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RecoverPage() {
+  return (
+    <Suspense fallback={null}>
+      <RecoverContent />
+    </Suspense>
   );
 }
