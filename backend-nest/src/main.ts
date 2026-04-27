@@ -10,7 +10,11 @@ async function bootstrap() {
     .map((origin) => origin.trim())
     .filter(Boolean);
   const allowedOrigins = Array.from(
-    new Set([...configuredOrigins, 'http://localhost:3000', 'http://127.0.0.1:3000']),
+    new Set([
+      ...configuredOrigins,
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+    ]),
   );
 
   app.enableCors({
@@ -18,8 +22,14 @@ async function bootstrap() {
     credentials: true,
   });
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true })
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
   );
-  await app.listen(process.env.PORT ?? 4000);
+  const port = Number(process.env.PORT ?? 4000);
+  await app.listen(port, '0.0.0.0');
+  console.log(`Server listening on port ${port}`);
 }
 bootstrap();
