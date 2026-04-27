@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
@@ -10,6 +11,7 @@ export default function TeacherLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -147,18 +149,36 @@ export default function TeacherLoginPage() {
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
                   <label className="font-label text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold" htmlFor="password">Security Token</label>
+                  <Link
+                    href={`/recover${email ? `?email=${encodeURIComponent(email)}` : ""}`}
+                    className="font-label text-[10px] uppercase tracking-[0.12em] text-on-surface-variant/70 transition-colors hover:text-on-surface"
+                  >
+                    Recover?
+                  </Link>
                 </div>
                 <div className="relative group">
                   <input
-                    className="w-full h-9 bg-surface-container-low border-0 focus:ring-1 focus:ring-primary text-sm font-body px-3 transition-all placeholder:text-outline-variant"
+                    className="w-full h-9 bg-surface-container-low border-0 focus:ring-1 focus:ring-primary text-sm font-body px-3 pr-11 transition-all placeholder:text-outline-variant"
                     id="password"
                     name="password"
-                    placeholder="••••••••"
+                    placeholder="????????"
                     required
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
+                  <button
+                    type="button"
+                    aria-label={showPassword ? "Hide security token" : "Show security token"}
+                    aria-pressed={showPassword}
+                    onClick={() => setShowPassword((current) => !current)}
+                    className="absolute inset-y-0 right-0 flex items-center px-3 text-on-surface-variant/70 transition-colors hover:text-on-surface"
+                  >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </button>
                   <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-primary group-focus-within:w-full transition-all duration-300"></div>
                 </div>
               </div>

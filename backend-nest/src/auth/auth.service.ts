@@ -7,6 +7,7 @@ import {
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 const jwtSecret = process.env.JWT_SECRET ?? 'change_me';
@@ -17,7 +18,10 @@ const adminApprovalEmail = process.env.ADMIN_APPROVAL_EMAIL ?? '';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly mailService: MailService
+  ) {}
 
   async login(emailStr: string, passwordStr: string) {
     const email = emailStr.toLowerCase().trim();
@@ -218,6 +222,55 @@ export class AuthService {
     return { message: 'Password updated successfully' };
   }
 
+  async requestPasswordReset(emailStr: string) {
+    const email = emailStr.toLowerCase().trim();
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      return {
+        message:
+          'If an account exists for that email, a password reset link has been sent.',
+      };
+    }
+
+    const token = this.createPasswordResetToken(user.id, user.password);
+    const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+    const resetUrl = `${frontendUrl}/recover?token=${encodeURIComponent(token)}`;
+
+    await this.mailService.sendPasswordResetEmail(
+      user.email,
+      user.name ?? user.email,
+      resetUrl
+    );
+
+    return {
+      message:
+        'If an account exists for that email, a password reset link has been sent.',
+    };
+  }
+
+  async validatePasswordResetToken(token?: string) {
+    await this.resolvePasswordResetToken(token);
+    return { valid: true };
+  }
+
+  async resetPassword(token: string, passwordStr: string) {
+    const password = passwordStr.trim();
+    if (password.length < 6) {
+      throw new BadRequestException('Password must be at least 6 characters');
+    }
+
+    const user = await this.resolvePasswordResetToken(token);
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+
+    return { message: 'Password reset successfully' };
+  }
+
   private async sendAdminApprovalEmail(payload: {
     name: string;
     email: string;
@@ -309,5 +362,53 @@ export class AuthService {
         `Failed to send pending email: ${response.status} ${errorBody}`
       );
     }
+  }
+
+  private createPasswordResetToken(userId: string, passwordHash: string) {
+    return jwt.sign(
+      { sub: userId, purpose: 'password-reset' },
+      this.getPasswordResetSecret(passwordHash),
+      { expiresIn: '1h' }
+    );
+  }
+
+  private async resolvePasswordResetToken(token?: string) {
+    if (!token) {
+      throw new BadRequestException('Reset token is required');
+    }
+
+    const decoded = jwt.decode(token);
+    const userId =
+      decoded && typeof decoded === 'object' && typeof decoded.sub === 'string'
+        ? decoded.sub
+        : null;
+
+    if (!userId) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    try {
+      const verified = jwt.verify(
+        token,
+        this.getPasswordResetSecret(user.password)
+      ) as { purpose?: string };
+
+      if (verified.purpose !== 'password-reset') {
+        throw new BadRequestException('Invalid or expired reset token');
+      }
+    } catch {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    return user;
+  }
+
+  private getPasswordResetSecret(passwordHash: string) {
+    return `${jwtSecret}:${passwordHash}`;
   }
 }

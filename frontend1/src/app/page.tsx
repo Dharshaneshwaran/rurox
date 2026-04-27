@@ -159,7 +159,7 @@ export default function LoginPage() {
                   <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-text-muted)] mb-2">
                     Security Token
                   </label>
-                  <a href="#" className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]/60 hover:text-[var(--color-primary)]">Recover?</a>
+                  <Link href={`/recover${email ? `?email=${encodeURIComponent(email)}` : ""}`} className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]/60 hover:text-[var(--color-primary)]">Recover?</Link>
                 </div>
                 <input
                   type="password"

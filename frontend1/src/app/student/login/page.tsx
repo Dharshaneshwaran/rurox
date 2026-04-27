@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -133,7 +134,15 @@ export default function StudentLoginPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-label text-[11px] uppercase tracking-widest text-muted-foreground font-semibold" htmlFor="password">Password</label>
+                <div className="flex items-center justify-between">
+                  <label className="font-label text-[11px] uppercase tracking-widest text-muted-foreground font-semibold" htmlFor="password">Password</label>
+                  <Link
+                    href={`/recover${email ? `?email=${encodeURIComponent(email)}` : ""}`}
+                    className="font-label text-[10px] uppercase tracking-[0.12em] text-muted-foreground/70 transition-colors hover:text-foreground"
+                  >
+                    Recover?
+                  </Link>
+                </div>
                 <input
                   className="w-full h-10 bg-surface-subtle border border-border focus:ring-1 focus:ring-primary text-sm font-body px-3 transition-all placeholder:text-muted-foreground rounded-md"
                   id="password"
