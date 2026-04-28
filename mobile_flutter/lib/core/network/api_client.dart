@@ -27,6 +27,9 @@ class ApiClient {
   Future<dynamic> post(String path, {Map<String, dynamic>? body}) =>
       _send('POST', path, body: body);
 
+  Future<dynamic> put(String path, {Map<String, dynamic>? body}) =>
+      _send('PUT', path, body: body);
+
   Future<dynamic> _send(
     String method,
     String path, {
@@ -43,6 +46,11 @@ class ApiClient {
       final response = switch (method) {
         'GET' => await _httpClient.get(uri, headers: headers),
         'POST' => await _httpClient.post(
+          uri,
+          headers: headers,
+          body: body == null ? null : jsonEncode(body),
+        ),
+        'PUT' => await _httpClient.put(
           uri,
           headers: headers,
           body: body == null ? null : jsonEncode(body),
